@@ -2,6 +2,13 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 6)
+- 🖥 **Server/Workstation 분리 아키텍처** 추가 (08-server-workstation-split.md)
+- Mac mini = Headless 서버 / 노트북 = 운영 워크스테이션 구성
+- 통신 채널 4종(SSH/HTTPS/MCP/VNC), 헤드리스 설정 8항목, 보안·운영 고려사항
+- MCP 서버 분리 패턴: Claude Code는 노트북 실행 / STB 제어 도구는 Mac mini 배포
+- 추가 비용 약 1만원 (HDMI Dummy Plug), PoC 총액 445만원 유지
+
 ## 2026-05-23 (업데이트 5)
 - 💻 **Test Server를 사내 자산 Mac mini M4 Pro로 대체** 검토 완료 (07-mac-mini-m4-pro-server.md)
 - 호환성 매트릭스, M4 Pro 강점(Neural Engine/MLX/Ollama), 보완 필요사항(USB 허브, ARM64 이미지, LIRC→iTach 대체) 정리
