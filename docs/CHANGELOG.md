@@ -2,6 +2,11 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 9)
+- 📋 **SUMMARY.md** 통합 요약 추가 — 미션/8가지 핵심 결정/아키텍처/일정/BOM/문서 인덱스 한 페이지
+- README.md 정비: SUMMARY를 시작 지점으로 안내, 카테고리별 정리
+- 총 8회 업데이트 누적 결과를 단일 문서로 압축
+
 ## 2026-05-23 (업데이트 8)
 - 🐳 **Docker Compose 2종 스택 + MCP 서비스 8종 스켈레톤** 추가
 - infrastructure/notebook-gateway/: capture / ir / uart / power MCP + Caddy 프록시
