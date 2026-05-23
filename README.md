@@ -17,6 +17,7 @@ Claude Code + Gemini를 활용한 AI 바이브코딩 기반 QA 자동화 구축 
 - [docs/06-test-environment.md](docs/06-test-environment.md) — 🛠 시험환경 구성도 + PoC BOM
 - [docs/07-mac-mini-m4-pro-server.md](docs/07-mac-mini-m4-pro-server.md) — 💻 Test Server를 Mac mini M4 Pro로 대체 검토 (PoC 예산 225만원 절감)
 - [docs/08-server-workstation-split.md](docs/08-server-workstation-split.md) — 🖥 Server/Workstation 분리 아키텍처 (Mac mini Headless + 운영 노트북)
+- [docs/09-notebook-gateway-architecture.md](docs/09-notebook-gateway-architecture.md) — 🔌 **노트북-게이트웨이 아키텍처 (현행)** — 캡처/IR/UART를 노트북에 직결
 - [docs/CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
 ## 진행 현황

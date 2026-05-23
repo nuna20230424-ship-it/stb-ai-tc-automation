@@ -2,6 +2,15 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 7)
+- 🔌 **노트북-게이트웨이 아키텍처 채택** (09-notebook-gateway-architecture.md)
+- 캡처카드/IR/UART를 운영 노트북에 직결, Mac mini는 순수 AI/DB 백엔드로 분리
+- 데이터 흐름 옵션 A(스트리밍)/B(배치) 비교, PoC는 옵션 B 권장
+- 최대 이슈: **24/7 야간 회귀** → 노트북 슬립 방지 또는 별도 게이트웨이 노드 도입(Sprint 2~3)
+- MCP 서버 재배치: STB 제어 4종은 노트북, AI/DB 4종은 Mac mini
+- BOM 변동 없음 (Powered TB Dock이 Mac mini용 → 노트북용으로 이전), 총액 445만원 유지
+- 사내 표준 노트북 OS·TB 지원 여부 확인 필요
+
 ## 2026-05-23 (업데이트 6)
 - 🖥 **Server/Workstation 분리 아키텍처** 추가 (08-server-workstation-split.md)
 - Mac mini = Headless 서버 / 노트북 = 운영 워크스테이션 구성
