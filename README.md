@@ -34,6 +34,9 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [09-notebook-gateway-architecture.md](docs/09-notebook-gateway-architecture.md) — 🔌 **현행 아키텍처** — 캡처/IR/UART 노트북 직결
 - [10-sprint0-day-by-day.md](docs/10-sprint0-day-by-day.md) — 📅 **Sprint 0 4주 일자별 작업 계획** (Day 1~20)
 - [11-ci-cd.md](docs/11-ci-cd.md) — ⚙️ CI/CD 아키텍처 (GitHub Actions + self-hosted runners)
+- [12-executive-briefing.md](docs/12-executive-briefing.md) — 📄 **경영진 1페이지 브리핑** (결재용)
+- [12-executive-briefing-slides.md](docs/12-executive-briefing-slides.md) — 🎯 **경영진 슬라이드 데크** (Marp, PDF/HTML/PPTX 변환 가능)
+- [README-export.md](docs/README-export.md) — 문서 PDF/HTML/PPTX 변환 가이드
 - [CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
 ### 🐳 인프라 코드 (`infrastructure/`)

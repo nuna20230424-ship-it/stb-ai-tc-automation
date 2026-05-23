@@ -2,6 +2,14 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 13)
+- 📄 **경영진 보고용 자료** 2종 추가
+- docs/12-executive-briefing.md: 1페이지 브리핑 (Why-Plan-Investment-ROI-Risk-Decision-Status)
+- docs/12-executive-briefing-slides.md: Marp 슬라이드 데크 9장 (PDF/HTML/PPTX 변환 가능)
+- docs/README-export.md: pandoc + Typst, Marp CLI, VS Code 확장 등 3가지 변환 방법
+- 의사결정 요청 3건 명확화 (445만원 예산 / 인력 2~3명 / IT 협조)
+- 한글 폰트(Apple SD Gothic Neo) 자동 적용 설정 포함
+
 ## 2026-05-23 (업데이트 12)
 - ⚙️ **GitHub Actions CI/CD 파이프라인** 추가 (.github/workflows/, docs/11-ci-cd.md)
 - 워크플로 5종:
