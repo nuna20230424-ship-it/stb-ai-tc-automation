@@ -2,6 +2,12 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 14)
+- 🚀 **Day 1 킥오프 미팅 슬라이드 (실무진용)** 추가 (13-kickoff-day1-slides.md, 18장)
+- 구성: 목표/아키텍처/Sprint 0 성공 정의/RACI/주차별 상세/기술 스택/Claude Code 활용법/리스크/Day 1 결정 8개/소통 채널/즉시 액션
+- Marp 형식, 한글 폰트, 16:9
+- 실무진 즉시 액션 명확화 (담당자별)
+
 ## 2026-05-23 (업데이트 13)
 - 📄 **경영진 보고용 자료** 2종 추가
 - docs/12-executive-briefing.md: 1페이지 브리핑 (Why-Plan-Investment-ROI-Risk-Decision-Status)
