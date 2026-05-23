@@ -33,6 +33,7 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [08-server-workstation-split.md](docs/08-server-workstation-split.md) — 🖥 Server/Workstation 분리
 - [09-notebook-gateway-architecture.md](docs/09-notebook-gateway-architecture.md) — 🔌 **현행 아키텍처** — 캡처/IR/UART 노트북 직결
 - [10-sprint0-day-by-day.md](docs/10-sprint0-day-by-day.md) — 📅 **Sprint 0 4주 일자별 작업 계획** (Day 1~20)
+- [11-ci-cd.md](docs/11-ci-cd.md) — ⚙️ CI/CD 아키텍처 (GitHub Actions + self-hosted runners)
 - [CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
 ### 🐳 인프라 코드 (`infrastructure/`)
@@ -41,6 +42,10 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 
 ### 🧪 E2E 테스트 (`tests/`)
 - [tests/](tests/) — 8종 MCP 통합 pytest 시나리오 (채널 Zap E2E 데모) + 베이스라인 시드 스크립트
+
+### ⚙️ CI/CD (`.github/`)
+- [.github/workflows/](.github/workflows/) — Lint / Build / Deploy Backend / Deploy Gateway / E2E Nightly 5종 워크플로
+- [.github/runners/](.github/runners/) — Mac mini + 노트북 self-hosted runner 설치 가이드
 
 ## 협업 도구
 - **Claude Code** — 코드 생성, MCP 서버, 실행 오케스트레이션, CI 통합

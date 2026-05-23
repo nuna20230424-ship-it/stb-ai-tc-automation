@@ -1,0 +1,65 @@
+name: Deploy Notebook Gateway
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infrastructure/notebook-gateway/**"
+      - ".github/workflows/deploy-gateway.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-gateway
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, notebook, gateway]
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: infrastructure/notebook-gateway
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Render .env from secrets
+        env:
+          ITACH_HOST: ${{ vars.ITACH_HOST }}
+          REF_PLUG_HOST: ${{ vars.REF_PLUG_HOST }}
+          DUT_PLUG_HOST: ${{ vars.DUT_PLUG_HOST }}
+          BACKEND_MINIO_ENDPOINT: ${{ vars.BACKEND_MINIO_ENDPOINT }}
+          BACKEND_MINIO_ACCESS_KEY: ${{ secrets.MINIO_USER }}
+          BACKEND_MINIO_SECRET_KEY: ${{ secrets.MINIO_PASSWORD }}
+        run: |
+          cp .env.example .env
+          for v in ITACH_HOST REF_PLUG_HOST DUT_PLUG_HOST \
+                   BACKEND_MINIO_ENDPOINT BACKEND_MINIO_ACCESS_KEY BACKEND_MINIO_SECRET_KEY; do
+            sed -i.bak -E "s|^${v}=.*|${v}=${!v}|" .env
+          done
+          rm -f .env.bak
+
+      - name: Build & start
+        run: |
+          docker compose up -d --build --remove-orphans
+
+      - name: Wait for health
+        run: |
+          for i in $(seq 1 20); do
+            if curl -fsS http://localhost:8080/health; then
+              echo "✅ gateway healthy"
+              exit 0
+            fi
+            echo "waiting... ($i/20)"
+            sleep 2
+          done
+          docker compose ps
+          docker compose logs --tail=200
+          exit 1
+
+      - name: Smoke test (LAN reachable services only)
+        run: |
+          curl -fsS http://localhost:8002/health  # ir
+          curl -fsS http://localhost:8004/health  # power
+          # capture/uart는 USB device 의존 → 호스트 네이티브 실행일 수 있음
+          curl -fsS http://localhost:8001/health || echo "::warning::capture-mcp not running (호스트 네이티브 모드 가능)"
+          curl -fsS http://localhost:8003/health || echo "::warning::uart-mcp not running (호스트 네이티브 모드 가능)"

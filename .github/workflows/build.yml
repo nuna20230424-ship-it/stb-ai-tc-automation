@@ -1,0 +1,61 @@
+name: Build MCP Images
+
+on:
+  pull_request:
+    paths:
+      - "infrastructure/**"
+      - ".github/workflows/build.yml"
+  push:
+    branches: [main]
+    paths:
+      - "infrastructure/**"
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - stack: notebook-gateway
+            service: capture-mcp
+          - stack: notebook-gateway
+            service: ir-mcp
+          - stack: notebook-gateway
+            service: uart-mcp
+          - stack: notebook-gateway
+            service: power-mcp
+          - stack: mac-mini-backend
+            service: baseline-mcp
+          - stack: mac-mini-backend
+            service: embedding-mcp
+          - stack: mac-mini-backend
+            service: detection-mcp
+          - stack: mac-mini-backend
+            service: report-mcp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build ${{ matrix.stack }}/${{ matrix.service }}
+        uses: docker/build-push-action@v6
+        with:
+          context: infrastructure/${{ matrix.stack }}/services/${{ matrix.service }}
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: stb-${{ matrix.service }}:ci
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  compose-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate notebook-gateway compose
+        run: docker compose -f infrastructure/notebook-gateway/docker-compose.yml config -q
+      - name: Validate mac-mini-backend compose
+        run: docker compose -f infrastructure/mac-mini-backend/docker-compose.yml config -q

@@ -1,0 +1,72 @@
+name: Deploy Mac mini Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infrastructure/mac-mini-backend/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backend
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, mac-mini, backend]
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: infrastructure/mac-mini-backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Render .env from secrets
+        env:
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          INFLUX_USER: ${{ secrets.INFLUX_USER }}
+          INFLUX_PASSWORD: ${{ secrets.INFLUX_PASSWORD }}
+          INFLUX_TOKEN: ${{ secrets.INFLUX_TOKEN }}
+          MINIO_USER: ${{ secrets.MINIO_USER }}
+          MINIO_PASSWORD: ${{ secrets.MINIO_PASSWORD }}
+          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          JIRA_URL: ${{ secrets.JIRA_URL }}
+          JIRA_USER: ${{ secrets.JIRA_USER }}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          JIRA_PROJECT: ${{ vars.JIRA_PROJECT }}
+        run: |
+          envsubst < .env.example > .env || cp .env.example .env
+          # 시크릿 주입 (개별 라인 치환)
+          for v in QDRANT_API_KEY INFLUX_USER INFLUX_PASSWORD INFLUX_TOKEN \
+                   MINIO_USER MINIO_PASSWORD GRAFANA_PASSWORD \
+                   JIRA_URL JIRA_USER JIRA_TOKEN JIRA_PROJECT; do
+            sed -i.bak -E "s|^${v}=.*|${v}=${!v}|" .env
+          done
+          rm -f .env.bak
+
+      - name: Build & start (zero-downtime per service)
+        run: |
+          docker compose pull --ignore-pull-failures || true
+          docker compose up -d --build --remove-orphans
+
+      - name: Wait for health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:8100/health; then
+              echo "✅ backend healthy"
+              exit 0
+            fi
+            echo "waiting... ($i/30)"
+            sleep 2
+          done
+          docker compose ps
+          docker compose logs --tail=200
+          exit 1
+
+      - name: Smoke test
+        run: |
+          curl -fsS http://localhost:8101/health  # baseline
+          curl -fsS http://localhost:8102/health  # embedding
+          curl -fsS http://localhost:8103/health  # detection
+          curl -fsS http://localhost:8104/health  # report

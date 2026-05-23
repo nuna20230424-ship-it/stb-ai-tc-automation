@@ -1,0 +1,110 @@
+name: E2E Nightly (Channel Zap)
+
+on:
+  schedule:
+    # 매일 22:00 KST = 13:00 UTC
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+    inputs:
+      markers:
+        description: "pytest -m 표현식"
+        required: false
+        default: "channel_zap"
+      iterations:
+        description: "반복 횟수"
+        required: false
+        default: "1"
+
+concurrency:
+  group: e2e-nightly
+  cancel-in-progress: false
+
+jobs:
+  e2e:
+    runs-on: [self-hosted, notebook, gateway]
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: tests
+    env:
+      # Backend (Mac mini) 위치 — vars로 관리
+      GATEWAY_BASE_URL: ${{ vars.GATEWAY_BASE_URL || 'http://localhost:8080' }}
+      BACKEND_BASE_URL: ${{ vars.BACKEND_BASE_URL }}
+      CAPTURE_MCP_URL: http://localhost:8001
+      IR_MCP_URL: http://localhost:8002
+      UART_MCP_URL: http://localhost:8003
+      POWER_MCP_URL: http://localhost:8004
+      BASELINE_MCP_URL: ${{ vars.BASELINE_MCP_URL }}
+      EMBEDDING_MCP_URL: ${{ vars.EMBEDDING_MCP_URL }}
+      DETECTION_MCP_URL: ${{ vars.DETECTION_MCP_URL }}
+      REPORT_MCP_URL: ${{ vars.REPORT_MCP_URL }}
+      INFLUX_URL: ${{ vars.INFLUX_URL }}
+      INFLUX_TOKEN: ${{ secrets.INFLUX_TOKEN }}
+      INFLUX_ORG: stbqa
+      INFLUX_BUCKET: stb-metrics
+      IR_CODESET: ${{ vars.IR_CODESET || 'ref_remote' }}
+      BOOT_WAIT_SEC: ${{ vars.BOOT_WAIT_SEC || '30' }}
+      DUT_FIRMWARE: ${{ vars.DUT_FIRMWARE || 'unknown' }}
+      SIMILARITY_THRESHOLD: ${{ vars.SIMILARITY_THRESHOLD || '0.92' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Health check (gateway + backend)
+        run: |
+          set +e
+          curl -fsS $CAPTURE_MCP_URL/health
+          curl -fsS $IR_MCP_URL/health
+          curl -fsS $UART_MCP_URL/health
+          curl -fsS $POWER_MCP_URL/health
+          curl -fsS $BASELINE_MCP_URL/health
+          curl -fsS $EMBEDDING_MCP_URL/health
+          curl -fsS $DETECTION_MCP_URL/health
+          curl -fsS $REPORT_MCP_URL/health
+
+      - name: Run pytest
+        id: pytest
+        run: |
+          source .venv/bin/activate
+          MARKERS="${{ github.event.inputs.markers || 'channel_zap' }}"
+          python -m pytest -m "$MARKERS" --junitxml=reports/junit.xml
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-reports-${{ github.run_id }}
+          path: |
+            tests/reports/
+            tests/data/captures/
+            tests/data/frames/
+          retention-days: 14
+
+      - name: Upload UART logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uart-logs-${{ github.run_id }}
+          path: tests/data/uart-logs/
+          retention-days: 14
+
+      - name: Summarize
+        if: always()
+        run: |
+          {
+            echo "## E2E Nightly 결과"
+            echo "- 시작: ${{ github.event.repository.updated_at }}"
+            echo "- DUT 펌웨어: ${DUT_FIRMWARE:-unknown}"
+            echo "- 결과: ${{ steps.pytest.outcome }}"
+            echo "- 리포트: artifact \`e2e-reports-${{ github.run_id }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

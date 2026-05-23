@@ -2,6 +2,18 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 12)
+- ⚙️ **GitHub Actions CI/CD 파이프라인** 추가 (.github/workflows/, docs/11-ci-cd.md)
+- 워크플로 5종:
+  - lint.yml (ruff/black/hadolint/yamllint, ubuntu-latest)
+  - build.yml (8개 MCP 이미지 buildx 매트릭스 amd64+arm64, compose validate)
+  - deploy-backend.yml (self-hosted: mac-mini, paths 트리거)
+  - deploy-gateway.yml (self-hosted: notebook, paths 트리거)
+  - e2e-nightly.yml (cron 22:00 KST + workflow_dispatch, pytest -m channel_zap, artifact 업로드)
+- Self-hosted runner 설치 가이드 2종 (Mac mini / 노트북)
+- 시크릿/변수 분리 (Secrets vs Variables), 라벨 기반 라우팅
+- 보안 체크리스트, 향후 확장 계획(Slack, GHCR, 매트릭스)
+
 ## 2026-05-23 (업데이트 11)
 - 🧪 **채널 Zap E2E 통합 pytest 시나리오** 추가 (tests/)
 - 8종 MCP 클라이언트 (clients.py) — Capture/IR/UART/Power/Baseline/Embedding/Detection/Report

@@ -1,0 +1,50 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install lint tools
+        run: pip install ruff==0.7.1 black==24.10.0
+      - name: Ruff
+        run: ruff check infrastructure tests
+      - name: Black (check only)
+        run: black --check infrastructure tests
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          recursive: true
+          dockerfile: infrastructure/**/Dockerfile
+
+  yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: yamllint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: .github/workflows infrastructure
+          config_data: |
+            extends: relaxed
+            rules:
+              line-length: disable
+              truthy: disable
