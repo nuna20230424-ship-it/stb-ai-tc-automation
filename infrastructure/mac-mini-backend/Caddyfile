@@ -1,0 +1,17 @@
+:80 {
+    handle /baseline/* {
+        reverse_proxy baseline-mcp:8000
+    }
+    handle /embedding/* {
+        reverse_proxy embedding-mcp:8000
+    }
+    handle /detection/* {
+        reverse_proxy detection-mcp:8000
+    }
+    handle /report/* {
+        reverse_proxy report-mcp:8000
+    }
+    handle /health {
+        respond "stb-backend ok" 200
+    }
+}

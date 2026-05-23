@@ -1,0 +1,190 @@
+# Mac mini Backend — AI / DB / 오케스트레이션 스택
+#
+# 역할: 노트북 게이트웨이에서 올라온 캡처/로그를 받아 임베딩·이상치 판정·보고.
+#
+# 호환성 메모:
+#   - Apple Silicon(M4 Pro) 전제. 모든 이미지는 linux/arm64 가용.
+#   - Ollama는 Docker 안에서는 Metal GPU 미사용 → **호스트 네이티브 실행 권장**.
+#     호스트에서 `brew install ollama && ollama serve` 후
+#     embedding-mcp가 host.docker.internal:11434로 접근.
+#
+# 사용:
+#   cp .env.example .env
+#   docker compose up -d
+#   docker compose ps
+
+name: stb-backend
+
+x-restart: &restart
+  restart: unless-stopped
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "5"
+
+services:
+  # ────────────────────────────────────────────────────────────
+  # 1) Qdrant — 벡터 DB (베이스라인 임베딩 저장)
+  # ────────────────────────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    platform: linux/arm64
+    container_name: stb-qdrant
+    <<: [*restart, *logging]
+    ports:
+      - "${QDRANT_PORT:-6333}:6333"
+      - "${QDRANT_GRPC_PORT:-6334}:6334"
+    volumes:
+      - ./data/qdrant:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__API_KEY=${QDRANT_API_KEY}
+
+  # ────────────────────────────────────────────────────────────
+  # 2) InfluxDB — 시계열(타이밍/메트릭)
+  # ────────────────────────────────────────────────────────────
+  influxdb:
+    image: influxdb:2.7-alpine
+    platform: linux/arm64
+    container_name: stb-influxdb
+    <<: [*restart, *logging]
+    ports:
+      - "${INFLUXDB_PORT:-8086}:8086"
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USER}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=stbqa
+      - DOCKER_INFLUXDB_INIT_BUCKET=stb-metrics
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUX_TOKEN}
+
+  # ────────────────────────────────────────────────────────────
+  # 3) MinIO — S3 호환 (영상/스크린샷/로그 원본 저장)
+  # ────────────────────────────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    platform: linux/arm64
+    container_name: stb-minio
+    <<: [*restart, *logging]
+    command: server /data --console-address ":9001"
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - ./data/minio:/data
+    environment:
+      - MINIO_ROOT_USER=${MINIO_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+
+  # ────────────────────────────────────────────────────────────
+  # 4) Grafana — 대시보드
+  # ────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana-oss:11.3.0
+    platform: linux/arm64
+    container_name: stb-grafana
+    <<: [*restart, *logging]
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    depends_on:
+      - influxdb
+
+  # ────────────────────────────────────────────────────────────
+  # 5) Baseline MCP — Qdrant 베이스라인 등록/조회
+  # ────────────────────────────────────────────────────────────
+  baseline-mcp:
+    build: ./services/baseline-mcp
+    container_name: stb-baseline-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${BASELINE_MCP_PORT:-8101}:8000"
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+    depends_on:
+      - qdrant
+
+  # ────────────────────────────────────────────────────────────
+  # 6) Embedding MCP — Ollama/MLX 호출하여 화면·로그 임베딩 생성
+  # ────────────────────────────────────────────────────────────
+  embedding-mcp:
+    build: ./services/embedding-mcp
+    container_name: stb-embedding-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${EMBEDDING_MCP_PORT:-8102}:8000"
+    environment:
+      # 호스트 네이티브 Ollama 사용 (Metal/MLX 가속)
+      - OLLAMA_URL=http://host.docker.internal:11434
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+      - VISION_MODEL=${VISION_MODEL:-llava:latest}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ────────────────────────────────────────────────────────────
+  # 7) Detection MCP — 베이스라인 비교 + 이상치 판정
+  # ────────────────────────────────────────────────────────────
+  detection-mcp:
+    build: ./services/detection-mcp
+    container_name: stb-detection-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${DETECTION_MCP_PORT:-8103}:8000"
+    environment:
+      - BASELINE_URL=http://baseline-mcp:8000
+      - EMBEDDING_URL=http://embedding-mcp:8000
+      - INFLUX_URL=http://influxdb:8086
+      - INFLUX_TOKEN=${INFLUX_TOKEN}
+      - SIMILARITY_THRESHOLD=${SIMILARITY_THRESHOLD:-0.92}
+    depends_on:
+      - baseline-mcp
+      - embedding-mcp
+      - influxdb
+
+  # ────────────────────────────────────────────────────────────
+  # 8) Report MCP — JIRA 자동 등록 + Grafana 알림
+  # ────────────────────────────────────────────────────────────
+  report-mcp:
+    build: ./services/report-mcp
+    container_name: stb-report-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${REPORT_MCP_PORT:-8104}:8000"
+    environment:
+      - JIRA_URL=${JIRA_URL}
+      - JIRA_USER=${JIRA_USER}
+      - JIRA_TOKEN=${JIRA_TOKEN}
+      - JIRA_PROJECT=${JIRA_PROJECT:-STBQA}
+      - GRAFANA_URL=http://grafana:3000
+
+  # ────────────────────────────────────────────────────────────
+  # 9) Backend Proxy — 단일 엔드포인트
+  # ────────────────────────────────────────────────────────────
+  backend-proxy:
+    image: caddy:2-alpine
+    platform: linux/arm64
+    container_name: stb-backend-proxy
+    <<: [*restart, *logging]
+    ports:
+      - "${BACKEND_PORT:-8100}:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - baseline-mcp
+      - embedding-mcp
+      - detection-mcp
+      - report-mcp
+
+networks:
+  default:
+    name: stb-backend-net

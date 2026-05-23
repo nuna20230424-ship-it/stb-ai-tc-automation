@@ -1,0 +1,141 @@
+# Notebook Gateway — STB 직결 제어 스택
+#
+# 역할: 운영 노트북에서 캡처카드/IR/UART/Power를 직접 제어하고
+#       Mac mini 백엔드(AI/DB)에 데이터를 업로드한다.
+#
+# 호환성 메모:
+#   - Linux 노트북 / Windows WSL2: USB device passthrough 그대로 사용 가능 (아래 devices: 블록)
+#   - macOS 노트북: Docker Desktop은 USB 디바이스 직접 접근 불가
+#     → capture-mcp, uart-mcp는 호스트 네이티브 실행 권장 (services/*/run-native.sh 참조)
+#     → ir-mcp, power-mcp는 LAN 기반이라 Docker 그대로 OK
+#
+# 사용:
+#   cp .env.example .env  # 환경값 채우기
+#   docker compose up -d
+#   docker compose ps
+
+name: stb-gateway
+
+x-restart: &restart
+  restart: unless-stopped
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  # ────────────────────────────────────────────────────────────
+  # 1) Capture MCP — HDMI 캡처카드(UVC) 제어
+  # ────────────────────────────────────────────────────────────
+  capture-mcp:
+    build: ./services/capture-mcp
+    container_name: stb-capture-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${CAPTURE_MCP_PORT:-8001}:8000"
+    environment:
+      - REF_CAPTURE_DEVICE=${REF_CAPTURE_DEVICE:-/dev/video0}
+      - DUT_CAPTURE_DEVICE=${DUT_CAPTURE_DEVICE:-/dev/video2}
+      - CAPTURE_OUTPUT_DIR=/data/captures
+      - BACKEND_MINIO_ENDPOINT=${BACKEND_MINIO_ENDPOINT}
+      - BACKEND_MINIO_ACCESS_KEY=${BACKEND_MINIO_ACCESS_KEY}
+      - BACKEND_MINIO_SECRET_KEY=${BACKEND_MINIO_SECRET_KEY}
+    volumes:
+      - ./data/captures:/data/captures
+    # Linux/WSL2에서만 활성화. macOS Docker Desktop은 host-native 실행으로 대체.
+    devices:
+      - /dev/video0:/dev/video0   # Reference STB capture
+      - /dev/video2:/dev/video2   # DUT capture (필요 시 추가)
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ────────────────────────────────────────────────────────────
+  # 2) IR MCP — Global Caché iTach IP2IR 제어 (LAN)
+  # ────────────────────────────────────────────────────────────
+  ir-mcp:
+    build: ./services/ir-mcp
+    container_name: stb-ir-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${IR_MCP_PORT:-8002}:8000"
+    environment:
+      - ITACH_HOST=${ITACH_HOST:-10.0.10.20}
+      - ITACH_PORT=${ITACH_PORT:-4998}
+      - IR_CODESET_DIR=/data/ir-codesets
+    volumes:
+      - ./data/ir-codesets:/data/ir-codesets:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ────────────────────────────────────────────────────────────
+  # 3) UART MCP — FTDI USB-Serial 로그 수집
+  # ────────────────────────────────────────────────────────────
+  uart-mcp:
+    build: ./services/uart-mcp
+    container_name: stb-uart-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${UART_MCP_PORT:-8003}:8000"
+    environment:
+      - REF_UART_DEVICE=${REF_UART_DEVICE:-/dev/ttyUSB0}
+      - DUT_UART_DEVICE=${DUT_UART_DEVICE:-/dev/ttyUSB1}
+      - UART_BAUD=${UART_BAUD:-115200}
+      - LOG_OUTPUT_DIR=/data/uart-logs
+    volumes:
+      - ./data/uart-logs:/data/uart-logs
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyUSB1:/dev/ttyUSB1
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ────────────────────────────────────────────────────────────
+  # 4) Power MCP — Shelly Smart Plug 제어 (LAN)
+  # ────────────────────────────────────────────────────────────
+  power-mcp:
+    build: ./services/power-mcp
+    container_name: stb-power-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${POWER_MCP_PORT:-8004}:8000"
+    environment:
+      - REF_PLUG_HOST=${REF_PLUG_HOST:-10.0.10.31}
+      - DUT_PLUG_HOST=${DUT_PLUG_HOST:-10.0.10.32}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ────────────────────────────────────────────────────────────
+  # 5) Gateway Proxy — 모든 MCP 서비스를 단일 엔드포인트로 노출
+  # ────────────────────────────────────────────────────────────
+  gateway-proxy:
+    image: caddy:2-alpine
+    container_name: stb-gateway-proxy
+    <<: [*restart, *logging]
+    ports:
+      - "${GATEWAY_PORT:-8080}:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - capture-mcp
+      - ir-mcp
+      - uart-mcp
+      - power-mcp
+
+networks:
+  default:
+    name: stb-gateway-net

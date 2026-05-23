@@ -1,0 +1,18 @@
+# Gateway Proxy - 단일 엔드포인트로 4종 MCP 노출
+:80 {
+    handle /capture/* {
+        reverse_proxy capture-mcp:8000
+    }
+    handle /ir/* {
+        reverse_proxy ir-mcp:8000
+    }
+    handle /uart/* {
+        reverse_proxy uart-mcp:8000
+    }
+    handle /power/* {
+        reverse_proxy power-mcp:8000
+    }
+    handle /health {
+        respond "stb-gateway ok" 200
+    }
+}

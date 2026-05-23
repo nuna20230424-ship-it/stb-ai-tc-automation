@@ -2,6 +2,21 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 8)
+- 🐳 **Docker Compose 2종 스택 + MCP 서비스 8종 스켈레톤** 추가
+- infrastructure/notebook-gateway/: capture / ir / uart / power MCP + Caddy 프록시
+  - capture-mcp: FFmpeg HDMI 캡처 (Linux/WSL2 device passthrough)
+  - ir-mcp: Global Caché iTach IP2IR TCP 4998 래퍼
+  - uart-mcp: pyserial FTDI USB 로그 수집 세션
+  - power-mcp: Shelly Gen2+ RPC 래퍼 (set/cycle/status)
+- infrastructure/mac-mini-backend/: Qdrant + InfluxDB + MinIO + Grafana + 4 MCP (linux/arm64 platform 명시)
+  - baseline-mcp: Qdrant 등록·조회
+  - embedding-mcp: Ollama 텍스트/비전(host.docker.internal:11434 — Metal 가속)
+  - detection-mcp: 베이스라인 비교 + 임계치 기반 이상치 판정
+  - report-mcp: JIRA REST API 자동 등록
+- 두 스택 모두 `cp .env.example .env && docker compose up -d` 즉시 가동
+- 호스트 네이티브 실행 가이드 (macOS의 USB 제약, Ollama Metal 가속)
+
 ## 2026-05-23 (업데이트 7)
 - 🔌 **노트북-게이트웨이 아키텍처 채택** (09-notebook-gateway-architecture.md)
 - 캡처카드/IR/UART를 운영 노트북에 직결, Mac mini는 순수 AI/DB 백엔드로 분리

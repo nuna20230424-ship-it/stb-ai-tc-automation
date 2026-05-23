@@ -20,6 +20,10 @@ Claude Code + Gemini를 활용한 AI 바이브코딩 기반 QA 자동화 구축 
 - [docs/09-notebook-gateway-architecture.md](docs/09-notebook-gateway-architecture.md) — 🔌 **노트북-게이트웨이 아키텍처 (현행)** — 캡처/IR/UART를 노트북에 직결
 - [docs/CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
+## 인프라 코드
+- [infrastructure/notebook-gateway/](infrastructure/notebook-gateway/) — 운영 노트북용 Docker Compose (capture/ir/uart/power MCP)
+- [infrastructure/mac-mini-backend/](infrastructure/mac-mini-backend/) — Mac mini용 Docker Compose (Qdrant/InfluxDB/MinIO/Grafana + baseline/embedding/detection/report MCP)
+
 ## 진행 현황
 - **2026-05-23**: 초기 기획 — 벤치마킹·5가지 안·로드맵 정리
 - **2026-05-23**: ⚡ Fast-Track 적용 — 24개월 → 6개월(24주) 4배 가속
