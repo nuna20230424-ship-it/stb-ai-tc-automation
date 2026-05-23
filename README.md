@@ -12,10 +12,12 @@ Claude Code + Gemini를 활용한 AI 바이브코딩 기반 QA 자동화 구축 
 - [docs/01-benchmarking.md](docs/01-benchmarking.md) — 글로벌 기업·상용 도구·2026 AI QA 트렌드 벤치마킹
 - [docs/02-five-approaches.md](docs/02-five-approaches.md) — 구축 방안 5가지 비교
 - [docs/03-roadmap.md](docs/03-roadmap.md) — 단계별 추진 로드맵 및 AI 역할 분담
+- [docs/04-fast-track.md](docs/04-fast-track.md) — ⚡ **Fast-Track 6개월 압축 일정 (현행)**
 - [docs/CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
 ## 진행 현황
-- **2026-05-23**: 초기 기획 — 벤치마킹·5가지 안·로드맵 정리 (Claude Code 세션)
+- **2026-05-23**: 초기 기획 — 벤치마킹·5가지 안·로드맵 정리
+- **2026-05-23**: ⚡ Fast-Track 적용 — 24개월 → 6개월(24주) 4배 가속
 
 ## 협업 도구
 - **Claude Code** — 코드 생성, MCP 서버, 실행 오케스트레이션, CI 통합
