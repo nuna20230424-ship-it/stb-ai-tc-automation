@@ -2,6 +2,11 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 3)
+- 🧠 **Reference STB 학습 기반 이상 탐지 에이전트** 설계 추가
+- 05-reference-learning-agent.md 신규: 학습 데이터 5종(화면/오디오/로그/타이밍/상태전이), 3-Agent 아키텍처(Learning/Detection/Reporting), 업계 유사 사례(Applitools/Witbe/VMAF/Watchdog/Sapientia)
+- Fast-Track 스프린트에 통합 일정 매핑
+
 ## 2026-05-23 (업데이트 2)
 - ⚡ **Fast-Track 압축 일정 적용** — 원래 24개월 → 6개월(24주)로 4배 가속
 - 04-fast-track.md 신규 추가 (Sprint 0~3 상세 계획)
