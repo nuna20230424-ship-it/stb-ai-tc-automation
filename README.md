@@ -32,6 +32,7 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [07-mac-mini-m4-pro-server.md](docs/07-mac-mini-m4-pro-server.md) — 💻 Test Server Mac mini 대체 검토
 - [08-server-workstation-split.md](docs/08-server-workstation-split.md) — 🖥 Server/Workstation 분리
 - [09-notebook-gateway-architecture.md](docs/09-notebook-gateway-architecture.md) — 🔌 **현행 아키텍처** — 캡처/IR/UART 노트북 직결
+- [10-sprint0-day-by-day.md](docs/10-sprint0-day-by-day.md) — 📅 **Sprint 0 4주 일자별 작업 계획** (Day 1~20)
 - [CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
 ### 🐳 인프라 코드 (`infrastructure/`)
