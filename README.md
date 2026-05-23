@@ -14,6 +14,7 @@ Claude Code + Gemini를 활용한 AI 바이브코딩 기반 QA 자동화 구축 
 - [docs/03-roadmap.md](docs/03-roadmap.md) — 단계별 추진 로드맵 및 AI 역할 분담
 - [docs/04-fast-track.md](docs/04-fast-track.md) — ⚡ **Fast-Track 6개월 압축 일정 (현행)**
 - [docs/05-reference-learning-agent.md](docs/05-reference-learning-agent.md) — 🧠 레퍼런스 STB 학습 기반 이상 탐지 에이전트 설계
+- [docs/06-test-environment.md](docs/06-test-environment.md) — 🛠 시험환경 구성도 + PoC BOM
 - [docs/CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
 ## 진행 현황

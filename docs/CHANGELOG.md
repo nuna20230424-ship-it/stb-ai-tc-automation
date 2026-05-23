@@ -2,6 +2,13 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 4)
+- 🛠 **시험환경 구성도** 추가 (06-test-environment.md)
+- Lab Topology, 4가지 핵심 채널(영상/입력/전원/로그), 소프트웨어 스택 다이어그램
+- PoC BOM 약 670만원 (Magewell 캡처, iTach IR, Shelly 전원, MikroTik 스위치, Ryzen 서버)
+- 네트워크 VLAN 설계(Mgmt/STB-WAN/STB-LAN/OTA)
+- 시나리오별 데이터 흐름 예시(채널 Zap) 및 Sprint 0 산출물 체크리스트
+
 ## 2026-05-23 (업데이트 3)
 - 🧠 **Reference STB 학습 기반 이상 탐지 에이전트** 설계 추가
 - 05-reference-learning-agent.md 신규: 학습 데이터 5종(화면/오디오/로그/타이밍/상태전이), 3-Agent 아키텍처(Learning/Detection/Reporting), 업계 유사 사례(Applitools/Witbe/VMAF/Watchdog/Sapientia)
