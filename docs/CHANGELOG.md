@@ -2,6 +2,16 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 11)
+- 🧪 **채널 Zap E2E 통합 pytest 시나리오** 추가 (tests/)
+- 8종 MCP 클라이언트 (clients.py) — Capture/IR/UART/Power/Baseline/Embedding/Detection/Report
+- conftest.py: 세션 단위 fixture + 헬스체크 자동 skip
+- utils.py: OpenCV 중간 프레임 추출 + InfluxDB 메트릭 기록
+- scenarios/test_channel_zap.py: 3개 채널 parametrize + 5회 반복 drift 테스트
+- baselines/seed_channel_zap.py: Reference STB 골든 베이스라인 자동 등록
+- Makefile: install/env/health/seed/test/report 타겟
+- 통과 기준 명시: verdict==normal, drift<0.10, zap_time<5s
+
 ## 2026-05-23 (업데이트 10)
 - 📅 **Sprint 0 4주 일자별 작업 계획** 추가 (10-sprint0-day-by-day.md)
 - Week 1: 발주·계약·시나리오 정의 (Day 1~5)

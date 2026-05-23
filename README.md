@@ -39,6 +39,9 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [notebook-gateway/](infrastructure/notebook-gateway/) — 운영 노트북용 Docker Compose (capture / ir / uart / power MCP)
 - [mac-mini-backend/](infrastructure/mac-mini-backend/) — Mac mini용 Docker Compose (Qdrant / InfluxDB / MinIO / Grafana + baseline / embedding / detection / report MCP)
 
+### 🧪 E2E 테스트 (`tests/`)
+- [tests/](tests/) — 8종 MCP 통합 pytest 시나리오 (채널 Zap E2E 데모) + 베이스라인 시드 스크립트
+
 ## 협업 도구
 - **Claude Code** — 코드 생성, MCP 서버, 실행 오케스트레이션, CI 통합
 - **Gemini** — 멀티모달 화면 분석, 대용량 로그 컨텍스트 분석, 회귀 영향도 예측
