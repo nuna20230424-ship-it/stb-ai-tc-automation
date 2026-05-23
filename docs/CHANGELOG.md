@@ -2,6 +2,12 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 5)
+- 💻 **Test Server를 사내 자산 Mac mini M4 Pro로 대체** 검토 완료 (07-mac-mini-m4-pro-server.md)
+- 호환성 매트릭스, M4 Pro 강점(Neural Engine/MLX/Ollama), 보완 필요사항(USB 허브, ARM64 이미지, LIRC→iTach 대체) 정리
+- **PoC 예산 약 225만원 절감 → 670만원 → 445만원**
+- Sprint 0 첫 주 호환성 검증 체크리스트 추가
+
 ## 2026-05-23 (업데이트 4)
 - 🛠 **시험환경 구성도** 추가 (06-test-environment.md)
 - Lab Topology, 4가지 핵심 채널(영상/입력/전원/로그), 소프트웨어 스택 다이어그램
