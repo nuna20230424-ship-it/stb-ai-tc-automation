@@ -1,0 +1,53 @@
+name: Preflight (Stage 2)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "infrastructure/**"
+      - "tests/**"
+      - ".github/workflows/preflight.yml"
+
+concurrency:
+  group: preflight
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: [self-hosted, notebook, gateway]
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: tests
+    env:
+      CAPTURE_MCP_URL: http://localhost:8001
+      IR_MCP_URL: http://localhost:8002
+      UART_MCP_URL: http://localhost:8003
+      POWER_MCP_URL: http://localhost:8004
+      VOICE_MCP_URL: http://localhost:8005
+      BLUETOOTH_MCP_URL: http://localhost:8006
+      BASELINE_MCP_URL: ${{ vars.BASELINE_MCP_URL }}
+      EMBEDDING_MCP_URL: ${{ vars.EMBEDDING_MCP_URL }}
+      DETECTION_MCP_URL: ${{ vars.DETECTION_MCP_URL }}
+      REPORT_MCP_URL: ${{ vars.REPORT_MCP_URL }}
+      INFLUX_URL: ${{ vars.INFLUX_URL }}
+      INFLUX_TOKEN: ${{ secrets.INFLUX_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+      - run: |
+          source .venv/bin/activate
+          python -m pytest -m preflight --junitxml=reports/preflight-junit.xml
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: preflight-reports-${{ github.run_id }}
+          path: tests/reports/
+          retention-days: 7

@@ -2,6 +2,21 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 17)
+- ✅ **사전 검증 (Pre-verification) 4단계 계획** 추가 (docs/16-pre-verification-plan.md)
+- Stage 1: 코드/구문 (lint, build, compose validate) — 매 PR 자동
+- Stage 2: 인프라 헬스 + 기능 스모크 — Docker 가동 후
+- Stage 3: 하드웨어 스모크 — 하드웨어 입고 후 4종 + 음성/BT 채널 1회씩
+- Stage 4: E2E 통합 — Sprint 0 데모
+- 신규 pytest: tests/scenarios/test_preflight.py (preflight 마커)
+- 신규 워크플로: .github/workflows/preflight.yml
+- Makefile에 preflight / preflight-stage3 타겟
+- 📡 **IR / BT 신호 인입 가이드** 추가 (docs/17-ir-bt-signal-injection-guide.md)
+- IR: iTach IP2IR 원리/물리 배치/codeset 학습/송신/트러블슈팅
+- BT: 3가지 자동화 전략 (실디바이스+수동/BLE 페리페럴 시뮬/GPIO 푸셔)
+- 페어링 모드 진입 카탈로그 (디바이스별 트리거 방법)
+- 인입 신호 무결성 검증 (월/주 회귀)
+
 ## 2026-05-23 (업데이트 16)
 - 🎤📡 **음성 발화 + 블루투스 호환성 시나리오** 추가
 - docs/15-voice-bluetooth-scenarios.md: 설계 / BOM (스피커·BT 디바이스 약 81~96만원) / Sprint 일정
