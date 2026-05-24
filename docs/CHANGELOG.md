@@ -2,6 +2,20 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 18)
+- 💸 **IR/BT 저가 대안 + 별도 장치 필요 여부 판단** 추가 (docs/18-low-cost-alternatives.md)
+- 결론: 무조건 필요 X. STB가 ADB/CEC/HTTP API 중 하나만 지원해도 IR 장치 0원 가능
+- IR 저가 대안 3종:
+  * BroadLink RM4 Mini (₩2~3만, 로컬 HTTP) ← iTach 대비 86% 절감
+  * ESP32 + IR LED DIY (₩1만, IR+BT+Wi-Fi 단일 보드)
+  * USB-UIRT (₩6~8만, Linux LIRC)
+- BT 저가 대안 3종:
+  * 노트북 내장 BT 활용 (0원) — bleak로 스캔/페리페럴 시뮬
+  * 제네릭 USB BT 5.0 동글 (₩5천~1만5천)
+  * ESP32 (₩1만, 가짜 BT HID 리모컨 시뮬)
+- STB 종류별 매트릭스: Android TV/CEC/IP API → 최대 18~33만원 절감 가능
+- ir-mcp 어댑터 패턴으로 백엔드 교체 가이드 (IR_BACKEND env)
+
 ## 2026-05-23 (업데이트 17)
 - ✅ **사전 검증 (Pre-verification) 4단계 계획** 추가 (docs/16-pre-verification-plan.md)
 - Stage 1: 코드/구문 (lint, build, compose validate) — 매 PR 자동
