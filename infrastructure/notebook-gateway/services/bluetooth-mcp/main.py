@@ -16,6 +16,7 @@ import os
 import subprocess
 from pathlib import Path
 
+import httpx
 from bleak import BleakScanner
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -23,6 +24,7 @@ from pydantic import BaseModel
 app = FastAPI(title="stb-bluetooth-mcp")
 
 CATALOG_PATH = Path(os.getenv("BT_CATALOG_PATH", "/data/bt-device-catalog.json"))
+GPIO_PUSHER_URL = os.getenv("GPIO_PUSHER_URL", "")  # 비어있으면 수동 모드
 
 
 class ScanRequest(BaseModel):
@@ -90,16 +92,40 @@ async def verify_advertising(mac: str, duration_sec: int = 5):
 
 @app.post("/trigger_pairing/{device_id}")
 def trigger_pairing(device_id: str):
-    """디바이스 카탈로그에서 device_id 조회, PoC 단계에선 운영자에게 페어링 모드 진입 요청.
-
-    Sprint 2: GPIO 푸셔 + 라즈베리파이 연동으로 자동 트리거.
+    """디바이스 페어링 모드 진입 — GPIO_PUSHER_URL이 설정되어 있으면 자동 트리거, 아니면 운영자 안내.
     """
     catalog_list = _load_catalog()
     device = next((d for d in catalog_list if d.get("id") == device_id), None)
     if not device:
         raise HTTPException(404, f"device_id not in catalog: {device_id}")
 
-    # PoC: 운영자 안내 메시지 반환 (실제 트리거는 수동)
+    pusher_seq = device.get("pusher_sequence")
+    if GPIO_PUSHER_URL and pusher_seq:
+        # Sprint 2 자동 모드
+        endpoint = "/multi_press" if len(pusher_seq.get("channels", [])) > 1 else "/press"
+        payload = dict(pusher_seq)
+        if endpoint == "/press":
+            payload["channel"] = payload.pop("channels", [0])[0]
+        try:
+            r = httpx.post(f"{GPIO_PUSHER_URL}{endpoint}", json=payload, timeout=payload.get("duration", 5) + 10)
+            r.raise_for_status()
+            return {
+                "device_id": device_id,
+                "device": device,
+                "action_required": "AUTO",
+                "triggered": True,
+                "pusher_response": r.json(),
+                "expected_advertise_within_sec": device.get("expected_advertise_within_sec", 5),
+            }
+        except httpx.HTTPError as e:
+            return {
+                "device_id": device_id,
+                "action_required": "MANUAL",
+                "warning": f"GPIO pusher unreachable: {e}",
+                "instruction": device.get("pairing_instruction"),
+            }
+
+    # Sprint 1 수동 모드
     return {
         "device_id": device_id,
         "device": device,

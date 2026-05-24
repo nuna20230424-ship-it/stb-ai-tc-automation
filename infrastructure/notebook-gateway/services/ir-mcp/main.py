@@ -13,11 +13,14 @@ import base64
 import json
 import os
 import socket
+import subprocess
 import time
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+
+from keyevents import ANDROID_TV_KEYEVENTS
 
 app = FastAPI(title="stb-ir-mcp")
 
@@ -25,6 +28,8 @@ IR_BACKEND = os.getenv("IR_BACKEND", "itach").lower()
 ITACH_HOST = os.getenv("ITACH_HOST", "10.0.10.20")
 ITACH_PORT = int(os.getenv("ITACH_PORT", "4998"))
 BROADLINK_HOST = os.getenv("BROADLINK_HOST", "192.168.1.50")
+# ADB: 네트워크 디바이스(예: "192.168.1.100:5555") 또는 USB 시리얼(예: "ABCD1234")
+ADB_TARGET = os.getenv("ADB_TARGET", "")
 CODESET_DIR = Path(os.getenv("IR_CODESET_DIR", "/data/ir-codesets"))
 
 
@@ -81,11 +86,38 @@ def _send_via_broadlink(payload: str) -> str:
     return "ok"
 
 
+def _adb_cmd(args: list[str], timeout: int = 10) -> str:
+    """adb -s <target> <args...> 실행 후 stdout 반환."""
+    if not ADB_TARGET:
+        raise HTTPException(500, "ADB_TARGET 환경변수가 설정되지 않음")
+    cmd = ["adb", "-s", ADB_TARGET, *args]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, check=True)
+    except subprocess.TimeoutExpired:
+        raise HTTPException(504, f"adb 시간 초과: {' '.join(cmd)}")
+    except subprocess.CalledProcessError as e:
+        raise HTTPException(502, f"adb 실패: {e.stderr.strip()[:200]}")
+    return result.stdout.strip()
+
+
+def _send_via_adb(payload: str) -> str:
+    """payload가 'adb:keyevent:<NUM>' 또는 정수면 keyevent로 송신."""
+    if payload.startswith("adb:keyevent:"):
+        keyevent = payload[len("adb:keyevent:"):]
+    elif payload.isdigit():
+        keyevent = payload
+    else:
+        raise HTTPException(400, "ADB 백엔드는 'adb:keyevent:<NUM>' 형식이 필요합니다")
+    return _adb_cmd(["shell", "input", "keyevent", keyevent])
+
+
 def _send(payload: str) -> str:
     if IR_BACKEND in ("itach", "itach-ilearner"):
         return _send_via_itach(payload)
     if IR_BACKEND in ("broadlink", "rm4", "rm4-mini"):
         return _send_via_broadlink(payload)
+    if IR_BACKEND in ("adb", "android-tv", "androidtv"):
+        return _send_via_adb(payload)
     raise HTTPException(500, f"unsupported IR_BACKEND: {IR_BACKEND}")
 
 
@@ -147,13 +179,42 @@ def _learn(timeout_sec: int) -> str:
 
 @app.get("/health")
 def health():
-    return {
+    info = {
         "status": "ok",
         "service": "ir-mcp",
         "backend": IR_BACKEND,
         "itach": f"{ITACH_HOST}:{ITACH_PORT}" if "itach" in IR_BACKEND else None,
         "broadlink": BROADLINK_HOST if IR_BACKEND == "broadlink" else None,
+        "adb_target": ADB_TARGET if IR_BACKEND.startswith("adb") or IR_BACKEND.startswith("android") else None,
     }
+    # ADB 백엔드는 연결 상태도 확인
+    if IR_BACKEND in ("adb", "android-tv", "androidtv") and ADB_TARGET:
+        try:
+            out = subprocess.run(
+                ["adb", "-s", ADB_TARGET, "get-state"],
+                capture_output=True, text=True, timeout=5,
+            )
+            info["adb_state"] = out.stdout.strip() or "no-device"
+        except Exception as e:
+            info["adb_state"] = f"error: {e}"
+    return info
+
+
+def _autogen_android_tv_codeset() -> dict:
+    """Android TV 표준 키맵을 ir-mcp 포맷으로 변환."""
+    return {f"_meta": {"backend": "adb", "auto": True}} | {
+        key: f"adb:keyevent:{code}" for key, code in ANDROID_TV_KEYEVENTS.items()
+    }
+
+
+@app.post("/codesets/android_tv/autogen")
+def autogen_android_tv():
+    """Android TV 표준 keyevent 매핑을 codeset JSON으로 자동 생성 (학습 불필요)."""
+    if IR_BACKEND not in ("adb", "android-tv", "androidtv"):
+        raise HTTPException(400, "IR_BACKEND=adb 일 때만 사용 가능")
+    data = _autogen_android_tv_codeset()
+    _save_codeset("android_tv", data)
+    return {"codeset": "android_tv", "keys": len(ANDROID_TV_KEYEVENTS), "path": str(_codeset_path("android_tv"))}
 
 
 @app.post("/send")

@@ -8,7 +8,8 @@
     "priority": "P1",
     "pairing_instruction": "리모컨의 OK + 뒤로가기 버튼을 동시에 5초간 누르세요.",
     "expected_advertise_within_sec": 5,
-    "compat_checks": ["pair", "key_input", "voice_capture", "battery_status"]
+    "compat_checks": ["pair", "key_input", "voice_capture", "battery_status"],
+    "pusher_sequence": {"channels": [0, 1], "duration": 5.0, "press_angle": 90, "rest_angle": 0}
   },
   {
     "id": "airpods-pro",
@@ -19,7 +20,8 @@
     "priority": "P1",
     "pairing_instruction": "케이스 뚜껑을 열고 뒷면 페어링 버튼을 흰색 LED가 깜박일 때까지 눌러주세요.",
     "expected_advertise_within_sec": 3,
-    "compat_checks": ["pair", "audio_stream", "avrcp_control"]
+    "compat_checks": ["pair", "audio_stream", "avrcp_control"],
+    "pusher_sequence": {"channels": [2], "duration": 3.0, "press_angle": 85, "rest_angle": 0}
   },
   {
     "id": "sony-wh1000xm",
@@ -30,7 +32,8 @@
     "priority": "P1",
     "pairing_instruction": "전원 버튼을 7초간 길게 눌러주세요. LED가 빠르게 깜박입니다.",
     "expected_advertise_within_sec": 5,
-    "compat_checks": ["pair", "audio_stream", "avrcp_control"]
+    "compat_checks": ["pair", "audio_stream", "avrcp_control"],
+    "pusher_sequence": {"channels": [3], "duration": 7.0, "press_angle": 95, "rest_angle": 0}
   },
   {
     "id": "jbl-flip",
@@ -41,7 +44,8 @@
     "priority": "P2",
     "pairing_instruction": "전원 ON 후 BT 버튼 2초 길게.",
     "expected_advertise_within_sec": 5,
-    "compat_checks": ["pair", "audio_stream"]
+    "compat_checks": ["pair", "audio_stream"],
+    "pusher_sequence": {"channels": [4], "duration": 2.0, "press_angle": 90, "rest_angle": 0}
   },
   {
     "id": "bt-keyboard-std",
@@ -52,6 +56,7 @@
     "priority": "P2",
     "pairing_instruction": "Fn+P 키 길게 누르기.",
     "expected_advertise_within_sec": 5,
-    "compat_checks": ["pair", "key_input"]
+    "compat_checks": ["pair", "key_input"],
+    "pusher_sequence": {"channels": [5, 6], "duration": 3.0, "press_angle": 90, "rest_angle": 0}
   }
 ]

@@ -1,0 +1,218 @@
+{
+  "uid": "stb-voice-bluetooth",
+  "title": "STB QA — Voice & Bluetooth",
+  "tags": ["stb", "qa", "voice", "bluetooth"],
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "Asia/Seoul",
+  "editable": true,
+  "graphTooltip": 1,
+  "time": {"from": "now-7d", "to": "now"},
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      {
+        "name": "firmware",
+        "label": "Firmware",
+        "type": "query",
+        "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"stb-metrics\", tag: \"firmware\", predicate: (r) => r._measurement == \"detection\")",
+        "refresh": 2, "multi": true, "includeAll": true,
+        "current": {"selected": false, "text": "All", "value": "$__all"}
+      }
+    ]
+  },
+  "panels": [
+    {"id": 1, "type": "row", "title": "🎤 Voice Command",
+     "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0}, "collapsed": false, "panels": []},
+
+    {
+      "id": 10, "type": "stat", "title": "Voice Response P50 (시나리오별)",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "values": true},
+        "orientation": "horizontal", "textMode": "value_and_name",
+        "colorMode": "value", "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms", "decimals": 0,
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 1500},
+            {"color": "red", "value": 2500}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"voice_command\" and r._field == \"response_ms\")\n  |> group(columns: [\"scenario\"])\n  |> quantile(q: 0.50, method: \"estimate_tdigest\", compression: 1000.0)"
+      }]
+    },
+
+    {
+      "id": 11, "type": "stat", "title": "Voice Response P95",
+      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "colorMode": "value", "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 2000},
+            {"color": "red", "value": 3000}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"voice_command\" and r._field == \"response_ms\")\n  |> quantile(q: 0.95, method: \"estimate_tdigest\", compression: 1000.0)"
+      }]
+    },
+
+    {
+      "id": 12, "type": "gauge", "title": "Intent Match Rate",
+      "gridPos": {"h": 6, "w": 6, "x": 18, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "orientation": "auto", "showThresholdLabels": false, "showThresholdMarkers": true,
+        "reduceOptions": {"calcs": ["lastNotNull"]}
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit", "min": 0, "max": 1, "decimals": 2,
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "red", "value": null},
+            {"color": "yellow", "value": 0.85},
+            {"color": "green", "value": 0.95}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "match = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"voice_command\" and r._field == \"intent_match\")\n  |> sum()\n  |> findRecord(fn: (key) => true, idx: 0)\n\ntotal = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"voice_command\" and r._field == \"intent_match\")\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\nimport \"array\"\narray.from(rows: [{_value: if total._value == 0 then 0.0 else float(v: match._value) / float(v: total._value)}])"
+      }]
+    },
+
+    {
+      "id": 13, "type": "timeseries", "title": "Voice Response Time Trend (시나리오별)",
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 7},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {"drawStyle": "line", "lineInterpolation": "smooth", "fillOpacity": 5}
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "right"}, "tooltip": {"mode": "multi"}},
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"voice_command\" and r._field == \"response_ms\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"response_ms\")"
+      }]
+    },
+
+    {"id": 2, "type": "row", "title": "📡 Bluetooth Pairing",
+     "gridPos": {"h": 1, "w": 24, "x": 0, "y": 16}, "collapsed": false, "panels": []},
+
+    {
+      "id": 20, "type": "stat", "title": "Pairing Time P95 (디바이스별)",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 17},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "values": true},
+        "orientation": "horizontal", "textMode": "value_and_name",
+        "colorMode": "value", "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 5000},
+            {"color": "red", "value": 10000}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"bluetooth_pairing\" and r._field == \"pairing_time_ms\")\n  |> group(columns: [\"device_id\"])\n  |> quantile(q: 0.95, method: \"estimate_tdigest\", compression: 1000.0)"
+      }]
+    },
+
+    {
+      "id": 21, "type": "gauge", "title": "BT Pairing Success Rate",
+      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 17},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "showThresholdMarkers": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit", "min": 0, "max": 1, "decimals": 2,
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "red", "value": null},
+            {"color": "yellow", "value": 0.90},
+            {"color": "green", "value": 0.99}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "ok = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"bluetooth_pairing\" and r._field == \"success\")\n  |> sum()\n  |> findRecord(fn: (key) => true, idx: 0)\n\ntotal = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"bluetooth_pairing\" and r._field == \"success\")\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\nimport \"array\"\narray.from(rows: [{_value: if total._value == 0 then 0.0 else float(v: ok._value) / float(v: total._value)}])"
+      }]
+    },
+
+    {
+      "id": 22, "type": "stat", "title": "Total Pairings (전체 / 디바이스)",
+      "gridPos": {"h": 6, "w": 6, "x": 18, "y": 17},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "colorMode": "value", "graphMode": "area"
+      },
+      "fieldConfig": {"defaults": {"unit": "short", "color": {"mode": "fixed", "fixedColor": "blue"}}},
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"bluetooth_pairing\" and r._field == \"pairing_time_ms\")\n  |> count()"
+      }]
+    },
+
+    {"id": 3, "type": "row", "title": "🧩 Bluetooth Compatibility Matrix",
+     "gridPos": {"h": 1, "w": 24, "x": 0, "y": 23}, "collapsed": false, "panels": []},
+
+    {
+      "id": 30, "type": "table", "title": "Compatibility 매트릭스 (디바이스 × Check)",
+      "gridPos": {"h": 12, "w": 24, "x": 0, "y": 24},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"showHeader": true, "cellHeight": "sm"},
+      "fieldConfig": {
+        "defaults": {"custom": {"align": "center"}},
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "function_pass"},
+            "properties": [
+              {"id": "custom.cellOptions", "value": {"type": "color-background"}},
+              {"id": "thresholds", "value": {"mode": "absolute", "steps": [
+                {"color": "red", "value": null},
+                {"color": "green", "value": 1}
+              ]}},
+              {"id": "mappings", "value": [
+                {"type": "value", "options": {"0": {"text": "FAIL"}, "1": {"text": "PASS"}}}
+              ]}
+            ]
+          }
+        ]
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"bluetooth_compatibility\" and r._field == \"function_pass\")\n  |> group(columns: [\"device_id\", \"check\", \"vendor\"])\n  |> last()\n  |> keep(columns: [\"device_id\", \"vendor\", \"check\", \"_value\"])\n  |> rename(columns: {_value: \"function_pass\"})"
+      }]
+    }
+  ]
+}

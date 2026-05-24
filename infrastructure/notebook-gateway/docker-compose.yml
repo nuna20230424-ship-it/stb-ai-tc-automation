@@ -69,7 +69,10 @@ services:
       - ITACH_HOST=${ITACH_HOST:-10.0.10.20}
       - ITACH_PORT=${ITACH_PORT:-4998}
       - BROADLINK_HOST=${BROADLINK_HOST:-192.168.1.50}
+      - ADB_TARGET=${ADB_TARGET:-}
       - IR_CODESET_DIR=/data/ir-codesets
+    # ADB 네트워크 디바이스 접근을 위한 host network 옵션 (선택)
+    # network_mode: host  # ADB 사용 시 활성화 권장 (Linux)
     volumes:
       # 학습 결과를 쓰기 위해 ro 제거 (이전에는 ro로 마운트되어 있었음)
       - ./data/ir-codesets:/data/ir-codesets
@@ -160,6 +163,7 @@ services:
       - "${BLUETOOTH_MCP_PORT:-8006}:8000"
     environment:
       - BT_CATALOG_PATH=/data/bt-device-catalog.json
+      - GPIO_PUSHER_URL=${GPIO_PUSHER_URL:-}
     volumes:
       - ./data/bt-device-catalog.json:/data/bt-device-catalog.json:ro
     # Linux 호스트 BT 스택 직접 접근. macOS는 호스트 네이티브 권장.

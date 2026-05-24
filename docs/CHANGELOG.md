@@ -2,6 +2,31 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 20)
+- 📋 **결재용 견적서·품의서 양식** (docs/19-procurement-quotation.md)
+- 품의서(사내 결재) + 견적서(외부 협력사) + CSV(사내 시스템 입력) 3종
+- 시나리오별 결재 옵션 4단계 (PoC 397만 → 음성/BT 456만 → +GPIO 471만 → +확장 592만)
+- 결재 라인 점검표 + 변환 명령 (pandoc PDF)
+
+- 🤖 **GPIO 푸셔 설계** (docs/20-gpio-pusher-design.md + tools/gpio-pusher/)
+- Pi4 + PCA9685 + 서보 3개 + 3D 프린팅 푸셔 (BOM ₩150,000)
+- pusher_service.py (FastAPI): /press, /multi_press, /release_all + mock 모드
+- systemd 서비스 파일 + Pi 셋업 가이드
+- BT 카탈로그 5종 모두에 pusher_sequence 필드 추가 (채널/duration/각도)
+- bluetooth-mcp `/trigger_pairing` 자동/수동 분기 (GPIO_PUSHER_URL env)
+
+- 🤖 **ir-mcp ADB 백엔드** (Android TV STB 0원 자동화)
+- IR_BACKEND=adb 추가, ADB_TARGET 환경변수 (네트워크 IP:5555 또는 USB 시리얼)
+- keyevents.py: Android TV 표준 KeyEvent 매핑 38개
+- POST /codesets/android_tv/autogen — 표준 키맵 자동 생성 (학습 불필요)
+- Dockerfile에 android-tools-adb 추가
+- 헬스체크에서 adb get-state로 디바이스 연결 확인
+
+- 📊 **Grafana Voice + BT 대시보드** 추가 (stb-voice-bluetooth.json)
+- Voice: Response P50/P95/Trend, Intent Match Rate gauge
+- BT Pairing: Pairing Time P95 by device, Success Rate gauge, Total count
+- BT Compatibility: 매트릭스 테이블 (디바이스 × check, PASS/FAIL 색상)
+
 ## 2026-05-23 (업데이트 19)
 - 🎓 **IR codeset 자동 학습 도구** 추가 (tools/ir-learner/)
 - 대화형 CLI: `python ir_learner.py learn --backend broadlink --host ... --keys-from-standard`
