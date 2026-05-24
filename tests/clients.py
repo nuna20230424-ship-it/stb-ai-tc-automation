@@ -70,6 +70,50 @@ class PowerClient(_Base):
         return r.json()
 
 
+class VoiceClient(_Base):
+    def speak(self, text: str, rate: int | None = None, volume: float | None = None,
+              voice_id: str | None = None, save_only: bool = False) -> dict:
+        payload = {"text": text, "save_only": save_only}
+        if rate is not None: payload["rate"] = rate
+        if volume is not None: payload["volume"] = volume
+        if voice_id: payload["voice_id"] = voice_id
+        r = self.client.post("/speak", json=payload, timeout=90)
+        r.raise_for_status()
+        return r.json()
+
+    def voices(self) -> list[dict]:
+        r = self.client.get("/voices")
+        r.raise_for_status()
+        return r.json()["voices"]
+
+
+class BluetoothClient(_Base):
+    def scan(self, duration_sec: int = 10, filter_name: str | None = None,
+             filter_mac: str | None = None) -> dict:
+        payload: dict[str, Any] = {"duration_sec": duration_sec}
+        if filter_name: payload["filter_name"] = filter_name
+        if filter_mac: payload["filter_mac"] = filter_mac
+        r = self.client.post("/scan", json=payload, timeout=duration_sec + 30)
+        r.raise_for_status()
+        return r.json()
+
+    def verify_advertising(self, mac: str, duration_sec: int = 5) -> dict:
+        r = self.client.get(f"/verify_advertising/{mac}", params={"duration_sec": duration_sec},
+                             timeout=duration_sec + 10)
+        r.raise_for_status()
+        return r.json()
+
+    def trigger_pairing(self, device_id: str) -> dict:
+        r = self.client.post(f"/trigger_pairing/{device_id}")
+        r.raise_for_status()
+        return r.json()
+
+    def catalog(self) -> list[dict]:
+        r = self.client.get("/catalog")
+        r.raise_for_status()
+        return r.json()["devices"]
+
+
 # ──────────── Mac mini Backend 측 ────────────
 
 class BaselineClient(_Base):

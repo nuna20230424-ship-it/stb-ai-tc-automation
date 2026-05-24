@@ -8,12 +8,19 @@ import pytest
 from dotenv import load_dotenv
 
 from clients import (
-    BaselineClient, CaptureClient, DetectionClient, EmbeddingClient,
-    IRClient, PowerClient, ReportClient, UARTClient,
+    BaselineClient, BluetoothClient, CaptureClient, DetectionClient,
+    EmbeddingClient, IRClient, PowerClient, ReportClient, UARTClient, VoiceClient,
 )
 from utils import InfluxMetrics
 
 load_dotenv()
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--auto", action="store_true", default=False,
+        help="페어링/수동 트리거 액션을 자동으로 진행 (CI/GPIO 환경)",
+    )
 
 
 @dataclass
@@ -22,6 +29,8 @@ class Gateway:
     ir: IRClient
     uart: UARTClient
     power: PowerClient
+    voice: VoiceClient
+    bluetooth: BluetoothClient
 
 
 @dataclass
@@ -39,6 +48,8 @@ def gateway() -> Gateway:
         ir=IRClient(os.getenv("IR_MCP_URL", "http://localhost:8002")),
         uart=UARTClient(os.getenv("UART_MCP_URL", "http://localhost:8003")),
         power=PowerClient(os.getenv("POWER_MCP_URL", "http://localhost:8004")),
+        voice=VoiceClient(os.getenv("VOICE_MCP_URL", "http://localhost:8005")),
+        bluetooth=BluetoothClient(os.getenv("BLUETOOTH_MCP_URL", "http://localhost:8006")),
     )
     # 헬스체크 — MCP가 안 살아있으면 시나리오 시작도 안 함
     for name, client in vars(g).items():

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "voice-remote-std",
+    "name": "자사 표준 BT 음성 리모컨",
+    "mac": "AA:BB:CC:00:00:01",
+    "vendor": "Internal",
+    "profile": ["HID", "Voice"],
+    "priority": "P1",
+    "pairing_instruction": "리모컨의 OK + 뒤로가기 버튼을 동시에 5초간 누르세요.",
+    "expected_advertise_within_sec": 5,
+    "compat_checks": ["pair", "key_input", "voice_capture", "battery_status"]
+  },
+  {
+    "id": "airpods-pro",
+    "name": "Apple AirPods Pro",
+    "mac": "AA:BB:CC:00:00:02",
+    "vendor": "Apple",
+    "profile": ["A2DP", "AVRCP"],
+    "priority": "P1",
+    "pairing_instruction": "케이스 뚜껑을 열고 뒷면 페어링 버튼을 흰색 LED가 깜박일 때까지 눌러주세요.",
+    "expected_advertise_within_sec": 3,
+    "compat_checks": ["pair", "audio_stream", "avrcp_control"]
+  },
+  {
+    "id": "sony-wh1000xm",
+    "name": "Sony WH-1000XM",
+    "mac": "AA:BB:CC:00:00:03",
+    "vendor": "Sony",
+    "profile": ["A2DP", "AVRCP", "HSP"],
+    "priority": "P1",
+    "pairing_instruction": "전원 버튼을 7초간 길게 눌러주세요. LED가 빠르게 깜박입니다.",
+    "expected_advertise_within_sec": 5,
+    "compat_checks": ["pair", "audio_stream", "avrcp_control"]
+  },
+  {
+    "id": "jbl-flip",
+    "name": "JBL Flip 보급형",
+    "mac": "AA:BB:CC:00:00:04",
+    "vendor": "JBL",
+    "profile": ["A2DP"],
+    "priority": "P2",
+    "pairing_instruction": "전원 ON 후 BT 버튼 2초 길게.",
+    "expected_advertise_within_sec": 5,
+    "compat_checks": ["pair", "audio_stream"]
+  },
+  {
+    "id": "bt-keyboard-std",
+    "name": "표준 BT 키보드",
+    "mac": "AA:BB:CC:00:00:05",
+    "vendor": "Generic",
+    "profile": ["HID"],
+    "priority": "P2",
+    "pairing_instruction": "Fn+P 키 길게 누르기.",
+    "expected_advertise_within_sec": 5,
+    "compat_checks": ["pair", "key_input"]
+  }
+]

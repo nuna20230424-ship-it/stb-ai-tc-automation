@@ -35,6 +35,7 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [10-sprint0-day-by-day.md](docs/10-sprint0-day-by-day.md) — 📅 **Sprint 0 4주 일자별 작업 계획** (Day 1~20)
 - [11-ci-cd.md](docs/11-ci-cd.md) — ⚙️ CI/CD 아키텍처 (GitHub Actions + self-hosted runners)
 - [14-grafana-dashboards.md](docs/14-grafana-dashboards.md) — 📊 Grafana 대시보드 (Zap P50/P95, drift, JIRA)
+- [15-voice-bluetooth-scenarios.md](docs/15-voice-bluetooth-scenarios.md) — 🎤📡 음성 발화 + 블루투스 호환성 시나리오
 - [12-executive-briefing.md](docs/12-executive-briefing.md) — 📄 **경영진 1페이지 브리핑** (결재용)
 - [12-executive-briefing-slides.md](docs/12-executive-briefing-slides.md) — 🎯 **경영진 슬라이드 데크** (Marp, PDF/HTML/PPTX 변환 가능)
 - [13-kickoff-day1-slides.md](docs/13-kickoff-day1-slides.md) — 🚀 **Day 1 킥오프 미팅 슬라이드 (실무진용, 18장)**

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "voice_music_channel",
+    "utterance": "음악 채널 틀어줘",
+    "intent": "channel_change",
+    "expected_screen": "음악 채널 (예: KBS 클래식 FM TV)",
+    "sla_response_ms": 2000,
+    "priority": "P1"
+  },
+  {
+    "id": "voice_netflix_open",
+    "utterance": "넷플릭스 실행해줘",
+    "intent": "app_launch",
+    "expected_screen": "Netflix 앱 홈화면",
+    "sla_response_ms": 3000,
+    "priority": "P1"
+  },
+  {
+    "id": "voice_show_epg",
+    "utterance": "편성표 보여줘",
+    "intent": "ui_navigate",
+    "expected_screen": "EPG 7-day grid",
+    "sla_response_ms": 1500,
+    "priority": "P1"
+  },
+  {
+    "id": "voice_volume_up",
+    "utterance": "볼륨 올려",
+    "intent": "volume_control",
+    "expected_screen": "볼륨 OSD 표시",
+    "sla_response_ms": 800,
+    "priority": "P1"
+  },
+  {
+    "id": "voice_search_actor",
+    "utterance": "송강호 나오는 영화 찾아줘",
+    "intent": "content_search",
+    "expected_screen": "송강호 출연 콘텐츠 검색 결과",
+    "sla_response_ms": 2500,
+    "priority": "P2"
+  },
+  {
+    "id": "voice_weather",
+    "utterance": "오늘 날씨 어때",
+    "intent": "info_query",
+    "expected_screen": "날씨 위젯 또는 카드",
+    "sla_response_ms": 2000,
+    "priority": "P2"
+  },
+  {
+    "id": "voice_power_off",
+    "utterance": "전원 꺼줘",
+    "intent": "power_control",
+    "expected_screen": "(검은 화면 또는 절전)",
+    "sla_response_ms": 1500,
+    "priority": "P2"
+  },
+  {
+    "id": "voice_recent_played",
+    "utterance": "최근에 본 거 뭐 있어",
+    "intent": "history_query",
+    "expected_screen": "시청 히스토리 화면",
+    "sla_response_ms": 2000,
+    "priority": "P3"
+  }
+]

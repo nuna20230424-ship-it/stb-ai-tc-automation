@@ -12,6 +12,12 @@
     handle /power/* {
         reverse_proxy power-mcp:8000
     }
+    handle /voice/* {
+        reverse_proxy voice-mcp:8000
+    }
+    handle /bluetooth/* {
+        reverse_proxy bluetooth-mcp:8000
+    }
     handle /health {
         respond "stb-gateway ok" 200
     }

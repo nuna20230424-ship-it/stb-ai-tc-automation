@@ -2,6 +2,25 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 16)
+- 🎤📡 **음성 발화 + 블루투스 호환성 시나리오** 추가
+- docs/15-voice-bluetooth-scenarios.md: 설계 / BOM (스피커·BT 디바이스 약 81~96만원) / Sprint 일정
+- 신규 MCP 서비스 2종 (notebook-gateway):
+  - voice-mcp (8005): pyttsx3 TTS + 스피커 재생, `/speak` 발화 종료 시각 반환
+  - bluetooth-mcp (8006): bleak BLE 스캔 + 디바이스 카탈로그 + 페어링 트리거 안내
+- 데이터 카탈로그 2종:
+  - data/bt-device-catalog.json (5종 디바이스, P1 음성 리모컨 + AirPods + Sony WH-1000XM)
+  - data/voice-command-catalog.json (8개 발화, P1 음악/Netflix/EPG/볼륨)
+- docker-compose / Caddyfile / .env.example 업데이트 (포트 8005/8006)
+- tests/clients.py: VoiceClient, BluetoothClient 추가
+- tests/conftest.py: Gateway 확장 + --auto 플래그 (수동 트리거 자동화)
+- pytest.ini: `voice`, `bluetooth` 마커 추가
+- 시나리오 3종:
+  - test_voice_response.py: P1 발화 parametrize + 5회 일관성 검증
+  - test_bluetooth_pairing.py: P1 BT 디바이스 페어링 광고 감지 + STB 화면 검증
+  - test_bluetooth_compatibility.py: 디바이스 × 점검항목 매트릭스 (HID/A2DP/AVRCP 등)
+- InfluxDB measurement 신규: voice_command, bluetooth_pairing, bluetooth_compatibility
+
 ## 2026-05-23 (업데이트 15)
 - 📊 **Grafana 대시보드 + 자동 프로비저닝** 추가
 - infrastructure/mac-mini-backend/grafana/provisioning/:

@@ -120,7 +120,59 @@ services:
       retries: 3
 
   # ────────────────────────────────────────────────────────────
-  # 5) Gateway Proxy — 모든 MCP 서비스를 단일 엔드포인트로 노출
+  # 5) Voice MCP — TTS 합성 + 스피커 재생 (음성 명령 시나리오)
+  # ────────────────────────────────────────────────────────────
+  voice-mcp:
+    build: ./services/voice-mcp
+    container_name: stb-voice-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${VOICE_MCP_PORT:-8005}:8000"
+    environment:
+      - VOICE_OUTPUT_DIR=/data/voice
+      - VOICE_RATE=${VOICE_RATE:-175}
+      - VOICE_VOLUME=${VOICE_VOLUME:-1.0}
+      - PLAYBACK_CMD=${PLAYBACK_CMD:-aplay}
+    volumes:
+      - ./data/voice:/data/voice
+    # Linux: ALSA host audio passthrough. macOS는 호스트 네이티브 실행 권장.
+    devices:
+      - /dev/snd:/dev/snd
+    group_add:
+      - audio
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ────────────────────────────────────────────────────────────
+  # 6) Bluetooth MCP — BT 광고 스캔 + 디바이스 카탈로그 (페어링 보조)
+  # ────────────────────────────────────────────────────────────
+  bluetooth-mcp:
+    build: ./services/bluetooth-mcp
+    container_name: stb-bluetooth-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${BLUETOOTH_MCP_PORT:-8006}:8000"
+    environment:
+      - BT_CATALOG_PATH=/data/bt-device-catalog.json
+    volumes:
+      - ./data/bt-device-catalog.json:/data/bt-device-catalog.json:ro
+    # Linux 호스트 BT 스택 직접 접근. macOS는 호스트 네이티브 권장.
+    # network_mode: host  # Linux에서 BT 어댑터 접근하려면 host 네트워크가 가장 안정적
+    # 위 주석은 환경에 따라 활성화. PoC는 dbus 마운트로도 가능.
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ────────────────────────────────────────────────────────────
+  # 7) Gateway Proxy — 모든 MCP 서비스를 단일 엔드포인트로 노출
   # ────────────────────────────────────────────────────────────
   gateway-proxy:
     image: caddy:2-alpine
@@ -135,6 +187,8 @@ services:
       - ir-mcp
       - uart-mcp
       - power-mcp
+      - voice-mcp
+      - bluetooth-mcp
 
 networks:
   default:
