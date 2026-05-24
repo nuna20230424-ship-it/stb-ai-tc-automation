@@ -41,6 +41,7 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [18-low-cost-alternatives.md](docs/18-low-cost-alternatives.md) — 💸 IR/BT 저가 대안 3종 + 별도 장치 필요 여부 판단
 - [19-procurement-quotation.md](docs/19-procurement-quotation.md) — 📋 결재용 견적서 / 품의서 양식 (CSV 포함)
 - [20-gpio-pusher-design.md](docs/20-gpio-pusher-design.md) — 🤖 GPIO 푸셔 설계 (Pi4 + 서보 + PCA9685)
+- [21-scenario-catalog.md](docs/21-scenario-catalog.md) — 📚 시나리오 카탈로그 (EPG/OTT/DRM/TrickPlay 16개)
 
 ### 🛠 도구 (`tools/`)
 - [tools/ir-learner/](tools/ir-learner/) — 🎓 IR codeset 자동 학습 CLI (BroadLink / iTach iLearner 백엔드)

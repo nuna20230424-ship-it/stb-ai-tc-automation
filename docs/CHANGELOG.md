@@ -2,6 +2,20 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 21)
+- 📚 **시나리오 카탈로그 (EPG/OTT/DRM/TrickPlay)** 추가
+- infrastructure/notebook-gateway/data/scenarios-catalog.json: 16개 시나리오 (P1 8 + P2 8)
+  - EPG: 7일 보기 / 다음 날 / 장르 필터 / 예약 녹화
+  - OTT: Netflix/Tving 음성 실행 / 검색 / 4K UHD 검증
+  - DRM: Widevine L1 / PlayReady IPTV / HDCP 위반
+  - TrickPlay: Pause/Resume / FF 2x·4x / Live Pause / Seek
+- 표준 step action 5종: ir / voice / wait / capture / navigate
+- tests/scenarios/test_catalog.py: 데이터-드리븐 generic 러너 (카테고리별 parametrize)
+- pytest.ini: catalog / epg / ott / drm / trickplay 마커 추가
+- tests/baselines/seed_catalog.py: 카탈로그 시드 (카테고리/우선순위 필터 지원)
+- InfluxDB `catalog_runs` measurement 추가
+- docs/21-scenario-catalog.md: 설계 / 등록 시나리오 표 / 추가 절차 / 로드맵
+
 ## 2026-05-23 (업데이트 20)
 - 📋 **결재용 견적서·품의서 양식** (docs/19-procurement-quotation.md)
 - 품의서(사내 결재) + 견적서(외부 협력사) + CSV(사내 시스템 입력) 3종

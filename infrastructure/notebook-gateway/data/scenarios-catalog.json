@@ -1,0 +1,217 @@
+[
+  {
+    "id": "epg_open_7day",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": ["live_tv"],
+    "steps": [
+      {"action": "ir", "key": "EPG"},
+      {"action": "wait", "sec": 2},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "7일치 편성표 그리드 표시",
+    "sla_ms": 2000
+  },
+  {
+    "id": "epg_next_day",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": ["epg_open"],
+    "steps": [
+      {"action": "ir", "key": "RIGHT", "repeat": 7},
+      {"action": "wait", "sec": 1},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "다음 날 편성표로 이동",
+    "sla_ms": 1500
+  },
+  {
+    "id": "epg_genre_filter",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": ["epg_open"],
+    "steps": [
+      {"action": "ir", "key": "YELLOW"},
+      {"action": "wait", "sec": 1},
+      {"action": "ir", "key": "OK"},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "장르 필터 옵션 표시 후 선택 결과",
+    "sla_ms": 2000
+  },
+  {
+    "id": "epg_reserve_recording",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": ["epg_open"],
+    "steps": [
+      {"action": "ir", "key": "OK"},
+      {"action": "wait", "sec": 1},
+      {"action": "ir", "key": "RED"},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "예약 녹화 확인 다이얼로그",
+    "sla_ms": 2500
+  },
+
+  {
+    "id": "ott_netflix_launch",
+    "category": "OTT",
+    "priority": "P1",
+    "preconditions": ["home_screen", "netflix_logged_in"],
+    "steps": [
+      {"action": "ir", "key": "HOME"},
+      {"action": "wait", "sec": 1},
+      {"action": "voice", "utterance": "넷플릭스 실행해줘"},
+      {"action": "capture", "duration": 3}
+    ],
+    "expected": "Netflix 홈 화면 (My List 또는 추천 표시)",
+    "sla_ms": 5000
+  },
+  {
+    "id": "ott_tving_launch",
+    "category": "OTT",
+    "priority": "P1",
+    "preconditions": ["home_screen", "tving_logged_in"],
+    "steps": [
+      {"action": "voice", "utterance": "티빙 실행해줘"},
+      {"action": "capture", "duration": 3}
+    ],
+    "expected": "Tving 홈 화면",
+    "sla_ms": 5000
+  },
+  {
+    "id": "ott_search_content",
+    "category": "OTT",
+    "priority": "P1",
+    "preconditions": ["netflix_home"],
+    "steps": [
+      {"action": "voice", "utterance": "스트레인저 띵스 찾아줘"},
+      {"action": "capture", "duration": 4}
+    ],
+    "expected": "Stranger Things 검색 결과",
+    "sla_ms": 3000
+  },
+  {
+    "id": "ott_resolution_auto_4k",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": ["netflix_playing"],
+    "steps": [
+      {"action": "wait", "sec": 10},
+      {"action": "ir", "key": "INFO"},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "재생 정보에 4K UHD 표시",
+    "sla_ms": 1500
+  },
+
+  {
+    "id": "drm_widevine_l1",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": ["netflix_logged_in"],
+    "steps": [
+      {"action": "navigate", "path": "Netflix → 4K HDR 콘텐츠 → 재생"},
+      {"action": "wait", "sec": 8},
+      {"action": "capture", "duration": 3}
+    ],
+    "expected": "정상 4K 영상 재생 (HDCP 인증 통과)",
+    "sla_ms": 8000
+  },
+  {
+    "id": "drm_playready_iptv",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": ["live_tv"],
+    "steps": [
+      {"action": "ir", "key": "CH_1"},
+      {"action": "wait", "sec": 3},
+      {"action": "capture", "duration": 3}
+    ],
+    "expected": "IPTV 채널 정상 재생 (PlayReady 인증)",
+    "sla_ms": 4000
+  },
+  {
+    "id": "drm_hdcp_violation",
+    "category": "DRM",
+    "priority": "P2",
+    "preconditions": ["drm_content_playing", "hdcp_unsupported_display"],
+    "steps": [
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "HDCP 미지원 디스플레이에서 검은 화면 또는 에러 메시지",
+    "sla_ms": 3000
+  },
+
+  {
+    "id": "trickplay_pause_resume",
+    "category": "TrickPlay",
+    "priority": "P1",
+    "preconditions": ["playback_active"],
+    "steps": [
+      {"action": "ir", "key": "PAUSE"},
+      {"action": "wait", "sec": 2},
+      {"action": "capture", "duration": 1, "label": "paused"},
+      {"action": "ir", "key": "PLAY"},
+      {"action": "wait", "sec": 1},
+      {"action": "capture", "duration": 1, "label": "resumed"}
+    ],
+    "expected": "일시정지 후 재생 정상 재개",
+    "sla_ms": 1000
+  },
+  {
+    "id": "trickplay_ff_2x",
+    "category": "TrickPlay",
+    "priority": "P1",
+    "preconditions": ["playback_active"],
+    "steps": [
+      {"action": "ir", "key": "FF"},
+      {"action": "wait", "sec": 1},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "2배속 빨리감기 OSD 표시",
+    "sla_ms": 800
+  },
+  {
+    "id": "trickplay_ff_4x",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": ["playback_active"],
+    "steps": [
+      {"action": "ir", "key": "FF", "repeat": 2},
+      {"action": "wait", "sec": 1},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "4배속 빨리감기 OSD",
+    "sla_ms": 800
+  },
+  {
+    "id": "trickplay_live_pause_timeshift",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": ["live_tv"],
+    "steps": [
+      {"action": "ir", "key": "PAUSE"},
+      {"action": "wait", "sec": 5},
+      {"action": "ir", "key": "PLAY"},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "Live Pause → 타임시프트 재생 (지연 표시)",
+    "sla_ms": 1500
+  },
+  {
+    "id": "trickplay_seek_jump",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": ["vod_playing"],
+    "steps": [
+      {"action": "ir", "key": "RIGHT", "repeat": 5},
+      {"action": "ir", "key": "OK"},
+      {"action": "wait", "sec": 2},
+      {"action": "capture", "duration": 2}
+    ],
+    "expected": "Seek bar 점프 후 새 시점 재생",
+    "sla_ms": 2500
+  }
+]
