@@ -2,6 +2,17 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 15)
+- 📊 **Grafana 대시보드 + 자동 프로비저닝** 추가
+- infrastructure/mac-mini-backend/grafana/provisioning/:
+  - datasources/influxdb.yml (Flux, 토큰은 .env)
+  - dashboards/dashboards.yml (provider 설정)
+  - dashboards/stb-channel-zap.json (UID: stb-channel-zap, 9패널)
+- 패널: Zap P50/P95/Total + Trend, Detection Score + Anomaly Rate + Score Drift, JIRA Total/Severity/Recent table
+- 템플릿 변수 channel·firmware, JIRA 발생 어노테이션
+- report-mcp 보강: JIRA 등록 시 `jira_incidents` measurement 자동 기록 (influxdb-client 추가)
+- docs/14-grafana-dashboards.md: 사용법 / 스키마 / 트러블슈팅 / 확장 아이디어
+
 ## 2026-05-23 (업데이트 14)
 - 🚀 **Day 1 킥오프 미팅 슬라이드 (실무진용)** 추가 (13-kickoff-day1-slides.md, 18장)
 - 구성: 목표/아키텍처/Sprint 0 성공 정의/RACI/주차별 상세/기술 스택/Claude Code 활용법/리스크/Day 1 결정 8개/소통 채널/즉시 액션

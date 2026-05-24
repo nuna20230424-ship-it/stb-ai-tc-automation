@@ -1,0 +1,398 @@
+{
+  "uid": "stb-channel-zap",
+  "title": "STB QA — Channel Zap & Detection",
+  "tags": ["stb", "qa", "channel-zap"],
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "Asia/Seoul",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      {
+        "name": "channel",
+        "label": "Channel",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB}"
+        },
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"stb-metrics\", tag: \"channel\", predicate: (r) => r._measurement == \"channel_zap\")",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "sort": 1
+      },
+      {
+        "name": "firmware",
+        "label": "Firmware",
+        "type": "query",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB}"
+        },
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"stb-metrics\", tag: \"firmware\", predicate: (r) => r._measurement == \"channel_zap\")",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "sort": 1
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "JIRA incidents",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB}"
+        },
+        "enable": true,
+        "iconColor": "red",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jira_incidents\" and r._field == \"created\")",
+        "titleField": "scenario",
+        "textField": "jira_key"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Channel Zap Latency (SLA: < 5000 ms)",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 10,
+      "type": "stat",
+      "title": "Zap Time P50",
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 3000},
+              {"color": "red", "value": 5000}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"channel_zap\" and r._field == \"zap_time_ms\")\n  |> filter(fn: (r) => contains(value: r.channel, set: ${channel:json}))\n  |> filter(fn: (r) => contains(value: r.firmware, set: ${firmware:json}))\n  |> group(columns: [\"channel\"])\n  |> quantile(q: 0.50, method: \"estimate_tdigest\", compression: 1000.0)"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "stat",
+      "title": "Zap Time P95",
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 4000},
+              {"color": "red", "value": 5000}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"channel_zap\" and r._field == \"zap_time_ms\")\n  |> filter(fn: (r) => contains(value: r.channel, set: ${channel:json}))\n  |> filter(fn: (r) => contains(value: r.firmware, set: ${firmware:json}))\n  |> group(columns: [\"channel\"])\n  |> quantile(q: 0.95, method: \"estimate_tdigest\", compression: 1000.0)"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "stat",
+      "title": "Zap Samples (전체)",
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {"unit": "short", "color": {"mode": "fixed", "fixedColor": "blue"}}
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"channel_zap\" and r._field == \"zap_time_ms\")\n  |> filter(fn: (r) => contains(value: r.channel, set: ${channel:json}))\n  |> count()"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Zap Time Trend (채널별)",
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 7},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {"drawStyle": "line", "lineInterpolation": "smooth", "fillOpacity": 10, "showPoints": "auto"},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "red", "value": 5000}
+            ]
+          }
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "right", "calcs": ["mean", "max"]}, "tooltip": {"mode": "multi"}},
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"channel_zap\" and r._field == \"zap_time_ms\")\n  |> filter(fn: (r) => contains(value: r.channel, set: ${channel:json}))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"zap_time_ms\")"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "row",
+      "title": "Detection (Reference STB 학습 기반 이상 판정)",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 16},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 20,
+      "type": "timeseries",
+      "title": "Detection Score (시나리오별, 임계치 0.92)",
+      "gridPos": {"h": 9, "w": 16, "x": 0, "y": 17},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "max": 1,
+          "decimals": 3,
+          "custom": {"drawStyle": "line", "lineInterpolation": "linear", "fillOpacity": 5},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 0.92}
+            ]
+          }
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "right"}, "tooltip": {"mode": "multi"}},
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"detection\" and r._field == \"score\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"score\")"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "type": "gauge",
+      "title": "Anomaly Rate",
+      "gridPos": {"h": 9, "w": 8, "x": 16, "y": 17},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "reduceOptions": {"calcs": ["lastNotNull"]}
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.05},
+              {"color": "red", "value": 0.10}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "anomaly = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"detection\" and r._field == \"score\" and r.verdict == \"anomaly\")\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\ntotal = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"detection\" and r._field == \"score\")\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\nimport \"array\"\narray.from(rows: [{_value: if total._value == 0 then 0.0 else float(v: anomaly._value) / float(v: total._value)}])"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "type": "stat",
+      "title": "Score Drift (max - min, 시나리오별)",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 26},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": true},
+        "orientation": "horizontal",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.05},
+              {"color": "red", "value": 0.10}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"detection\" and r._field == \"score\")\n  |> group(columns: [\"scenario\"])\n  |> reduce(\n      identity: {max: 0.0, min: 1.0},\n      fn: (r, accumulator) => ({\n        max: if r._value > accumulator.max then r._value else accumulator.max,\n        min: if r._value < accumulator.min then r._value else accumulator.min,\n      }),\n    )\n  |> map(fn: (r) => ({scenario: r.scenario, _value: r.max - r.min}))"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "row",
+      "title": "JIRA Incidents (자동 등록)",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 34},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 30,
+      "type": "stat",
+      "title": "Incidents Created (전체)",
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 35},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "colorMode": "background",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {"mode": "fixed", "fixedColor": "red"},
+          "decimals": 0
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jira_incidents\" and r._field == \"created\")\n  |> count()"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "type": "barchart",
+      "title": "Incidents by Severity",
+      "gridPos": {"h": 6, "w": 9, "x": 6, "y": 35},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "orientation": "horizontal",
+        "showValue": "always",
+        "legend": {"showLegend": false}
+      },
+      "fieldConfig": {
+        "defaults": {"unit": "short", "decimals": 0}
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jira_incidents\" and r._field == \"created\")\n  |> group(columns: [\"severity\"])\n  |> count()"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "type": "table",
+      "title": "Recent Incidents",
+      "gridPos": {"h": 9, "w": 9, "x": 15, "y": 35},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"showHeader": true, "cellHeight": "sm"},
+      "fieldConfig": {
+        "defaults": {
+          "custom": {"align": "left", "displayMode": "auto"}
+        },
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "jira_key"},
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open in JIRA",
+                    "url": "${jira_base_url:raw}/browse/${__value.raw}",
+                    "targetBlank": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jira_incidents\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> sort(columns: [\"_time\"], desc: true)\n  |> limit(n: 20)\n  |> keep(columns: [\"_time\", \"scenario\", \"severity\", \"jira_key\"])"
+        }
+      ]
+    }
+  ]
+}

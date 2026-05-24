@@ -1,8 +1,15 @@
-"""Report MCP — 이상치 자동으로 JIRA 등록 + Grafana 알림."""
+"""Report MCP — 이상치 자동으로 JIRA 등록 + InfluxDB에 추적 메트릭 기록."""
+import logging
 import os
+from datetime import datetime
+
 import httpx
 from fastapi import FastAPI, HTTPException
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client.client.write_api import SYNCHRONOUS
 from pydantic import BaseModel
+
+logger = logging.getLogger("report-mcp")
 
 app = FastAPI(title="stb-report-mcp")
 
@@ -11,18 +18,34 @@ JIRA_USER = os.getenv("JIRA_USER")
 JIRA_TOKEN = os.getenv("JIRA_TOKEN")
 JIRA_PROJECT = os.getenv("JIRA_PROJECT", "STBQA")
 
+INFLUX_URL = os.getenv("INFLUX_URL", "http://influxdb:8086")
+INFLUX_TOKEN = os.getenv("INFLUX_TOKEN")
+INFLUX_ORG = os.getenv("INFLUX_ORG", "stbqa")
+INFLUX_BUCKET = os.getenv("INFLUX_BUCKET", "stb-metrics")
+
+_influx = None
+_write = None
+if INFLUX_TOKEN:
+    _influx = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)
+    _write = _influx.write_api(write_options=SYNCHRONOUS)
+
 
 class IncidentRequest(BaseModel):
     scenario: str
     severity: str       # "P1" | "P2" | "P3"
     summary: str
     description: str
-    evidence_url: str | None = None  # MinIO presigned URL 등
+    evidence_url: str | None = None
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "report-mcp", "jira_project": JIRA_PROJECT}
+    return {
+        "status": "ok",
+        "service": "report-mcp",
+        "jira_project": JIRA_PROJECT,
+        "influx": "ok" if _write else "disabled",
+    }
 
 
 @app.post("/incident")
@@ -55,7 +78,25 @@ def create_incident(req: IncidentRequest):
         raise HTTPException(502, f"jira failed: {e}")
 
     issue = r.json()
-    return {"jira_key": issue.get("key"), "jira_url": f"{JIRA_URL}/browse/{issue.get('key')}"}
+    jira_key = issue.get("key", "UNKNOWN")
+    jira_url = f"{JIRA_URL}/browse/{jira_key}"
+
+    # InfluxDB에 추적 메트릭 기록 (Grafana 대시보드 자동 갱신)
+    if _write:
+        try:
+            point = (
+                Point("jira_incidents")
+                .tag("scenario", req.scenario)
+                .tag("severity", req.severity)
+                .tag("jira_key", jira_key)
+                .field("created", 1)
+                .time(datetime.utcnow(), WritePrecision.NS)
+            )
+            _write.write(bucket=INFLUX_BUCKET, org=INFLUX_ORG, record=point)
+        except Exception as e:
+            logger.warning("InfluxDB 기록 실패: %s", e)
+
+    return {"jira_key": jira_key, "jira_url": jira_url}
 
 
 @app.get("/tools")
