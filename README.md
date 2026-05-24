@@ -39,6 +39,9 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [16-pre-verification-plan.md](docs/16-pre-verification-plan.md) — ✅ 사전 검증 4단계 (Stage 1~4)
 - [17-ir-bt-signal-injection-guide.md](docs/17-ir-bt-signal-injection-guide.md) — 📡 IR / BT 신호 인입 가이드 (자동화 방법)
 - [18-low-cost-alternatives.md](docs/18-low-cost-alternatives.md) — 💸 IR/BT 저가 대안 3종 + 별도 장치 필요 여부 판단
+
+### 🛠 도구 (`tools/`)
+- [tools/ir-learner/](tools/ir-learner/) — 🎓 IR codeset 자동 학습 CLI (BroadLink / iTach iLearner 백엔드)
 - [12-executive-briefing.md](docs/12-executive-briefing.md) — 📄 **경영진 1페이지 브리핑** (결재용)
 - [12-executive-briefing-slides.md](docs/12-executive-briefing-slides.md) — 🎯 **경영진 슬라이드 데크** (Marp, PDF/HTML/PPTX 변환 가능)
 - [13-kickoff-day1-slides.md](docs/13-kickoff-day1-slides.md) — 🚀 **Day 1 킥오프 미팅 슬라이드 (실무진용, 18장)**

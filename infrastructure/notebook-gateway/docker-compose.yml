@@ -65,11 +65,14 @@ services:
     ports:
       - "${IR_MCP_PORT:-8002}:8000"
     environment:
+      - IR_BACKEND=${IR_BACKEND:-itach}
       - ITACH_HOST=${ITACH_HOST:-10.0.10.20}
       - ITACH_PORT=${ITACH_PORT:-4998}
+      - BROADLINK_HOST=${BROADLINK_HOST:-192.168.1.50}
       - IR_CODESET_DIR=/data/ir-codesets
     volumes:
-      - ./data/ir-codesets:/data/ir-codesets:ro
+      # 학습 결과를 쓰기 위해 ro 제거 (이전에는 ro로 마운트되어 있었음)
+      - ./data/ir-codesets:/data/ir-codesets
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
       interval: 30s

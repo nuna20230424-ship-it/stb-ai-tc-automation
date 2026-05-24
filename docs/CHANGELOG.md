@@ -2,6 +2,21 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-23 (업데이트 19)
+- 🎓 **IR codeset 자동 학습 도구** 추가 (tools/ir-learner/)
+- 대화형 CLI: `python ir_learner.py learn --backend broadlink --host ... --keys-from-standard`
+- 백엔드 2종:
+  - BroadLink RM4 Mini (₩3만, 학습+송신, 권장)
+  - Global Caché iTach Flex/iLearner (학습 지원 모델)
+- 표준 키 카탈로그 38개 (POWER/CH/VOL/네비/숫자/EPG/미디어/컬러/BT_SETTINGS 등)
+- 키별 즉시 저장 (중단 시 손실 방지), `--skip-existing` 재시작 지원
+- 학습 직후 `--verify` 송신으로 STB 반응 확인
+- ir-mcp `/learn` 엔드포인트 추가 — HTTP로 학습 트리거 가능
+- ir-mcp 어댑터 패턴 적용: IR_BACKEND=itach|broadlink|itach-ilearner 환경변수
+- broadlink Python 라이브러리 의존성 추가
+- docker-compose에 BROADLINK_HOST 환경변수 + codeset 디렉토리 RW 마운트
+- IRClient에 `learn()` 메서드 추가
+
 ## 2026-05-23 (업데이트 18)
 - 💸 **IR/BT 저가 대안 + 별도 장치 필요 여부 판단** 추가 (docs/18-low-cost-alternatives.md)
 - 결론: 무조건 필요 X. STB가 ADB/CEC/HTTP API 중 하나만 지원해도 IR 장치 0원 가능

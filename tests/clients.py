@@ -40,6 +40,20 @@ class IRClient(_Base):
         r.raise_for_status()
         return r.json()
 
+    def learn(self, codeset: str, key: str, timeout_sec: int = 30) -> dict:
+        r = self.client.post(
+            "/learn",
+            json={"codeset": codeset, "key": key, "timeout_sec": timeout_sec},
+            timeout=timeout_sec + 15,
+        )
+        r.raise_for_status()
+        return r.json()
+
+    def codesets(self) -> list[str]:
+        r = self.client.get("/codesets")
+        r.raise_for_status()
+        return r.json()["codesets"]
+
 
 class UARTClient(_Base):
     def start_session(self, target: str, label: str | None = None) -> dict:
