@@ -2,6 +2,31 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-25 (업데이트 25)
+- 📊 **300~500 TC 스케일 전략 + 업계 벤치마크 리서치** 추가 (docs/23-scale-300-500-tc-strategy.md)
+- 외부 사례 분석: Witbe / S3 StormTest / Netflix Test / Comcast RDK X1 / Tata Elxsi /
+  stb-tester / Samsung Tizen / LG webOS — 각 조직의 AI/기법·스케일 패턴·우리 적용성
+- 한국 시그널: KT/SKB/LG U+ STB QA 공개 사례 부재 → Kaon 차별화 여백.
+  KT 4K UHD 시험 절차(Kaon STB 214채/60채/20초 자핑)에서 표준 시험 패턴 식별
+- AI 기법 진위 판정:
+  - Vision LLM 단독 오라클 ❌ (GPT-4V 시각 환각 0.383 정확도, 환각률 10~30%)
+  - Self-healing intent re-derivation ✅ (testRIGOR 패턴, DOM 없는 STB에 유일 이식 가능)
+  - NL 작성 ✅ (초안 한정. Claude 3가 user story → BDD 인간평가 1위)
+  - Vector DB baseline ✅ (Netflix RMSE dual-mode와 동등. Qdrant + nomic-embed-text 정당화)
+  - Agent 탐색 ⚠️ (보조용. STB는 상태 그래프 단순해 결정론 우위)
+- 카탈로그 v2 스키마 제안: risk_weight / firmware_min·max / tags / flake_history /
+  baseline_vector_id / change_signals / owner / avg_runtime_sec 8필드 추가
+- Smart Test Selection 산업 수치: MS TIA 15~30% 컴퓨트 절약·99%+ 버그 탐지,
+  Facebook PTS 최대 90% 실행 감소 → STB는 빌드 메타 ↔ tags/change_signals 매칭
+- 자동 트리아지: LogSage(2025) LLM RCA F1 +38%p, precision 98%+ → triage-mcp 도입 권고
+- 36 → 500 TC 5단계 로드맵 (Phase 1~5, 약 16주):
+  - P1: 카탈로그 v2 + 시나리오 작성 파이프라인 (36→150)
+  - P2: Judge 파이프라인 재설계 (Qdrant 1차 + LLaVA 2차 + 룰 3차)
+  - P3: Smart Selection + Flake 관리 (150→300, 야간 4h 이내)
+  - P4: 자동 트리아지 MCP + 카탈로그 200 확장 (→500, 트리아지 90% 단축)
+  - P5: State Graph Navigation + RDK API 폴백
+- 의도적 제외 항목 (testRIGOR/Functionize/Witbe 라이선스/Agentic 메인 루프) + 이유
+
 ## 2026-05-25 (업데이트 24)
 - 📚 **Sprint 2 카탈로그 확장 — Search / Recording / Parental / Settings (+20 시나리오)**
 - 카탈로그 16 → 36 시나리오 (P1 19 / P2 17)
