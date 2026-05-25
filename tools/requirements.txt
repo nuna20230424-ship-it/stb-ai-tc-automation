@@ -1,0 +1,5 @@
+# tools/ 디렉터리 유틸리티 의존성 (테스트 러너와 분리)
+pydantic>=2.9
+pandas>=2.0
+openpyxl>=3.1     # .xlsx 읽기 (excel_importer)
+anthropic>=0.45   # Claude API (scenario_drafter / excel_importer / edge_case_generator)

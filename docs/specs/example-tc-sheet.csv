@@ -1,0 +1,13 @@
+TC ID,Test Case Name,Category,Priority,Pre-condition,Test Steps,Expected Result,SLA (ms),Owner,JIRA Epic,Firmware Min,Firmware Max,Remarks
+KAON-EPG-001,EPG 7일치 보기,EPG,P1,라이브 TV 채널 진입 상태,1. EPG 키 누름. 2. 2초 대기.,7일치 편성표 그리드가 표시됨,2000,qa-team@kaongroup.com,STBQA-100,v1.0.0,,
+KAON-EPG-002,장르 필터,EPG,P2,EPG 화면 열린 상태,1. YELLOW 키 누름. 2. 1초 대기. 3. OK 키 누름.,장르 필터 옵션 표시 후 선택 결과,2000,qa-team@kaongroup.com,STBQA-100,v1.0.0,,
+KAON-OTT-001,넷플릭스 음성 실행,OTT,P1,홈 화면,"1. 음성으로 ""넷플릭스 실행"" 발화. 2. 5초 대기.",Netflix 홈 화면이 5초 이내에 표시됨 (My List 또는 추천 row),5000,qa-team@kaongroup.com,STBQA-101,v1.2.0,,Netflix 세션 유지 가정
+KAON-OTT-002,티빙 음성 실행,OTT,P1,홈 화면,"1. 음성으로 ""티빙 실행"" 발화. 2. 5초 대기.",Tving 홈 화면 표시,5000,qa-team@kaongroup.com,STBQA-101,v1.2.0,,
+KAON-DRM-001,Widevine L1 4K HDR,DRM,P1,Netflix 홈 진입 상태,"1. 음성으로 ""4K HDR 콘텐츠 재생"" 발화. 2. 8초 대기.",4K HDR 영상 재생 + OSD에 ""4K UHD HDR"" 인포,8000,qa-team@kaongroup.com,STBQA-102,v1.5.0,,HDCP 2.2 협상 성공 가정
+KAON-TPL-001,Pause/Play 토글,TrickPlay,P1,VOD 재생 중,1. PAUSE 키. 2. 1초 대기. 3. PLAY 키.,재생 정상 재개 (OSD 사라짐),1000,qa-team@kaongroup.com,STBQA-103,v1.0.0,,
+KAON-TPL-002,2배속 빨리감기,TrickPlay,P1,VOD 재생 중,1. FF 키 누름.,2배속 OSD 표시 (응답 < 800ms),800,qa-team@kaongroup.com,STBQA-103,v1.0.0,,
+KAON-SRC-001,음성 배우 검색,Search,P1,홈 화면,"1. 음성으로 ""송강호 검색"" 발화. 2. 3초 대기.",배우 출연작 검색 결과 표시,4000,qa-team@kaongroup.com,STBQA-104,v1.3.0,,
+KAON-REC-001,1회 예약 녹화,Recording,P1,EPG 화면 열린 상태,1. RIGHT 2번. 2. OK 키. 3. RED 키. 4. OK 키.,예약 완료 다이얼로그 + 시계 아이콘 표시,3000,qa-team@kaongroup.com,STBQA-105,v1.4.0,,
+KAON-PRN-001,성인 PIN 입력 요구,Parental,P1,라이브 TV,"1. 음성으로 ""성인 채널로 이동"" 발화. 2. 3초 대기.",PIN 입력 다이얼로그 표시,3500,qa-team@kaongroup.com,STBQA-106,v1.0.0,,
+KAON-SET-001,설정 메뉴 진입,Settings,P1,홈 화면,1. SETTINGS 키.,설정 메뉴 카테고리 목록 표시,2000,qa-team@kaongroup.com,STBQA-107,v1.0.0,,
+KAON-SET-002,4K 해상도 변경,Settings,P1,설정 메뉴 열린 상태,"1. 음성으로 ""영상 해상도"" 발화. 2. 2초. 3. DOWN 3번. 4. OK.",4K UHD 적용 + 확인 다이얼로그,5000,qa-team@kaongroup.com,STBQA-107,v1.0.0,,

@@ -2,6 +2,47 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-25 (업데이트 27) — Phase 1 두 번째 청크: 시나리오 작성 파이프라인 3종
+
+300~500 TC 스케일 전략 docs/23 Phase 1의 시나리오 작성 파이프라인 핵심 3종 신설.
+모두 Claude API (Opus 4.7) + 프롬프트 캐싱 + pydantic 검증 공통 흐름.
+
+### 🏗️ 신규 도구 3종
+
+- **excel_importer** (메인 워크플로) — 사내 정형 TC Excel/CSV → v2 카탈로그 JSON
+  - tools/excel_importer/{column_map,prompt,importer}.py
+  - Direct map(id/category/priority/expected/sla 등)은 코드, 자유 텍스트(Steps/Pre-cond)만 LLM
+  - 컬럼 매핑 override + batch(기본 8) + dry-run + prompt-only 4가지 모드
+  - 12행 가상 샘플(docs/specs/example-tc-sheet.csv)로 검증: 12/12 direct map 통과
+
+- **edge_case_generator** (보강) — 고객관점 사용성 엣지케이스 자동 생성
+  - tools/edge_case_generator/{prompt,generate}.py
+  - 타사 인증 표준(Netflix/Roku/Google TV/HbbTV/WCAG) 컨텍스트 시스템 프롬프트
+  - 5종 엣지(Negative/Boundary/Stress/Accessibility/Localization) × N개씩 생성
+  - --from-scenario 또는 --category 입력 + prompt-only fallback
+
+- **scenario_drafter** (보조) — 자유 텍스트 명세서 → 시나리오 초안
+  - tools/scenario_drafter/{prompt,draft,_llm}.py
+  - 향후 자유 PRD/명세 input에 대비. Excel이 없는 경우의 보조 경로
+  - _llm.py: 세 도구가 공유하는 LLM 호출/JSON 추출/검증 헬퍼
+
+### 📂 보조 파일
+
+- docs/specs/example-disney-plus.md — drafter 입력 예시(가상 명세)
+- docs/specs/example-tc-sheet.csv — importer 입력 예시(12행 가상 정형 TC)
+- tools/requirements.txt — pydantic / pandas / openpyxl / anthropic
+
+### 📚 문서
+
+- docs/25-scenario-drafter.md (자유 명세 → 시나리오 초안, 보조 도구)
+- docs/26-excel-importer.md (Excel/CSV TC → v2, 메인 워크플로)
+- docs/27-edge-case-generator.md (엣지케이스 생성, 타사 표준 컨텍스트)
+
+### 🔐 보안 / 운영
+
+- 실 사내 Excel 업로드는 사내 보안 검토 후 진행 (docs/26-excel-importer.md §6)
+- 가상 샘플로만 PoC 검증 완료, 실 데이터 매핑은 컬럼명만 override
+
 ## 2026-05-25 (업데이트 26) — Phase 1 시작: Catalog Schema v2
 - 🏗️ **Catalog Schema v2** 도입 — 300~500 TC 스케일 전략 [docs/23] Phase 1 첫 산출물
 - 카탈로그 필드 7 → **17** (v2 메타 8개 + flake_history 보조)
