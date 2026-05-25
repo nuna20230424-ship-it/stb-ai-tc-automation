@@ -4,6 +4,8 @@
 *.log
 .env
 .env.*
+!.env.example
+!*.env.example
 __pycache__/
 *.pyc
 node_modules/
