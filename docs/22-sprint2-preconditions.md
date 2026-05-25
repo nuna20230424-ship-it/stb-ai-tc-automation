@@ -112,9 +112,25 @@ HDCP_UNSUPPORTED_PRESENT=true pytest -m drm
 
 - [ ] STB 디바이스별 **on-screen keyboard 매크로** — 명시적 로그인 (`NETFLIX_SKIP_LOGIN_IF_SESSION=false`)
 - [ ] `playback_source=live_tv` 경로의 trickplay 시나리오 검증
-- [ ] precondition 도달 실패 시 **자동 복구**(power cycle → 재시도) 추가
-- [ ] preconditions 자체에 대한 **smoke test** (`test_preconditions.py`) — 매크로별 1회 실행 + capture 검증
+- [x] precondition 도달 실패 시 **자동 복구**(power cycle → 재시도) 추가 — `apply_preconditions(retry=True)` 기본 동작
+- [x] preconditions 자체에 대한 **smoke test** (`test_preconditions.py`) — 매크로 11종 단위 실행 + capture 검증
 - [ ] 카탈로그 확장 (Search / Recording / Parental Control) 시 새 precondition 등록
+
+### 자동 복구 동작
+도달 중 예외(IR 송신 실패, 음성 발화 timeout 등) 발생 시 `gateway.power.cycle("dut", off_sec=5)` → `boot_wait_sec` 대기 → 매크로 1회 재시도. `pytest.skip` / `pytest.fail`은 재시도 대상 아님.
+
+`retry=False`로 호출하면 단순 propagate (smoke test에서 의도적으로 매크로 결함 노출용).
+
+### Smoke test 실행
+```bash
+# 매크로 11종 단위 실행 (도달 + 캡처 + 빈 프레임 가드)
+pytest -m preconditions
+
+# OTT/DRM 시나리오 비포함 — 하드웨어만 필요한 5종
+pytest -m "preconditions and not (ott or drm)"
+
+# InfluxDB measurement: precondition_smoke (tags: precondition, firmware / field: capture_ms)
+```
 
 ## 11. Claude Code 활용
 

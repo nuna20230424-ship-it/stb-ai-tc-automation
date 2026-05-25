@@ -11,11 +11,15 @@ test_catalog.py가 `request.getfixturevalue(f"pre_{name}")` 형태로 동적 dis
 """
 from __future__ import annotations
 
+import logging
 import os
+import time
 
 import pytest
 
 from preconditions import macros
+
+logger = logging.getLogger(__name__)
 
 
 # ──────────────────────────────────────────────────────────────
@@ -117,15 +121,59 @@ KNOWN_PRECONDITIONS = {
 }
 
 
-def apply_preconditions(request, preconditions: list[str]) -> dict[str, dict]:
+def _power_cycle_recover(request, off_sec: int = 5) -> None:
+    """precondition 도달 실패 시 STB 전원을 한 번 끄고 켠다."""
+    try:
+        gateway = request.getfixturevalue("gateway")
+        env = request.getfixturevalue("env")
+    except Exception as e:
+        logger.warning("recover: gateway/env fixture 접근 실패 — 복구 skip (%s)", e)
+        return
+    logger.warning("precondition 도달 실패 — power cycle 복구 (off %ds)", off_sec)
+    try:
+        gateway.power.cycle("dut", off_sec=off_sec)
+    except Exception as e:
+        logger.error("power cycle 실패: %s", e)
+        return
+    time.sleep(env.get("boot_wait_sec", 30))
+
+
+def apply_preconditions(request, preconditions: list[str], *, retry: bool = True) -> dict[str, dict]:
     """카탈로그 preconditions 배열을 fixture로 변환·실행.
 
     알 수 없는 precondition은 pytest.skip — 카탈로그에 새 이름이 추가되면
     fixtures.py에 fixture 등록을 강제하기 위함.
+
+    retry=True (기본): 도달 중 예외 발생 시 power cycle 후 1회 재시도.
+    pytest.skip / pytest.fail (Failed/Skipped) 예외는 재시도 대상 아님.
     """
     results: dict[str, dict] = {}
     for name in preconditions:
         if name not in KNOWN_PRECONDITIONS:
             pytest.skip(f"미등록 precondition: {name} — fixtures.py에 추가 필요")
-        results[name] = request.getfixturevalue(f"pre_{name}")
+        try:
+            results[name] = request.getfixturevalue(f"pre_{name}")
+        except (pytest.skip.Exception, pytest.fail.Exception):
+            raise
+        except Exception as e:
+            if not retry:
+                raise
+            logger.warning("precondition '%s' 도달 실패 (%s) — 1회 재시도", name, e)
+            _power_cycle_recover(request)
+            # fixture 캐시 무효화: pytest는 같은 request 내에서 fixture를 재계산하지 않으므로
+            # 재시도는 매크로를 직접 호출해야 한다.
+            gateway = request.getfixturevalue("gateway")
+            env = request.getfixturevalue("env")
+            reach_fn = getattr(macros, f"reach_{name}", None)
+            if reach_fn is None:
+                pytest.fail(f"precondition '{name}' 도달 재시도 불가 — reach_{name} 없음")
+            # credentials 인자 필요한 매크로 처리
+            if name in ("netflix_logged_in", "netflix_home"):
+                creds = request.getfixturevalue("netflix_credentials")
+                results[name] = reach_fn(gateway, env, creds)
+            elif name == "tving_logged_in":
+                creds = request.getfixturevalue("tving_credentials")
+                results[name] = reach_fn(gateway, env, creds)
+            else:
+                results[name] = reach_fn(gateway, env)
     return results

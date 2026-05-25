@@ -2,6 +2,19 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-25 (업데이트 23)
+- 🧪 **Precondition smoke test + 자동 복구** 추가
+- tests/scenarios/test_preconditions.py: 11종 매크로 단위 smoke test (home/live_tv/epg_open/
+  netflix_chain 3종/tving/playback/vod/drm/hdcp). 도달 → 캡처 → 빈 프레임 가드.
+- tests/preconditions/fixtures.py:
+  - `apply_preconditions(retry=True)` — 도달 중 예외 시 power cycle → 1회 재시도
+  - `pytest.skip` / `pytest.fail`은 재시도 제외 (의도적 skip 보존)
+  - 재시도 시 fixture 캐시 우회하여 `reach_*()` 직접 호출 (credentials 인자 자동 주입)
+- tests/pytest.ini: `preconditions` 마커 추가
+- InfluxDB `precondition_smoke` measurement 신규 (tags: precondition / firmware,
+  field: capture_ms)
+- docs/22-sprint2-preconditions.md 10절: smoke test / 자동 복구 항목 체크 + 실행 가이드
+
 ## 2026-05-25 (업데이트 22)
 - 🧩 **Sprint 2 — Precondition Fixture 자동화** 추가
 - tests/preconditions/macros.py: reach_*() 11종 (home/live_tv/epg_open/netflix_logged_in/
