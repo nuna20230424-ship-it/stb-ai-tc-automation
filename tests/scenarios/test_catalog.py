@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 from influxdb_client import Point, WritePrecision
 
+from preconditions.fixtures import apply_preconditions
 from utils import extract_middle_frame
 
 CATALOG_PATH = (
@@ -69,12 +70,15 @@ def _exec_step(step: dict, gateway, env) -> Path | None:
     raise ValueError(f"unknown action: {action}")
 
 
-def _run_scenario(scenario: dict, gateway, backend, metrics, env):
-    """카탈로그 시나리오 1건 실행 → 마지막 capture 프레임 검증."""
+def _run_scenario(scenario: dict, gateway, backend, metrics, env, request):
+    """카탈로그 시나리오 1건 실행 → preconditions 자동 도달 → 마지막 capture 프레임 검증."""
     scenario_id = scenario["id"]
     last_frame: Path | None = None
-    t0 = time.monotonic()
 
+    # Sprint 2: preconditions 자동 적용 (fixture 동적 dispatch)
+    apply_preconditions(request, scenario.get("preconditions", []))
+
+    t0 = time.monotonic()
     for step in scenario["steps"]:
         result = _exec_step(step, gateway, env)
         if isinstance(result, Path):
@@ -136,33 +140,29 @@ TRICKPLAY_P1 = _filter("TrickPlay", "P1")
 @pytest.mark.catalog
 @pytest.mark.epg
 @pytest.mark.parametrize("scenario", EPG_P1, ids=_ids(EPG_P1))
-def test_epg(scenario, gateway, backend, metrics, env):
-    gateway.power.set("dut", on=True)
-    _run_scenario(scenario, gateway, backend, metrics, env)
+def test_epg(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)
 
 
 @pytest.mark.e2e
 @pytest.mark.catalog
 @pytest.mark.ott
 @pytest.mark.parametrize("scenario", OTT_P1, ids=_ids(OTT_P1))
-def test_ott(scenario, gateway, backend, metrics, env):
-    gateway.power.set("dut", on=True)
-    _run_scenario(scenario, gateway, backend, metrics, env)
+def test_ott(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)
 
 
 @pytest.mark.e2e
 @pytest.mark.catalog
 @pytest.mark.drm
 @pytest.mark.parametrize("scenario", DRM_P1, ids=_ids(DRM_P1))
-def test_drm(scenario, gateway, backend, metrics, env):
-    gateway.power.set("dut", on=True)
-    _run_scenario(scenario, gateway, backend, metrics, env)
+def test_drm(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)
 
 
 @pytest.mark.e2e
 @pytest.mark.catalog
 @pytest.mark.trickplay
 @pytest.mark.parametrize("scenario", TRICKPLAY_P1, ids=_ids(TRICKPLAY_P1))
-def test_trickplay(scenario, gateway, backend, metrics, env):
-    gateway.power.set("dut", on=True)
-    _run_scenario(scenario, gateway, backend, metrics, env)
+def test_trickplay(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)

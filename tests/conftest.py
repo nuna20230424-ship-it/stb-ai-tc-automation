@@ -13,6 +13,16 @@ from clients import (
 )
 from utils import InfluxMetrics
 
+# Sprint 2: precondition fixtures를 pytest namespace에 노출
+from preconditions.fixtures import (  # noqa: F401
+    netflix_credentials, tving_credentials,
+    pre_home_screen, pre_live_tv, pre_epg_open,
+    pre_netflix_logged_in, pre_netflix_home, pre_netflix_playing,
+    pre_tving_logged_in,
+    pre_playback_active, pre_vod_playing,
+    pre_drm_content_playing, pre_hdcp_unsupported_display,
+)
+
 load_dotenv()
 
 
@@ -102,4 +112,14 @@ def env() -> dict:
         "similarity_threshold": float(os.getenv("SIMILARITY_THRESHOLD", "0.92")),
         "jira_severity": os.getenv("JIRA_SEVERITY_DEFAULT", "P2"),
         "firmware": os.getenv("DUT_FIRMWARE", "unknown"),
+        # Sprint 2 preconditions
+        "live_tv_key": os.getenv("LIVE_TV_KEY", "LIVE"),
+        "live_tv_channel": os.getenv("LIVE_TV_CHANNEL", "default"),
+        "playback_warmup_sec": int(os.getenv("PLAYBACK_WARMUP_SEC", "6")),
+        "playback_source": os.getenv("PLAYBACK_SOURCE", "vod_test_clip"),
+        "vod_test_voice": os.getenv("VOD_TEST_VOICE", "테스트 클립 재생"),
+        "drm_test_voice": os.getenv("DRM_TEST_VOICE", "넷플릭스에서 4K 콘텐츠 재생"),
+        "netflix_skip_login_if_session": os.getenv("NETFLIX_SKIP_LOGIN_IF_SESSION", "true").lower() == "true",
+        "tving_skip_login_if_session": os.getenv("TVING_SKIP_LOGIN_IF_SESSION", "true").lower() == "true",
+        "hdcp_unsupported_present": os.getenv("HDCP_UNSUPPORTED_PRESENT", "false").lower() == "true",
     }

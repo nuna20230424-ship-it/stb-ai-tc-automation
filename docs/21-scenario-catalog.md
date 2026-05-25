@@ -97,14 +97,16 @@ python -m baselines.seed_catalog --firmware v1.2.3 --category OTT --iterations 1
 
 → 별도 코드 작성 불필요. `pytest -m epg` 가 자동으로 새 시나리오 포함하여 실행.
 
-## 8. 사전 조건 (preconditions) 활용
+## 8. 사전 조건 (preconditions) 활용 ✅ Sprint 2 완료
 
-현재 PoC는 preconditions을 명시만 하고 자동 셋업은 X. Sprint 2에서:
-- `live_tv` → IR로 라이브 채널 진입 매크로
-- `netflix_logged_in` → 로그인 자동화 (계정 정보는 secret)
-- `playback_active` → VOD 재생 시작 매크로
+`tests/preconditions/{macros,fixtures}.py`에 11종 reach 매크로 + pytest fixture 등록 완료. `_run_scenario`가 시나리오 진입 직전 `apply_preconditions(request, scenario["preconditions"])`로 자동 도달.
 
-각 precondition을 **재사용 가능 fixture**로 분리 예정.
+상세 설계는 [22-sprint2-preconditions.md](22-sprint2-preconditions.md) 참고.
+
+빠른 요약:
+- 의존성: `home_screen → live_tv → epg_open` / `home → netflix_logged_in → netflix_home → (netflix_playing | drm_content_playing)` / `home → tving_logged_in`
+- Secrets: `NETFLIX_EMAIL/PASSWORD`, `TVING_ID/PASSWORD` 누락 시 해당 시나리오 자동 skip
+- 새 precondition: macros.py에 함수 + fixtures.py에 `pre_<name>` + `KNOWN_PRECONDITIONS` 등록만 하면 카탈로그에서 즉시 사용 가능
 
 ## 9. 카탈로그 확장 로드맵
 

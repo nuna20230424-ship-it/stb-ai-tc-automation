@@ -2,6 +2,21 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-25 (업데이트 22)
+- 🧩 **Sprint 2 — Precondition Fixture 자동화** 추가
+- tests/preconditions/macros.py: reach_*() 11종 (home/live_tv/epg_open/netflix_logged_in/
+  netflix_home/netflix_playing/tving_logged_in/playback_active/vod_playing/
+  drm_content_playing) + assert_hdcp_unsupported_display
+- tests/preconditions/fixtures.py: pre_* pytest fixtures + 의존성 체인 + apply_preconditions()
+  동적 dispatch helper + KNOWN_PRECONDITIONS 화이트리스트
+- tests/conftest.py: env에 Sprint 2 파라미터 8종 추가 (live_tv_key/playback_warmup/
+  playback_source/voice utterance/login skip flag/hdcp flag) + fixture import
+- tests/scenarios/test_catalog.py: _run_scenario가 request 인자 받아 시나리오 진입 직전에
+  preconditions 자동 도달 (기존 power.set 중복 제거)
+- tests/.env.example: NETFLIX_/TVING_ credential placeholder + Sprint 2 env 13종
+- docs/21-scenario-catalog.md 8절(사전 조건) 업데이트
+- docs/22-sprint2-preconditions.md: 의존성 그래프 + dispatch 설계 + secrets 처리 + 후속 작업
+
 ## 2026-05-23 (업데이트 21)
 - 📚 **시나리오 카탈로그 (EPG/OTT/DRM/TrickPlay)** 추가
 - infrastructure/notebook-gateway/data/scenarios-catalog.json: 16개 시나리오 (P1 8 + P2 8)
