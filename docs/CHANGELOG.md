@@ -2,6 +2,24 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-25 (업데이트 26) — Phase 1 시작: Catalog Schema v2
+- 🏗️ **Catalog Schema v2** 도입 — 300~500 TC 스케일 전략 [docs/23] Phase 1 첫 산출물
+- 카탈로그 필드 7 → **17** (v2 메타 8개 + flake_history 보조)
+- 신규 필드: risk_weight / firmware_min·max / tags / flake_history / owner /
+  jira_epic / baseline_vector_id / change_signals / avg_runtime_sec
+- tools/catalog/__init__.py / schema.py / migrate_v1_to_v2.py / validate.py 신규
+- 자동 추론 규칙: tags(step actions + category), change_signals(category 매핑 8종),
+  risk_weight(P1=4 / P2=2 / P3=1)
+- 36/36 시나리오 v2 마이그레이션 완료 (idempotent, 재실행 시 0 migrated)
+- step JSON은 v1 수준 가독성 유지(null/default 생략)
+- infrastructure/notebook-gateway/data/scenarios-catalog.schema.json 자동 생성
+  (IDE 자동완성·외부 검증용)
+- tests/scenarios/test_preflight.py::TestCatalogSchema:
+  - test_catalog_loads / test_all_scenarios_match_v2_schema / test_no_duplicate_ids
+  - → 카탈로그 손상이 e2e 실패의 원인 되는 것을 사전 차단
+- docs/24-catalog-schema-v2.md: 8필드 정의 + 추론 규칙 + 도구 사용법 +
+  새 시나리오 추가 절차 + 다음 Phase에서 사용되는 방식
+
 ## 2026-05-25 (업데이트 25)
 - 📊 **300~500 TC 스케일 전략 + 업계 벤치마크 리서치** 추가 (docs/23-scale-300-500-tc-strategy.md)
 - 외부 사례 분석: Witbe / S3 StormTest / Netflix Test / Comcast RDK X1 / Tata Elxsi /

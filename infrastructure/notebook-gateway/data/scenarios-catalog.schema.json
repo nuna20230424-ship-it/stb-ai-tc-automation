@@ -1,0 +1,297 @@
+{
+  "$defs": {
+    "FlakeStats": {
+      "properties": {
+        "runs": {
+          "default": 0,
+          "title": "Runs",
+          "type": "integer"
+        },
+        "passes": {
+          "default": 0,
+          "title": "Passes",
+          "type": "integer"
+        },
+        "last_failures": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Last Failures",
+          "type": "array"
+        }
+      },
+      "title": "FlakeStats",
+      "type": "object"
+    },
+    "ScenarioStep": {
+      "properties": {
+        "action": {
+          "enum": [
+            "ir",
+            "voice",
+            "wait",
+            "capture",
+            "navigate"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "repeat": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Repeat",
+          "type": "integer"
+        },
+        "utterance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utterance"
+        },
+        "sec": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sec"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "ScenarioStep",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "maxLength": 80,
+      "minLength": 3,
+      "title": "Id",
+      "type": "string"
+    },
+    "category": {
+      "enum": [
+        "EPG",
+        "OTT",
+        "DRM",
+        "TrickPlay",
+        "Search",
+        "Recording",
+        "Parental",
+        "Settings"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "preconditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preconditions",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/ScenarioStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "expected": {
+      "title": "Expected",
+      "type": "string"
+    },
+    "sla_ms": {
+      "exclusiveMinimum": 0,
+      "title": "Sla Ms",
+      "type": "integer"
+    },
+    "risk_weight": {
+      "default": 3,
+      "description": "회귀/스모크 선택 가중치. P1=4, P2=2가 기본",
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Risk Weight",
+      "type": "integer"
+    },
+    "firmware_min": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "이 펌웨어 이상에서만 실행 (semver 또는 빌드번호). None=제한 없음",
+      "title": "Firmware Min"
+    },
+    "firmware_max": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "이 펌웨어 이하에서만 실행. None=제한 없음",
+      "title": "Firmware Max"
+    },
+    "tags": {
+      "description": "MCP 의존성(`mcp:voice` 등) + 도메인 태그. 장애 격리·필터링에 사용",
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "flake_history": {
+      "$ref": "#/$defs/FlakeStats",
+      "description": "최근 N회 통과율 — runtime 갱신"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "자동 티켓 라우팅 (이메일 또는 핸들)",
+      "title": "Owner"
+    },
+    "jira_epic": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "JIRA epic 키 (예: STBQA-100)",
+      "title": "Jira Epic"
+    },
+    "baseline_vector_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Qdrant 베이스라인 vector ID (시드 후 채워짐)",
+      "title": "Baseline Vector Id"
+    },
+    "change_signals": {
+      "description": "이 TC를 트리거할 SW 컴포넌트 변경 신호 — TIA 입력",
+      "items": {
+        "type": "string"
+      },
+      "title": "Change Signals",
+      "type": "array"
+    },
+    "avg_runtime_sec": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "최근 평균 실행시간 — 샤딩/예산 산정",
+      "title": "Avg Runtime Sec"
+    }
+  },
+  "required": [
+    "id",
+    "category",
+    "priority",
+    "steps",
+    "expected",
+    "sla_ms"
+  ],
+  "title": "STB Scenario Catalog v2.0",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

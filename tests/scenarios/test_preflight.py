@@ -5,7 +5,48 @@
 """
 from __future__ import annotations
 
+import json
+import sys
+from pathlib import Path
+
 import pytest
+
+# tools/catalog import 경로 — repo root를 sys.path에 추가
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+from tools.catalog.schema import Scenario  # noqa: E402
+
+CATALOG_PATH = (
+    _REPO_ROOT / "infrastructure" / "notebook-gateway" / "data" / "scenarios-catalog.json"
+)
+
+
+@pytest.mark.preflight
+class TestCatalogSchema:
+    """카탈로그 v2 schema validation — 하드웨어 무관, 매 실행 가드."""
+
+    def test_catalog_loads(self):
+        assert CATALOG_PATH.exists(), f"카탈로그 누락: {CATALOG_PATH}"
+        raw = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+        assert isinstance(raw, list) and len(raw) > 0
+
+    def test_all_scenarios_match_v2_schema(self):
+        raw = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+        failed: list[str] = []
+        for i, item in enumerate(raw):
+            try:
+                Scenario.model_validate(item)
+            except Exception as e:
+                failed.append(f"{item.get('id', f'<index {i}>')}: {e}")
+        assert not failed, "v2 schema 위반:\n" + "\n".join(failed)
+
+    def test_no_duplicate_ids(self):
+        raw = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+        ids = [s["id"] for s in raw]
+        dupes = {i for i in ids if ids.count(i) > 1}
+        assert not dupes, f"중복된 시나리오 ID: {dupes}"
 
 
 @pytest.mark.preflight
