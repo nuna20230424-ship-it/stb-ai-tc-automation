@@ -29,8 +29,28 @@
 | TrickPlay | `trickplay_ff_4x` | P2 | 4배속 OSD | 800ms |
 | TrickPlay | `trickplay_live_pause_timeshift` | P2 | Live Pause → 타임시프트 | 1500ms |
 | TrickPlay | `trickplay_seek_jump` | P2 | Seek bar 점프 | 2500ms |
+| **Search** | `search_voice_actor` | P1 | 음성 배우 검색 | 4000ms |
+| Search | `search_voice_title` | P1 | 음성 콘텐츠 제목 검색 | 4000ms |
+| Search | `search_text_input` | P2 | On-screen 키보드 텍스트 입력 | 3000ms |
+| Search | `search_filter_genre` | P2 | 결과 장르 필터 | 3000ms |
+| Search | `search_recent_history` | P2 | 최근 검색어 표시 | 2000ms |
+| **Recording** | `recording_schedule_single` | P1 | 1회 예약 녹화 | 3000ms |
+| Recording | `recording_schedule_series` | P1 | 시리즈 예약 | 3000ms |
+| Recording | `recording_list_view` | P1 | 녹화 목록 표시 | 2000ms |
+| Recording | `recording_playback` | P2 | 녹화물 재생 | 6000ms |
+| Recording | `recording_delete` | P2 | 녹화물 삭제 | 2500ms |
+| **Parental** | `parental_pin_prompt` | P1 | 19+ 접근 시 PIN 요구 | 3500ms |
+| Parental | `parental_pin_correct` | P1 | PIN 정상 → 채널 진입 | 5000ms |
+| Parental | `parental_pin_wrong_3times` | P2 | 3회 오류 → 잠금 | 8000ms |
+| Parental | `parental_block_channel_unblock` | P2 | 차단 채널 해제 | 3500ms |
+| Parental | `parental_age_rating_filter` | P2 | EPG 19+ 잠금 아이콘 | 2500ms |
+| **Settings** | `settings_open_menu` | P1 | 설정 메뉴 진입 | 2000ms |
+| Settings | `settings_change_language` | P1 | 언어 변경 | 4000ms |
+| Settings | `settings_resolution_4k` | P1 | 4K UHD 해상도 변경 | 5000ms |
+| Settings | `settings_audio_passthrough` | P2 | 오디오 passthrough 토글 | 3500ms |
+| Settings | `settings_network_status` | P2 | 네트워크 상태 표시 | 3000ms |
 
-총 16개 시나리오. P1 8개 / P2 8개. Sprint 1 P1 우선 자동화.
+총 36개 시나리오. P1 19개 / P2 17개. Sprint 1(EPG/OTT/DRM/TrickPlay) + Sprint 2(Search/Recording/Parental/Settings).
 
 ## 3. Step Action 5종
 
@@ -112,8 +132,8 @@ python -m baselines.seed_catalog --firmware v1.2.3 --category OTT --iterations 1
 
 | 시점 | 추가 카테고리 | 시나리오 수 |
 |---|---|---|
-| Sprint 1 (현재) | EPG / OTT / DRM / TrickPlay | 16 |
-| Sprint 2 | Search, Recording, Parental Control, Settings | +20 |
+| Sprint 1 | EPG / OTT / DRM / TrickPlay | 16 |
+| Sprint 2 (현재) | Search / Recording / Parental / Settings | +20 (= 36) |
 | Sprint 3 | Multi-room, OTA Update, Diagnostics, Stress | +30 |
 | 운영 | 100+ 시나리오 — 100% 자동화 목표 | — |
 

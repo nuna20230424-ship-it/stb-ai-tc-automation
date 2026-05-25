@@ -2,6 +2,31 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-25 (업데이트 24)
+- 📚 **Sprint 2 카탈로그 확장 — Search / Recording / Parental / Settings (+20 시나리오)**
+- 카탈로그 16 → 36 시나리오 (P1 19 / P2 17)
+- Search 5종: voice_actor / voice_title / text_input / filter_genre / recent_history
+- Recording 5종: schedule_single / schedule_series / list_view / playback / delete
+- Parental 5종: pin_prompt / pin_correct / pin_wrong_3times / block_channel_unblock /
+  age_rating_filter
+- Settings 5종: open_menu / change_language / resolution_4k / audio_passthrough /
+  network_status
+- 새 precondition 4종 등록:
+  - `search_open` (home → IR SEARCH)
+  - `recording_list_open` (home → 음성 "녹화 목록")
+  - `settings_open` (home → IR SETTINGS)
+  - `pin_unlocked` (PIN 다이얼로그에 env['parental_pin'] 입력, 기본 0000)
+- tests/preconditions/macros.py: reach_* 4종 추가 (총 15종)
+- tests/preconditions/fixtures.py: pre_* 4종 + KNOWN_PRECONDITIONS 갱신
+- tests/conftest.py: env에 SEARCH_KEY/SETTINGS_KEY/RECORDING_OPEN_VOICE/PARENTAL_PIN 4종
+- tests/.env.example: Sprint 2 카탈로그 확장 env block 추가
+- tests/scenarios/test_catalog.py: test_search / test_recording / test_parental /
+  test_settings 4개 함수 + 마커 4종
+- tests/scenarios/test_preconditions.py: 새 매크로 4종 smoke test 추가
+- tests/pytest.ini: search / recording / parental / settings 마커 등록
+- docs/21-scenario-catalog.md: 36 시나리오 표 + 로드맵 Sprint 2 현재 표시
+- docs/22-sprint2-preconditions.md: precondition 인벤토리 갱신 + 후속 체크박스 갱신
+
 ## 2026-05-25 (업데이트 23)
 - 🧪 **Precondition smoke test + 자동 복구** 추가
 - tests/scenarios/test_preconditions.py: 11종 매크로 단위 smoke test (home/live_tv/epg_open/

@@ -21,6 +21,8 @@ from preconditions.fixtures import (  # noqa: F401
     pre_tving_logged_in,
     pre_playback_active, pre_vod_playing,
     pre_drm_content_playing, pre_hdcp_unsupported_display,
+    # Sprint 2 카탈로그 확장
+    pre_search_open, pre_recording_list_open, pre_settings_open, pre_pin_unlocked,
 )
 
 load_dotenv()
@@ -122,4 +124,9 @@ def env() -> dict:
         "netflix_skip_login_if_session": os.getenv("NETFLIX_SKIP_LOGIN_IF_SESSION", "true").lower() == "true",
         "tving_skip_login_if_session": os.getenv("TVING_SKIP_LOGIN_IF_SESSION", "true").lower() == "true",
         "hdcp_unsupported_present": os.getenv("HDCP_UNSUPPORTED_PRESENT", "false").lower() == "true",
+        # Sprint 2 카탈로그 확장 preconditions
+        "search_key": os.getenv("SEARCH_KEY", "SEARCH"),
+        "settings_key": os.getenv("SETTINGS_KEY", "SETTINGS"),
+        "recording_open_voice": os.getenv("RECORDING_OPEN_VOICE", "녹화 목록"),
+        "parental_pin": os.getenv("PARENTAL_PIN", "0000"),
     }

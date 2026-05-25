@@ -145,6 +145,49 @@ def reach_drm_content_playing(gateway, env) -> dict[str, Any]:
 
 
 # ──────────────────────────────────────────────────────────────
+# Sprint 2 카탈로그 확장 (Search / Recording / Parental / Settings)
+# ──────────────────────────────────────────────────────────────
+
+def reach_search_open(gateway, env) -> dict[str, Any]:
+    """home에서 SEARCH 키 또는 음성으로 검색 화면 진입."""
+    key = env.get("search_key", "SEARCH")
+    _ir(gateway, env, key)
+    time.sleep(2)
+    return {"state": "search_open"}
+
+
+def reach_recording_list_open(gateway, env) -> dict[str, Any]:
+    """home에서 음성 또는 키로 녹화 관리 화면 진입.
+
+    STB에 따라 REC 길게 누르기 또는 메뉴 진입 — env['recording_open_voice']로 음성 사용.
+    """
+    utterance = env.get("recording_open_voice", "녹화 목록")
+    _voice(gateway, utterance, settle=3.0)
+    return {"state": "recording_list_open"}
+
+
+def reach_settings_open(gateway, env) -> dict[str, Any]:
+    """home에서 SETTINGS 키로 설정 메뉴 진입."""
+    key = env.get("settings_key", "SETTINGS")
+    _ir(gateway, env, key)
+    time.sleep(2)
+    return {"state": "settings_open"}
+
+
+def reach_pin_unlocked(gateway, env) -> dict[str, Any]:
+    """parental PIN 입력 상태로 전환. env['parental_pin'] (기본 0000) 사용.
+
+    STB가 PIN 잠금을 요구하는 화면에 도달했을 때 호출된다는 가정.
+    호출 순서: 다른 precondition(예: settings_open) 이후 PIN 다이얼로그가 떠 있을 때.
+    """
+    pin = env.get("parental_pin", "0000")
+    for digit in pin:
+        _ir(gateway, env, digit, wait=0.25)
+    time.sleep(1.5)
+    return {"state": "pin_unlocked", "pin_length": len(pin)}
+
+
+# ──────────────────────────────────────────────────────────────
 # 환경 검증 (매크로 아님 — 사전 조건 확인)
 # ──────────────────────────────────────────────────────────────
 

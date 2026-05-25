@@ -136,6 +136,40 @@ def test_drm_content_playing(pre_drm_content_playing, gateway, metrics, env):
 
 
 # ──────────────────────────────────────────────────────────────
+# Sprint 2 카탈로그 확장 (Search / Recording / Settings / Parental PIN)
+# ──────────────────────────────────────────────────────────────
+
+@pytest.mark.preconditions
+@pytest.mark.search
+def test_search_open(pre_search_open, gateway, metrics, env):
+    assert pre_search_open["state"] == "search_open"
+    _smoke_assert("search_open", gateway, metrics, env)
+
+
+@pytest.mark.preconditions
+@pytest.mark.recording
+def test_recording_list_open(pre_recording_list_open, gateway, metrics, env):
+    assert pre_recording_list_open["state"] == "recording_list_open"
+    _smoke_assert("recording_list_open", gateway, metrics, env)
+
+
+@pytest.mark.preconditions
+@pytest.mark.settings
+def test_settings_open(pre_settings_open, gateway, metrics, env):
+    assert pre_settings_open["state"] == "settings_open"
+    _smoke_assert("settings_open", gateway, metrics, env)
+
+
+@pytest.mark.preconditions
+@pytest.mark.parental
+def test_pin_unlocked(pre_pin_unlocked, gateway, metrics, env):
+    # PIN 다이얼로그가 떠 있을 때만 유효하지만, smoke 단계에서는 키 송신 자체만 검증
+    assert pre_pin_unlocked["state"] == "pin_unlocked"
+    assert pre_pin_unlocked["pin_length"] >= 4
+    _smoke_assert("pin_unlocked", gateway, metrics, env)
+
+
+# ──────────────────────────────────────────────────────────────
 # 환경 확인 (도달 매크로 아님 — env flag만 체크)
 # ──────────────────────────────────────────────────────────────
 

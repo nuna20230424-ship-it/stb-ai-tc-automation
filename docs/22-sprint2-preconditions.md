@@ -10,14 +10,18 @@ Sprint 1 카탈로그(`scenarios-catalog.json`, 16개 시나리오)는 `precondi
 
 | 이름 | 사용 시나리오 수 | 도달 수단 |
 |---|---:|---|
-| `home_screen` | 2 | Power ON + IR HOME |
-| `live_tv` | 3 | home → IR LIVE |
-| `epg_open` | 3 | live_tv → IR EPG |
+| `home_screen` | 5 | Power ON + IR HOME |
+| `live_tv` | 6 | home → IR LIVE |
+| `epg_open` | 6 | live_tv → IR EPG |
+| `settings_open` | 5 | home → IR SETTINGS |
+| `search_open` | 3 | home → IR SEARCH |
+| `recording_list_open` | 3 | home → 음성 "녹화 목록" |
+| `playback_active` | 3 | 음성으로 test 클립 재생 |
 | `netflix_logged_in` | 2 | home → 음성 "넷플릭스 실행" + 프로필 OK |
+| `pin_unlocked` | 2 | PIN 다이얼로그에서 env['parental_pin'] 입력 |
 | `netflix_home` | 1 | logged_in과 동일 화면 |
 | `netflix_playing` | 1 | netflix_home → 첫 카드 OK → PLAY |
 | `tving_logged_in` | 1 | home → 음성 "티빙 실행" + 프로필 OK |
-| `playback_active` | 3 | 음성으로 test 클립 재생 |
 | `vod_playing` | 1 | `playback_active` alias |
 | `drm_content_playing` | 1 | netflix_home → 음성으로 4K DRM 콘텐츠 재생 |
 | `hdcp_unsupported_display` | 1 | 환경 플래그 (장치 연결 확인만, 자동 도달 X) |
@@ -113,8 +117,8 @@ HDCP_UNSUPPORTED_PRESENT=true pytest -m drm
 - [ ] STB 디바이스별 **on-screen keyboard 매크로** — 명시적 로그인 (`NETFLIX_SKIP_LOGIN_IF_SESSION=false`)
 - [ ] `playback_source=live_tv` 경로의 trickplay 시나리오 검증
 - [x] precondition 도달 실패 시 **자동 복구**(power cycle → 재시도) 추가 — `apply_preconditions(retry=True)` 기본 동작
-- [x] preconditions 자체에 대한 **smoke test** (`test_preconditions.py`) — 매크로 11종 단위 실행 + capture 검증
-- [ ] 카탈로그 확장 (Search / Recording / Parental Control) 시 새 precondition 등록
+- [x] preconditions 자체에 대한 **smoke test** (`test_preconditions.py`) — 매크로 15종 단위 실행 + capture 검증
+- [x] 카탈로그 확장 (Search / Recording / Parental / Settings) + 새 precondition 4종 등록 (`search_open` / `recording_list_open` / `settings_open` / `pin_unlocked`)
 
 ### 자동 복구 동작
 도달 중 예외(IR 송신 실패, 음성 발화 timeout 등) 발생 시 `gateway.power.cycle("dut", off_sec=5)` → `boot_wait_sec` 대기 → 매크로 1회 재시도. `pytest.skip` / `pytest.fail`은 재시도 대상 아님.

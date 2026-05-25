@@ -134,6 +134,11 @@ EPG_P1 = _filter("EPG", "P1")
 OTT_P1 = _filter("OTT", "P1")
 DRM_P1 = _filter("DRM", "P1")
 TRICKPLAY_P1 = _filter("TrickPlay", "P1")
+# Sprint 2 카탈로그 확장
+SEARCH_P1 = _filter("Search", "P1")
+RECORDING_P1 = _filter("Recording", "P1")
+PARENTAL_P1 = _filter("Parental", "P1")
+SETTINGS_P1 = _filter("Settings", "P1")
 
 
 @pytest.mark.e2e
@@ -165,4 +170,36 @@ def test_drm(scenario, gateway, backend, metrics, env, request):
 @pytest.mark.trickplay
 @pytest.mark.parametrize("scenario", TRICKPLAY_P1, ids=_ids(TRICKPLAY_P1))
 def test_trickplay(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)
+
+
+@pytest.mark.e2e
+@pytest.mark.catalog
+@pytest.mark.search
+@pytest.mark.parametrize("scenario", SEARCH_P1, ids=_ids(SEARCH_P1))
+def test_search(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)
+
+
+@pytest.mark.e2e
+@pytest.mark.catalog
+@pytest.mark.recording
+@pytest.mark.parametrize("scenario", RECORDING_P1, ids=_ids(RECORDING_P1))
+def test_recording(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)
+
+
+@pytest.mark.e2e
+@pytest.mark.catalog
+@pytest.mark.parental
+@pytest.mark.parametrize("scenario", PARENTAL_P1, ids=_ids(PARENTAL_P1))
+def test_parental(scenario, gateway, backend, metrics, env, request):
+    _run_scenario(scenario, gateway, backend, metrics, env, request)
+
+
+@pytest.mark.e2e
+@pytest.mark.catalog
+@pytest.mark.settings
+@pytest.mark.parametrize("scenario", SETTINGS_P1, ids=_ids(SETTINGS_P1))
+def test_settings(scenario, gateway, backend, metrics, env, request):
     _run_scenario(scenario, gateway, backend, metrics, env, request)

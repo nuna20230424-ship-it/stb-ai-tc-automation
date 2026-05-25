@@ -101,6 +101,26 @@ def pre_drm_content_playing(gateway, env, pre_netflix_home):
 
 
 @pytest.fixture
+def pre_search_open(gateway, env, pre_home_screen):
+    return macros.reach_search_open(gateway, env)
+
+
+@pytest.fixture
+def pre_recording_list_open(gateway, env, pre_home_screen):
+    return macros.reach_recording_list_open(gateway, env)
+
+
+@pytest.fixture
+def pre_settings_open(gateway, env, pre_home_screen):
+    return macros.reach_settings_open(gateway, env)
+
+
+@pytest.fixture
+def pre_pin_unlocked(gateway, env, pre_home_screen):
+    return macros.reach_pin_unlocked(gateway, env)
+
+
+@pytest.fixture
 def pre_hdcp_unsupported_display(env):
     result = macros.assert_hdcp_unsupported_display(env)
     if not result["available"]:
@@ -118,6 +138,8 @@ KNOWN_PRECONDITIONS = {
     "tving_logged_in",
     "playback_active", "vod_playing",
     "drm_content_playing", "hdcp_unsupported_display",
+    # Sprint 2 카탈로그 확장
+    "search_open", "recording_list_open", "settings_open", "pin_unlocked",
 }
 
 
