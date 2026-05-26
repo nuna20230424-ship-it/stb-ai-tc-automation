@@ -2,6 +2,45 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 35) — 데모·요약 HTML 공개 + GitHub Pages 배포 활성화
+
+코드 측면 Phase 2 종결(업데이트 34) 이후, 비개발자 이해관계자가 별도 빌드 없이
+브라우저 한 번으로 전체 그림을 볼 수 있도록 정적 페이지를 발행. 두 가지 경로 제공:
+즉시 동작하는 raw.githack 미러 + 정식 GitHub Pages 호스팅.
+
+### 📄 docs/STB-AI-자동화-요약.html (commit `1903090`)
+- 5개 섹션: 기획 배경 / 전체 개요 / 구조 / 진행 방식 / 사용 가이드
+- 단일 HTML — 외부 CSS/JS 의존 0, 사내망에서도 열림
+- 임원/QA 외부 인원 공유용 (텍스트 위주, 인쇄 가능)
+
+### 🖱 docs/demo.html (commit `5c52151`)
+- 5탭 인터랙티브 데모 — 클릭 가능한 운영 표면 미리보기
+- 탭: Catalog v2 / Judge Pipeline / Evidence Viewer / Grafana / Vision Bench
+- 실제 데이터 구조(36 시나리오, 3-tier 분기)를 시각화 — 실서비스 mock
+- 의사결정자가 "실제로 어떻게 보이나"를 즉시 체감하는 용도
+
+### 🚀 .github/workflows/pages.yml (commit `17b5c87`)
+- `docs/**` push 시 GitHub Pages 자동 배포
+- `actions/configure-pages` + `actions/upload-pages-artifact` + `deploy-pages`
+- main 브랜치 푸시 트리거 + 수동 `workflow_dispatch`
+- 빌드 단계 없음(정적 HTML 직배포) — 1~2분 내 반영
+
+### 🪧 docs/README.md (commit `900882b`)
+- docs/ 진입점 — 두 페이지로의 명시적 링크
+- raw.githack URL과 Pages URL 병기
+
+### 🌐 GitHub Pages 활성화 (오늘 세션 — 웹 UI 작업)
+- Settings → Pages → Source: **GitHub Actions** 로 전환 (이전 "Deploy from a branch")
+- 빨간 X 났던 `pages.yml` 첫 실행을 **Re-run all jobs** 로 재실행 → ✓ 성공
+- **공개 URL 발행:** https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/
+- 공개 저장소 + Public Pages → 인증/로그인 없이 외부 어디서나 접속 가능
+- 즉시 동작 미러(raw.githack)는 비상용으로 유지
+
+### 📌 운영 메모
+- 이후 `docs/`에 푸시되는 모든 변경은 1~2분 내 자동 반영
+- 민감 정보(STB 시리얼/내부 IP/API 키)는 docs/에 절대 올리지 않을 것 — 검색엔진 노출됨
+- Pages가 Private이 필요해지면 GitHub Enterprise 또는 사내 호스팅으로 이전
+
 ## 2026-05-26 (업데이트 34) — Phase 2 종결: vision provider 벤치 + Tier 3 다변화
 
 detection-mcp Tier 3에서 사용할 vision 모델을 데이터 기반으로 선택하고
