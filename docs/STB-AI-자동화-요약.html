@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>STB AI 테스트 자동화 — 기획·구조·진행·사용 요약</title>
+<style>
+  :root {
+    --fg: #1a202c;
+    --muted: #4a5568;
+    --soft: #718096;
+    --bg: #ffffff;
+    --card: #f7fafc;
+    --border: #e2e8f0;
+    --accent: #2b6cb0;
+    --accent-soft: #ebf4ff;
+    --ok: #38a169;
+    --warn: #d69e2e;
+    --code-bg: #f1f3f5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+      "Pretendard", "Noto Sans KR", sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 36px 64px;
+  }
+  header.cover {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  header.cover h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+  }
+  header.cover .sub {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  header.cover .meta {
+    display: flex;
+    gap: 18px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--soft);
+    flex-wrap: wrap;
+  }
+  header.cover .meta b { color: var(--fg); font-weight: 600; }
+
+  h2 {
+    font-size: 20px;
+    margin: 40px 0 14px;
+    padding: 6px 0 6px 14px;
+    border-left: 5px solid var(--accent);
+    color: var(--accent);
+    letter-spacing: -0.3px;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 22px 0 8px;
+    color: var(--fg);
+  }
+  p { margin: 8px 0; }
+
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .card h3 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .card .pill {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 12px;
+  }
+  th, td {
+    text-align: left;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { background: var(--card); font-weight: 600; }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  code, .mono {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11.5px;
+  }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+  pre {
+    background: #1a202c;
+    color: #e2e8f0;
+    padding: 12px 14px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  pre.light {
+    background: #f7fafc;
+    color: var(--fg);
+    border: 1px solid var(--border);
+  }
+
+  .arch {
+    background: #fdfdfd;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  ul, ol { margin: 6px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+
+  .checklist { list-style: none; padding-left: 4px; }
+  .checklist li::before {
+    content: "✓ ";
+    color: var(--ok);
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .checklist li.pending::before {
+    content: "○ ";
+    color: var(--warn);
+  }
+
+  .timeline {
+    position: relative;
+    margin: 14px 0;
+    padding-left: 26px;
+    border-left: 3px solid var(--border);
+  }
+  .timeline .step {
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .timeline .step::before {
+    content: "";
+    position: absolute;
+    left: -33px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .timeline .step.done::before { background: var(--ok); box-shadow: 0 0 0 2px var(--ok); }
+  .timeline .step.pending::before { background: var(--warn); box-shadow: 0 0 0 2px var(--warn); }
+
+  .badge-ok    { color: var(--ok);    font-weight: 600; }
+  .badge-warn  { color: var(--warn);  font-weight: 600; }
+  .badge-muted { color: var(--soft);  font-weight: 600; }
+
+  footer {
+    margin-top: 50px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--soft);
+    font-size: 11.5px;
+  }
+
+  @media print {
+    body { font-size: 11px; }
+    .wrap { padding: 18px 22px; max-width: none; }
+    h2 { page-break-after: avoid; }
+    .card, table, pre, .arch { page-break-inside: avoid; }
+    a { color: var(--accent); text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <h1>STB AI 테스트 자동화 — 기획·구조·진행·사용 요약</h1>
+  <div class="sub">
+    셋톱박스(STB) 매뉴얼 QA의 300~500 TC 규모를 AI 기반으로 흡수하는 자동화 플랫폼.
+    Phase 2 (Judge 파이프라인) 코드 측면 종결 시점 요약.
+  </div>
+  <div class="meta">
+    <span><b>저장소</b> nuna20230424-ship-it/stb-ai-tc-automation</span>
+    <span><b>현재 단계</b> Phase 2 코드 8/8 완료</span>
+    <span><b>다음 게이트</b> 실 STB 캡처 → 골든셋 100장 라벨링</span>
+    <span><b>최종 갱신</b> 2026-05-26</span>
+  </div>
+</header>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<h2>1. 기획 — 왜 / 무엇을 / 어떻게</h2>
+
+<div class="grid grid-3">
+  <div class="card">
+    <h3>왜 (Why)</h3>
+    <ul>
+      <li>STB 매뉴얼 QA <b>300~500 TC</b> 24/7 운용 부담</li>
+      <li>펌웨어 릴리스 주기 단축 → 회귀 압박</li>
+      <li>"500 TC = 500 스크립트"는 무너짐 — 카탈로그 필요</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>무엇을 (What)</h3>
+    <ul>
+      <li><b>카탈로그 v2</b> (메타데이터+표준 액션 DSL)</li>
+      <li><b>3-tier Judge</b> (임베딩→룰→vision 회색 지대만)</li>
+      <li><b>증거 자동 번들</b> + JIRA 자동 등록</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>어떻게 (How)</h3>
+    <ul>
+      <li><b>Claude Code</b>: 코드/스키마/도구 작성</li>
+      <li><b>Gemini</b>: 시나리오 초안 / 엣지케이스 생성</li>
+      <li>Notebook(현장 게이트웨이) + Mac mini(중앙 분석) 분리</li>
+    </ul>
+  </div>
+</div>
+
+<h3 style="margin-top:18px">업계 합의 — 우리가 따르는 패턴</h3>
+<table>
+  <thead>
+    <tr><th style="width:18%">조직</th><th>패턴</th><th style="width:22%">우리 매핑</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Witbe (STB 벤더)</td><td>AI 생성 + KPI 결정론 이중 루프</td><td>3-tier judge</td></tr>
+    <tr><td>Netflix Test</td><td>픽셀 동일성→의미 동일성 (RMSE dual-mode, 5~10만 골든)</td><td>Qdrant 임베딩 유사도</td></tr>
+    <tr><td>S3 Group StormTest</td><td>TC ↔ 펌웨어 변경 1:1 추적</td><td><span class="mono">change_signals</span> + JIRA</td></tr>
+    <tr><td>Comcast RDK X1</td><td>Lightning UI(DOM 없음) → 이미지/이벤트 강제</td><td>capture+IR 같은 제약 그대로 채택</td></tr>
+    <tr><td>stb-tester(OSS)</td><td>OpenCV/OCR + pytest 네이티브</td><td>"우리 스택과 거의 동일 철학"</td></tr>
+  </tbody>
+</table>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<h2>2. 전체개요 — 한눈에 보는 시스템</h2>
+
+<div class="arch">┌────────────────── 현장 (Reference STB / DUT) ──────────────────┐
+│   HDMI 캡처 카드 ─┐                                              │
+│   IR 송신기 ──────┼──→  Notebook (게이트웨이)  ─── HTTP ─→        │
+│   UART 콘솔 ──────┘     8001 capture · 8002 ir · 8003 uart         │
+│   GPIO 전원       ──→   8004 power · 8005 voice · 8006 bluetooth    │
+└────────────────────────────────────────────┬─────────────────────┘
+                                             │ HTTP (REST/JSON)
+                       ┌─────────────────────▼─────────────────────┐
+                       │     Mac mini M4 Pro (중앙 백엔드)             │
+                       │  8101 baseline-mcp  ◀──▶ Qdrant 벡터DB        │
+                       │  8102 embedding-mcp ◀──▶ Ollama / 클라우드     │
+                       │  8103 detection-mcp (3-tier judge)            │
+                       │  8104 report-mcp    ◀──▶ JIRA / InfluxDB / Grafana │
+                       └───────────────────────────────────────────┘
+                                             │
+                       ┌─────────────────────▼─────────────────────┐
+                       │ pytest 카탈로그 러너 (tests/scenarios/*)      │
+                       │  precondition fixtures + evidence-bundler   │
+                       └───────────────────────────────────────────┘</div>
+
+<div class="grid grid-2" style="margin-top:14px">
+  <div class="card">
+    <h3>데이터 흐름 (정상 시나리오 1건)</h3>
+    <ol>
+      <li><b>precondition</b> 적용 (라이브 TV / 넷플릭스 로그인 등)</li>
+      <li><b>steps</b> 순차 실행 (IR/voice/wait/capture/navigate)</li>
+      <li>마지막 capture → <b>embedding-mcp</b> describe + text 임베딩</li>
+      <li><b>detection-mcp</b> 3-tier judge → verdict/tier/confidence</li>
+      <li>이상/회색 지대 → <b>evidence-bundler</b> 디렉토리 + JIRA 자동 등록</li>
+      <li>InfluxDB <span class="mono">catalog_runs</span> measurement → Grafana</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>외부 모델 다변화 (Phase 2)</h3>
+    <table>
+      <tr><th>Provider</th><th>대표 모델</th><th>비용/호출*</th></tr>
+      <tr><td>Ollama (기본)</td><td>LLaVA / Qwen-VL</td><td>$0</td></tr>
+      <tr><td>Anthropic</td><td>claude-sonnet-4-6</td><td>$0.0042</td></tr>
+      <tr><td>OpenAI</td><td>gpt-4o-mini</td><td>$0.0005</td></tr>
+      <tr><td>Gemini</td><td>gemini-2.5-flash</td><td>$0.0002</td></tr>
+    </table>
+    <p style="color:var(--soft);font-size:11px;margin-top:6px">
+      * 1500 tok in + 50 tok out 가정. 회색 지대만 호출되므로 시나리오의 ~4%에만 발생.
+    </p>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<h2>3. 구조 — 코드 베이스 레이아웃</h2>
+
+<div class="arch">stb-ai-tc-automation/
+├── infrastructure/
+│   ├── mac-mini-backend/services/   ← 4 MCP 서비스 + Grafana provisioning
+│   │   ├── baseline-mcp/    (Qdrant CRUD)
+│   │   ├── embedding-mcp/   (Ollama/Anthropic/OpenAI/Gemini 라우팅)
+│   │   ├── detection-mcp/   (v2 3-tier judge)
+│   │   └── report-mcp/      (JIRA + InfluxDB)
+│   └── notebook-gateway/data/
+│       └── scenarios-catalog.json   ← 36 시나리오, v2 18필드
+│
+├── tests/
+│   ├── scenarios/test_catalog.py    ← 카탈로그 러너 + evidence 자동 번들
+│   ├── preconditions/fixtures.py    ← 11종 precondition 매크로
+│   └── baselines/golden_set/        ← 라벨된 골든셋 (Phase 2)
+│
+├── tools/
+│   ├── catalog/      schema·validate·merge·seed_helpers
+│   ├── scenario_drafter/  (Gemini 시나리오 초안)
+│   ├── edge_case_generator/  (엣지케이스 자동 생성)
+│   ├── excel_importer/      (기존 매뉴얼 TC import)
+│   ├── evidence/     bundler·viewer
+│   ├── golden_set/   schema·label_cli·tune_thresholds·replay
+│   ├── vision_bench/ providers·runner·cli
+│   └── tests/        ← 66/66 단위 테스트
+│
+└── docs/  01~32 + CHANGELOG  (33개 문서)</div>
+
+<h3>핵심 데이터 모델 — Scenario v2 (18 필드)</h3>
+<table>
+  <thead><tr><th>그룹</th><th>필드</th><th>역할</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3">기본(v1)</td><td><span class="mono">id / category / priority</span></td><td>식별·분류·우선순위(P1~P3)</td></tr>
+    <tr><td><span class="mono">preconditions / steps / expected</span></td><td>전제·실행·기대값</td></tr>
+    <tr><td><span class="mono">sla_ms</span></td><td>SLA 임계 (ms)</td></tr>
+    <tr><td rowspan="4">v2 확장 8필드</td><td><span class="mono">risk_weight / firmware_min/max</span></td><td>회귀 선택 가중치 + 펌웨어 매트릭스</td></tr>
+    <tr><td><span class="mono">tags / change_signals</span></td><td>MCP 의존성 + TIA(Test Impact Analysis) 입력</td></tr>
+    <tr><td><span class="mono">flake_history / avg_runtime_sec</span></td><td>runtime 갱신 — 신뢰도·예산 산정</td></tr>
+    <tr><td><span class="mono">owner / jira_epic / baseline_vector_id</span></td><td>티켓 라우팅 + Qdrant 베이스라인 키</td></tr>
+    <tr><td>v2.1</td><td><span class="mono">expected_keywords</span></td><td>룰 tier 매칭용 명시 키워드</td></tr>
+  </tbody>
+</table>
+
+<h3>3-tier Judge 흐름 (detection-mcp v2)</h3>
+<div class="arch">  화면 캡처
+     │
+     ▼  embedding-mcp /vision/describe + /text
+  [임베딩] → Qdrant /query → best_score
+     │
+     ├── score ≥ 0.96  → verdict=normal, tier=embedding  ✅ 즉시 종료
+     ├── score < 0.85  → verdict=anomaly, tier=embedding  ⚠️ 즉시 종료
+     └── 회색 지대 (0.85 ≤ score < 0.96)
+            │
+            ▼  expected_keywords ↔ description
+         [룰 매칭] → 키워드 N개 이상 포함?
+            ├── yes  → verdict=normal, tier=rule
+            └── no
+                 │
+                 ▼  vision 재질의 ("yes/no?")
+              [vision tier] → 최종 보루
+                 ├── yes → verdict=normal,  tier=vision
+                 └── no  → verdict=anomaly, tier=vision</div>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<h2>4. 진행방식 — Phase별 산출물</h2>
+
+<div class="timeline">
+  <div class="step done">
+    <h3>Sprint 0 · Phase 0 (Week 1~2) <span class="badge-ok">완료</span></h3>
+    <p>인프라 발주 + 8 MCP 서비스 smoke. 노트북·맥미니 분리 아키텍처 확정.</p>
+  </div>
+  <div class="step done">
+    <h3>Sprint 1 (Week 3~6) <span class="badge-ok">완료</span></h3>
+    <p>채널 Zap · Voice · Bluetooth 3 시나리오 자동화 + Grafana 1차 대시보드(stb-channel-zap).</p>
+  </div>
+  <div class="step done">
+    <h3>Sprint 2 / Phase 1 (Week 7~12) <span class="badge-ok">완료</span></h3>
+    <p>카탈로그 v2 (36 시나리오 마이그레이션) + 작성 파이프라인 3종(drafter / edge-gen / excel-importer) + 안전 머지 도구.</p>
+  </div>
+  <div class="step done">
+    <h3>Phase 2 — Judge 파이프라인 (2026-05-26) <span class="badge-ok">코드 8/8 완료</span></h3>
+    <ul class="checklist">
+      <li>detection-mcp v2 3-tier judge + evidence-bundler/viewer</li>
+      <li>카탈로그 v2.1 <span class="mono">expected_keywords</span> 필드 + 36 시나리오 부여</li>
+      <li>baseline_vector_id 자동 시드 (<span class="mono">--missing-only</span>) + baseline-mcp scenario delete</li>
+      <li>Grafana <b>judge-pipeline</b> 대시보드 (tier 분포 / 회색 지대 / 카테고리별 confidence)</li>
+      <li>골든셋 라벨링·튜닝·회귀 도구 (<span class="mono">tools/golden_set/</span>)</li>
+      <li>vision provider 벤치(4종) + Tier 3 다변화 (<span class="mono">VISION_PROVIDER</span> env)</li>
+    </ul>
+    <ul class="checklist" style="margin-top:6px">
+      <li class="pending">자체 골든셋 100장 라벨링 ← 실 STB 캡처 의존 (도구 준비됨)</li>
+      <li class="pending">임계 튜닝 (위 100장 확보 시 1줄 실행)</li>
+      <li class="pending">vision 벤치 실행 → <span class="mono">VISION_PROVIDER</span> 결정</li>
+    </ul>
+  </div>
+  <div class="step pending">
+    <h3>Phase 3 / Sprint 3 (Week 13~24) <span class="badge-warn">예정</span></h3>
+    <p>Self-Healing TC, Test Impact Analysis 본격, 외부 디바이스 팜 SaaS 검토, 100% 시나리오 커버리지, 부서 확산.</p>
+  </div>
+</div>
+
+<h3>역할 분담</h3>
+<table>
+  <thead><tr><th style="width:18%">담당</th><th>책임</th><th>도구</th></tr></thead>
+  <tbody>
+    <tr><td><b>Claude Code</b></td>
+      <td>스키마·도구·MCP 서비스·테스트 코드 작성, 도메인 모델링, 워크플로 자동화</td>
+      <td>repo 전체</td></tr>
+    <tr><td><b>Gemini</b></td>
+      <td>시나리오 초안 생성, 엣지케이스 다양화, 자연어 설명 정리</td>
+      <td><span class="mono">tools/scenario_drafter/</span><br><span class="mono">tools/edge_case_generator/</span></td></tr>
+    <tr><td><b>QA SME (사람)</b></td>
+      <td>시나리오 검토·승인, 골든셋 라벨링, 임계 결정, 펌웨어 회귀 결과 트리아지</td>
+      <td>PR 리뷰, <span class="mono">label_cli</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<h2>5. 사용가이드 — 명령어 치트시트</h2>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3>① 시나리오 추가</h3>
+    <pre>## Excel 매뉴얼 TC → draft 변환
+python -m tools.excel_importer \
+    --input manual_tcs.xlsx --out drafts/imported.json
+
+## 엣지케이스 자동 생성
+python -m tools.edge_case_generator \
+    --base drafts/imported.json --variants 3
+
+## 카탈로그 안전 머지 (충돌·검증·백업)
+python -m tools.catalog.merge \
+    --drafts drafts/imported.json --dry-run</pre>
+  </div>
+
+  <div class="card">
+    <h3>② 베이스라인 시드 (Reference STB)</h3>
+    <pre>## 신규 시나리오만 빠르게 시드
+python -m tests.baselines.seed_catalog \
+    --firmware v1.2.3 --missing-only
+
+## 펌웨어 업그레이드 후 재시드
+python -m tests.baselines.seed_catalog \
+    --firmware v1.3.0 --replace</pre>
+  </div>
+
+  <div class="card">
+    <h3>③ 골든셋 라벨링 (DUT)</h3>
+    <pre>## evidence 번들에서 (권장)
+python -m tools.golden_set.label_cli \
+    --from-evidence evidence/&lt;dir&gt; \
+    --labeler me@kaongroup.com
+
+## 비대화 배치
+python -m tools.golden_set.label_cli \
+    --scenario epg_open_7day --image ./shot.png \
+    --firmware v1.2.3 --labeler me@x.com \
+    --verdict normal --tier embedding --yes</pre>
+  </div>
+
+  <div class="card">
+    <h3>④ 임계 튜닝 + Vision 벤치</h3>
+    <pre>## 임계 grid search (HARD_NORMAL × HARD_ANOMALY)
+python -m tools.golden_set.tune_thresholds \
+    --objective balanced
+
+## vision provider 비교 벤치
+python -m tools.vision_bench.cli \
+    --objective accuracy-first \
+    --save-report reports/bench.json</pre>
+  </div>
+
+  <div class="card">
+    <h3>⑤ 회귀 실행</h3>
+    <pre>## 전체 카탈로그 회귀 + evidence 자동 번들
+cd tests && pytest -m catalog
+
+## 카테고리/우선순위 필터
+pytest -m "epg and not slow"
+pytest -m catalog -k "priority_P1"
+
+## 골든셋 회귀 (임계 변경 안전망)
+pytest -m golden_set</pre>
+  </div>
+
+  <div class="card">
+    <h3>⑥ Evidence 조회 (실패 트리아지)</h3>
+    <pre>## 최근 실패 목록
+python -m tools.evidence.viewer list --limit 20
+
+## 특정 시나리오 상세
+python -m tools.evidence.viewer show 2026-05-26_epg
+
+## JIRA 첨부용 zip
+python -m tools.evidence.viewer export &lt;prefix&gt;
+
+## 오래된 evidence 정리
+python -m tools.evidence.viewer prune --older-than 30d</pre>
+  </div>
+</div>
+
+<h3 style="margin-top:20px">⑦ Production 환경변수 (mac-mini-backend/.env)</h3>
+<pre class="light"># Vision provider (기본 ollama, 벤치 후 클라우드 전환)
+VISION_PROVIDER=ollama         # ollama | anthropic | openai | gemini
+VISION_MODEL=llava:latest      # ollama 모델
+ANTHROPIC_VISION_MODEL=claude-sonnet-4-6
+OPENAI_VISION_MODEL=gpt-4o
+GEMINI_VISION_MODEL=gemini-2.5-flash
+ANTHROPIC_API_KEY=sk-...
+OPENAI_API_KEY=sk-...
+GEMINI_API_KEY=...
+
+# detection-mcp 3-tier 임계 (튜닝 후 갱신)
+THRESHOLD_HARD_NORMAL=0.96
+THRESHOLD_HARD_ANOMALY=0.85
+RULE_MIN_KEYWORD_HITS=1
+VISION_TIER_ENABLED=true
+
+# JIRA / InfluxDB
+JIRA_BASE_URL=...
+INFLUX_TOKEN=...</pre>
+
+<h3>⑧ Grafana 대시보드</h3>
+<ul>
+  <li><b>stb-channel-zap</b> — 채널 Zap latency / Detection score / JIRA incident 어노테이션</li>
+  <li><b>stb-voice-bluetooth</b> — 음성·블루투스 시나리오 트렌드</li>
+  <li><b>stb-judge-pipeline</b> (Phase 2) — tier 분포, 회색 지대 비율(target &lt; 10%), 카테고리별 confidence, 카테고리×tier 매트릭스</li>
+</ul>
+<p style="color:var(--soft)">
+  접근: SSH 터널 후 <code>http://localhost:3000</code> → STB QA 폴더. 30초 자동 새로고침.
+</p>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<h2>6. 다음 액션 — 블로커 해소 즉시 가능</h2>
+<ol>
+  <li><b>실 STB 캡처 100장 확보</b> — 카테고리×verdict 매트릭스 (47 normal / 38 anomaly / 15 회색 지대, docs/31 §7).</li>
+  <li><b>라벨링</b> — <span class="mono">label_cli</span>로 1건당 ~30초 × 100건 = 50분 작업.</li>
+  <li><b>임계 튜닝</b> — <span class="mono">tune_thresholds --objective balanced</span> → 환경변수 갱신.</li>
+  <li><b>Vision 벤치</b> — <span class="mono">vision_bench.cli</span> → <span class="mono">VISION_PROVIDER</span> 결정 → embedding-mcp 재배포.</li>
+  <li><b>회귀 안전망 가동</b> — <span class="mono">pytest -m golden_set</span> CI에 연결, 이후 임계 변경 PR 자동 검증.</li>
+  <li><b>Phase 3 진입</b> — Self-Healing TC / TIA / 외부 SaaS 검토.</li>
+</ol>
+
+<footer>
+  본 요약은 2026-05-26 기준. 상세 내용은 저장소 <code>docs/</code>의 33개 문서와 <code>docs/CHANGELOG.md</code> 참조.<br>
+  주요 docs: 01-benchmarking, 03-roadmap, 23-scale-300-500-tc-strategy, 24-catalog-schema-v2, 29-judge-pipeline-v2, 31-golden-set, 32-vision-bench.
+</footer>
+
+</div>
+</body>
+</html>
