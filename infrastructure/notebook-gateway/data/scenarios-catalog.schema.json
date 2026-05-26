@@ -281,6 +281,14 @@
       "default": null,
       "description": "최근 평균 실행시간 — 샤딩/예산 산정",
       "title": "Avg Runtime Sec"
+    },
+    "expected_keywords": {
+      "description": "룰 tier(detection-mcp 2차) 매칭용 명시 키워드. 비어 있으면 detection-mcp가 expected에서 자동 추출 (정확도 낮음). 명시 권장: 카테고리·기기별 핵심 노출 텍스트(예: '4K UHD', 'My List', 'PIN')",
+      "items": {
+        "type": "string"
+      },
+      "title": "Expected Keywords",
+      "type": "array"
     }
   },
   "required": [

@@ -122,7 +122,8 @@ def _run_scenario(scenario: dict, gateway, backend, metrics, env, request):
         scenario=scenario_id,
         image_path=last_frame,
         firmware=env["firmware"],
-        expected=scenario.get("expected"),   # Phase 2 v2: 룰 tier 입력
+        expected=scenario.get("expected"),                          # 룰 tier 입력
+        expected_keywords=scenario.get("expected_keywords") or None,   # v2.1: 명시 키워드
     )
     bundler.detection_result = verdict
     bundler.verdict = verdict["verdict"]

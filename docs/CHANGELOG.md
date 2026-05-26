@@ -2,6 +2,39 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 30) — Catalog v2.1: expected_keywords 필드
+
+Phase 2의 후속 항목 중 첫 번째. 룰 tier(detection-mcp 2차) 매칭 정확도 향상.
+
+### 🆕 Scenario 모델 필드 추가 — `expected_keywords: list[str]`
+- 의도: 한국어 expected의 약한 토큰("표시", "결과")이 룰 매칭 noise 만드는 문제 해소
+- default_factory=list (사람이 명시; 자동 추출은 detection-mcp 측 fallback 유지)
+- 권장 2~4개 — 카테고리·기기별 핵심 노출 텍스트
+
+### 📋 36 시나리오 전체에 의미 있는 키워드 부여
+예시:
+- OTT: `["Netflix", "My List", "추천"]` / `["Tving", "홈"]`
+- DRM: `["4K", "HDR"]` / `["HDCP", "지원하지", "오류"]`
+- Settings: `["4K", "UHD", "2160p"]` / `["언어"]`
+- Parental: `["PIN"]` / `["잠금"]`
+- (전 시나리오 36/36 채움 완료, 빈 리스트 0)
+
+### 🔌 통합
+- `tools/catalog/schema.py`: 필드 추가 + `infer_defaults`에 빈 리스트 기본값
+- `tools/catalog/migrate_v1_to_v2.py`: 재실행으로 36 시나리오 자동 마이그레이션
+- `tests/scenarios/test_catalog.py`: 카탈로그의 `expected_keywords`를
+  DetectionClient에 자동 전달 (None일 때 detection-mcp 자동 추출 fallback)
+- `infrastructure/notebook-gateway/data/scenarios-catalog.schema.json` 재생성
+
+### 📚 문서
+- docs/24-catalog-schema-v2.md: v2.1 필드 설명 + 추론 안 하는 이유 + 예시
+- docs/29-judge-pipeline-v2.md: 후속 작업 체크박스 갱신 (이번 항목 완료)
+
+### 카탈로그 필드 수 변화
+- v2.0: 17 필드
+- v2.1: 18 필드 (`expected_keywords` 추가)
+- 검증: 36/36 시나리오 통과
+
 ## 2026-05-26 (업데이트 29) — Phase 2 시작 + 오류 로그 추출 도구
 
 ### 🧠 detection-mcp v2 — 3-tier judge 파이프라인

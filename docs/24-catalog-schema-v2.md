@@ -1,12 +1,12 @@
 # 24. Catalog Schema v2 — Phase 1 산출물
 
-> 2026-05-25 작성. 300~500 TC 스케일 전략 [docs/23](23-scale-300-500-tc-strategy.md) Phase 1의 첫 산출물. Scenario 카탈로그에 8개 메타 필드를 추가하고 pydantic 모델 + JSON Schema로 검증 강제.
+> 2026-05-25 작성, 2026-05-26 v2.1 (`expected_keywords` 추가). 300~500 TC 스케일 전략 [docs/23](23-scale-300-500-tc-strategy.md) Phase 1의 첫 산출물. Scenario 카탈로그에 메타 필드를 추가하고 pydantic 모델 + JSON Schema로 검증 강제.
 
 ## 1. 변경 요약
 
 | 항목 | 이전 | 이후 |
 |---|---|---|
-| 카탈로그 필드 수 | 7 (id/category/priority/preconditions/steps/expected/sla_ms) | **17** (+ v2 메타 9종 + flake_history 보조) |
+| 카탈로그 필드 수 | 7 (id/category/priority/preconditions/steps/expected/sla_ms) | **18** (+ v2 메타 9종 + flake_history 보조 + expected_keywords v2.1) |
 | 검증 | 없음 (json.load 후 즉시 사용) | pydantic Scenario 모델 + preflight 테스트 가드 |
 | 도구 | — | `tools/catalog/{schema,migrate_v1_to_v2,validate}.py` |
 | 36 시나리오 | v1 그대로 | **36/36 v2 통과** (마이그레이션 완료) |
@@ -25,6 +25,7 @@
 | `baseline_vector_id` | str? | null | Qdrant 베이스라인 vector ID |
 | `change_signals[]` | list[str] | category에서 추론 | **TIA 입력** — 어떤 SW 컴포넌트가 바뀌면 이 TC를 돌릴지 |
 | `avg_runtime_sec` | float? | null | 샤딩·예산 산정, runtime 갱신 |
+| `expected_keywords[]` (v2.1) | list[str] | `[]` (사람이 명시) | **detection-mcp 룰 tier 매칭용**. 비어 있으면 detection-mcp가 expected에서 자동 추출 (정확도 낮음) — 핵심 노출 텍스트를 명시하면 룰 매칭 정확도 ↑ |
 
 ## 3. 자동 추론 규칙 (마이그레이션 시)
 
@@ -51,6 +52,17 @@ step의 action 모음 → "mcp:<action>" (capture/ir/voice/navigate)
 
 ### 3-3. `risk_weight` — priority 기반
 P1→4, P2→2, P3→1 (수동 override 권장)
+
+### 3-4. `expected_keywords` — 자동 추론 X, 사람이 명시
+의도적으로 빈 리스트로 두고 카탈로그 작성자가 직접 채움.
+- 자동 추출은 detection-mcp가 fallback으로 수행 (toкen 정규식 + stopword 제거)
+- 그러나 한국어 expected는 "표시", "결과" 같은 약한 토큰이 false positive 생성 가능
+- **카테고리·기기별 핵심 노출 텍스트** 명시 권장:
+  - OTT: `["Netflix", "My List", "추천"]` / `["Tving", "홈"]`
+  - DRM: `["4K", "HDR"]` / `["HDCP", "지원하지", "오류"]`
+  - Settings: `["4K", "UHD", "2160p"]` / `["언어"]`
+  - Parental: `["PIN"]` / `["잠금"]`
+- 한 시나리오당 **2~4개**가 적당 (너무 많으면 거짓 통과, 너무 적으면 거짓 실패)
 
 ## 4. 도구
 

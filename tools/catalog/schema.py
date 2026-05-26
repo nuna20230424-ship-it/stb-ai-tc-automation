@@ -98,6 +98,10 @@ class Scenario(BaseModel):
         description="이 TC를 트리거할 SW 컴포넌트 변경 신호 — TIA 입력")
     avg_runtime_sec: float | None = Field(default=None, ge=0,
         description="최근 평균 실행시간 — 샤딩/예산 산정")
+    expected_keywords: list[str] = Field(default_factory=list,
+        description="룰 tier(detection-mcp 2차) 매칭용 명시 키워드. "
+                    "비어 있으면 detection-mcp가 expected에서 자동 추출 (정확도 낮음). "
+                    "명시 권장: 카테고리·기기별 핵심 노출 텍스트(예: '4K UHD', 'My List', 'PIN')")
 
     @field_validator("id")
     @classmethod
@@ -244,5 +248,9 @@ def infer_defaults(scenario_v1: dict) -> dict:
     out.setdefault("baseline_vector_id", None)
     out.setdefault("avg_runtime_sec", None)
     out.setdefault("flake_history", {"runs": 0, "passes": 0, "last_failures": []})
+
+    # v2.1: expected_keywords 빈 리스트로 두기. 자동 추출은 detection-mcp 측에 위임.
+    # (의도적으로 자동 채우지 않음 — 약한 토큰이 룰 매칭 노이즈를 만들 수 있어 사람이 명시 권장)
+    out.setdefault("expected_keywords", [])
 
     return out

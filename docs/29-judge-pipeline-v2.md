@@ -100,6 +100,8 @@ DetectionClient.check_screen(
 
 `expected_keywords` 미지정 시 `_extract_keywords()`가 `expected`에서 간단 휴리스틱(한글/영문/숫자 토큰, stopword 제거)으로 추출.
 
+**v2.1 (2026-05-26)**: 카탈로그 v2.1에 `expected_keywords` 필드 정식 추가. test_catalog.py가 카탈로그의 명시 키워드를 자동으로 detection-mcp에 전달 → 룰 매칭 정확도 ↑. 36 시나리오 전부 의미 있는 키워드 부여 완료.
+
 ## 5. 룰 키워드 추출 (Tier 2)
 
 ```python
@@ -130,7 +132,7 @@ Grafana 대시보드 후속 작업:
 - [ ] **자체 골든셋 100장 라벨링** + LLaVA/Qwen-VL/GPT-4V 비교 벤치
 - [ ] 임계 튜닝 (`THRESHOLD_*` 환경변수)
 - [ ] Grafana 패널 — tier 분포 / 회색 지대 비율 / 카테고리별 confidence
-- [ ] 카탈로그 `expected_keywords` 필드 (선택적 명시 키워드)
+- [x] 카탈로그 `expected_keywords` 필드 (v2.1, 2026-05-26)
 - [ ] vision tier 모델 다변화 (LLaVA 외 GPT-4V / Claude vision 옵션)
 - [ ] baseline_vector_id 자동 시드 — 카탈로그 신규 시나리오 머지 시 베이스라인 자동 등록
 
