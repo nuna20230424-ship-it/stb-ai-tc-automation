@@ -134,7 +134,7 @@ Grafana 대시보드 후속 작업:
 - [ ] Grafana 패널 — tier 분포 / 회색 지대 비율 / 카테고리별 confidence
 - [x] 카탈로그 `expected_keywords` 필드 (v2.1, 2026-05-26)
 - [ ] vision tier 모델 다변화 (LLaVA 외 GPT-4V / Claude vision 옵션)
-- [ ] baseline_vector_id 자동 시드 — 카탈로그 신규 시나리오 머지 시 베이스라인 자동 등록
+- [x] baseline_vector_id 자동 시드 — `seed_catalog.py --missing-only` + merge 안내 + baseline-mcp scenario delete (2026-05-26)
 
 ## 8. 의도적으로 제외
 

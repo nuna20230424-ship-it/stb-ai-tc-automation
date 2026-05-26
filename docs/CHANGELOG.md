@@ -2,6 +2,43 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 31) — Phase 2: baseline_vector_id 자동 시드
+
+판정 파이프라인의 1차(Qdrant) 베이스라인을 카탈로그와 동기화하는 마지막 미싱링크.
+머지/시드/판정이 한 워크플로로 닫힘.
+
+### 🌱 seed_catalog.py 개편 (`tests/baselines/seed_catalog.py`)
+- `--missing-only`: catalog의 `baseline_vector_id`가 비어있는 시나리오만 시드 → 머지 후 신규분만 빠르게 채움
+- catalog write-back: 첫 iteration의 Qdrant ID를 `baseline_vector_id`에 매 시나리오 단위로 저장 (atomic — `.seed.tmp` rename)
+- `--replace`: 펌웨어 업그레이드 후 기존 scenario 포인트를 baseline-mcp /delete로 비우고 재시드
+- `--ids`: 특정 시나리오만 타겟; `--no-rewrite-catalog`: 드라이런용
+- `--category` choices 확장 (Search/Recording/Parental/Settings 포함)
+
+### 🗄 baseline-mcp 확장 (`POST /list`, `POST /delete`)
+- scenario 필터로 Qdrant 포인트 audit / 일괄 삭제
+- BaselineClient에 `list_by_scenario` / `delete_by_scenario` 추가
+
+### 🔗 merge.py 안내 통합
+- 머지 직후 누락 시나리오 수 + 샘플 ID + 시드 명령어 한 줄 출력
+- dry-run에서도 동일하게 가시화 → CI에서 누락 인지 가능
+
+### 🧪 단위 테스트 (`tools/tests/` 신설)
+- 통합 conftest와 분리, MCP 헬스체크 없이 실행 가능
+- `test_seed_helpers.py` 9건 — filter/write-back/count 검증
+- `test_merge_missing_baseline.py` 2건 — merge subprocess 출력 검증
+- 전 11건 통과
+
+### 📤 결과 (실 카탈로그 dry-run)
+```
+⚠️  baseline_vector_id 누락 36건: epg_open_7day, epg_next_day, …
+   👉 python -m tests.baselines.seed_catalog --firmware <ver> --missing-only
+```
+Reference STB 노드에서 위 한 줄 실행 → 36건 자동 채움 + Qdrant 등록 동기.
+
+### 🚧 Phase 2 잔여
+- [ ] 자체 골든셋 100장 라벨링 + 임계 튜닝 (실 STB 캡처 필요 — 블로커)
+- [ ] Grafana 패널 — tier 분포 / 회색 지대 비율 / 카테고리별 confidence
+
 ## 2026-05-26 (업데이트 30) — Catalog v2.1: expected_keywords 필드
 
 Phase 2의 후속 항목 중 첫 번째. 룰 tier(detection-mcp 2차) 매칭 정확도 향상.

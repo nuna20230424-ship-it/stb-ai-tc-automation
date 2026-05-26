@@ -46,6 +46,17 @@ class BaselineQuery(BaseModel):
     top_k: int = 5
 
 
+class BaselineDelete(BaseModel):
+    collection: str
+    scenario: str
+
+
+class BaselineList(BaseModel):
+    collection: str
+    scenario: str
+    limit: int = 100
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "baseline-mcp", "qdrant": QDRANT_URL}
@@ -80,11 +91,49 @@ def query(req: BaselineQuery):
     return {"hits": [{"id": str(p.id), "score": p.score, "payload": p.payload} for p in result]}
 
 
+@app.post("/list")
+def list_points(req: BaselineList):
+    """scenario에 등록된 포인트 ID·payload 목록 — 재시드 audit용."""
+    if req.collection not in COLLECTIONS:
+        raise HTTPException(400, f"unknown collection: {req.collection}")
+    flt = qm.Filter(must=[qm.FieldCondition(key="scenario", match=qm.MatchValue(value=req.scenario))])
+    points, _next = client.scroll(
+        collection_name=req.collection,
+        scroll_filter=flt,
+        limit=req.limit,
+        with_payload=True,
+        with_vectors=False,
+    )
+    return {
+        "scenario": req.scenario,
+        "count": len(points),
+        "points": [{"id": str(p.id), "payload": p.payload} for p in points],
+    }
+
+
+@app.post("/delete")
+def delete_by_scenario(req: BaselineDelete):
+    """scenario 필터로 기존 베이스라인 일괄 삭제 — --replace 재시드 전 호출."""
+    if req.collection not in COLLECTIONS:
+        raise HTTPException(400, f"unknown collection: {req.collection}")
+    flt = qm.Filter(must=[qm.FieldCondition(key="scenario", match=qm.MatchValue(value=req.scenario))])
+    # 삭제 전 개수 파악 (audit)
+    points, _ = client.scroll(
+        collection_name=req.collection, scroll_filter=flt,
+        limit=10_000, with_payload=False, with_vectors=False,
+    )
+    deleted = len(points)
+    client.delete(collection_name=req.collection, points_selector=qm.FilterSelector(filter=flt))
+    return {"scenario": req.scenario, "deleted": deleted}
+
+
 @app.get("/tools")
 def list_tools():
     return {
         "tools": [
             {"name": "register", "description": "골든 베이스라인 임베딩 등록"},
             {"name": "query", "description": "임베딩 유사도 조회"},
+            {"name": "list", "description": "scenario별 등록 포인트 목록 (audit)"},
+            {"name": "delete", "description": "scenario 필터로 기존 베이스라인 삭제 (재시드용)"},
         ]
     }

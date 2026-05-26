@@ -169,5 +169,6 @@ git add . && git commit -m "feat: Excel batch 2026-05-26 + OTT edge cases"
 ## 9. 한계 / 후속
 
 - 머지 결과의 시나리오 순서: 메인 카탈로그 → drafts에 나오는 순. 카테고리·우선순위로 재정렬은 별도 도구 (`tools/catalog/sort.py` — 후속)
-- baseline_vector_id는 머지가 채우지 않음 (Phase 2 Qdrant 시드 단계에서 부여)
+- baseline_vector_id는 머지가 채우지 않지만 누락 시 머지 직후 시드 명령 힌트를 출력
+  (`python -m tests.baselines.seed_catalog --firmware <ver> --missing-only`)
 - 머지 직후 새 시나리오의 `flake_history`는 비어있음 — runtime 누적 후 채워짐

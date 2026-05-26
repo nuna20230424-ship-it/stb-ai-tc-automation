@@ -37,8 +37,10 @@ from typing import Literal
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
     from tools.catalog.schema import Scenario, dump_catalog, infer_defaults
+    from tools.catalog.seed_helpers import count_missing_baselines
 else:
     from .schema import Scenario, dump_catalog, infer_defaults
+    from .seed_helpers import count_missing_baselines
 
 
 ConflictMode = Literal["abort", "skip", "overwrite"]
@@ -266,6 +268,15 @@ def main():
           f"/ ~{stats['overwritten']} overwritten "
           f"/ -{stats['skipped_conflict']} skipped (conflict)")
     print(f"   final: {len(merged)} scenarios (was {len(main_items)})")
+
+    # 7-b. baseline 시드 누락 audit — Phase 2 자동 시드 워크플로 안내
+    missing_count, missing_ids = count_missing_baselines(merged)
+    if missing_count:
+        sample = ", ".join(missing_ids[:5]) + ("..." if missing_count > 5 else "")
+        print(f"\n⚠️  baseline_vector_id 누락 {missing_count}건: {sample}")
+        print("    👉 Reference STB 노드에서:")
+        print("       python -m tests.baselines.seed_catalog "
+              "--firmware <ver> --missing-only")
 
     if args.dry_run:
         print("\n🟡 dry-run — 저장하지 않음")

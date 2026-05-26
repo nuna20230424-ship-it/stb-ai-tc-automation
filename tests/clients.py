@@ -147,6 +147,18 @@ class BaselineClient(_Base):
         r.raise_for_status()
         return r.json()
 
+    def list_by_scenario(self, collection: str, scenario: str, limit: int = 100) -> dict:
+        r = self.client.post("/list", json={
+            "collection": collection, "scenario": scenario, "limit": limit,
+        })
+        r.raise_for_status()
+        return r.json()
+
+    def delete_by_scenario(self, collection: str, scenario: str) -> dict:
+        r = self.client.post("/delete", json={"collection": collection, "scenario": scenario})
+        r.raise_for_status()
+        return r.json()
+
 
 class EmbeddingClient(_Base):
     def text(self, text: str) -> list[float]:
