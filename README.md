@@ -3,7 +3,16 @@
 셋탑박스(STB) QA 테스트케이스 100% 자동화 프로젝트.  
 Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 운영.
 
-> **🚀 시작하려면**: [SUMMARY.md](SUMMARY.md) 한 페이지 통합 요약을 먼저 읽으세요.
+## 🚀 빠른 시작 — 클릭 한 번에 열기
+
+| 진입점 | 즉시 열기 (raw.githack) | GitHub Pages (Settings → Pages enable 후) |
+|---|---|---|
+| 📺 **인터랙티브 데모** (5탭) | <https://raw.githack.com/nuna20230424-ship-it/stb-ai-tc-automation/main/docs/demo.html> | <https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/demo.html> |
+| 📄 **요약 HTML** (기획·구조·진행·사용) | <https://raw.githack.com/nuna20230424-ship-it/stb-ai-tc-automation/main/docs/STB-AI-%EC%9E%90%EB%8F%99%ED%99%94-%EC%9A%94%EC%95%BD.html> | <https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/STB-AI-자동화-요약.html> |
+| 📋 텍스트 통합 요약 | [SUMMARY.md](SUMMARY.md) | — |
+
+- **raw.githack** 링크는 별도 설정 없이 즉시 동작 (캐시 ~10분)
+- **GitHub Pages** 사용 시: Repo Settings → Pages → Source = `GitHub Actions` 한 번만 활성화 → `docs/` 변경 시 자동 배포 (`.github/workflows/pages.yml`)
 
 ## 목적
 - STB QA 테스트케이스 작성·실행·유지보수의 100% 자동화

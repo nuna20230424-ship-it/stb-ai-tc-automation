@@ -1,0 +1,96 @@
+name: Deploy docs to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build site (docs/ + index 진입점)
+        run: |
+          mkdir -p _site
+          cp -r docs/* _site/
+          # 진입점 index.html — demo.html / 요약 HTML로 안내
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="ko">
+          <head>
+            <meta charset="utf-8">
+            <title>STB AI 테스트 자동화 — 문서·데모 진입점</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+              :root { color-scheme: light dark; }
+              body { font-family: -apple-system, BlinkMacSystemFont,
+                "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+                max-width: 720px; margin: 60px auto; padding: 0 24px;
+                line-height: 1.65; color: #1a202c; background: #fff; }
+              @media (prefers-color-scheme: dark) {
+                body { color: #e2e8f0; background: #0f172a; }
+                .card { background: #1e293b !important; border-color: #334155 !important; }
+                a { color: #38bdf8 !important; }
+              }
+              h1 { font-size: 24px; letter-spacing: -0.5px; margin: 0 0 8px; }
+              .sub { color: #64748b; margin-bottom: 28px; }
+              .card { display: block; padding: 18px 20px; margin: 12px 0;
+                background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+                text-decoration: none; color: inherit; transition: border-color .15s; }
+              .card:hover { border-color: #2b6cb0; }
+              .card h2 { margin: 0 0 4px; font-size: 16px; }
+              .card p { margin: 0; color: #64748b; font-size: 13px; }
+              a { color: #2b6cb0; }
+              footer { margin-top: 40px; color: #94a3b8; font-size: 11px;
+                border-top: 1px solid #e2e8f0; padding-top: 16px; }
+            </style>
+          </head>
+          <body>
+            <h1>STB AI 테스트 자동화</h1>
+            <div class="sub">셋톱박스 QA 100% 자동화 · Phase 2 코드 8/8 완료</div>
+
+            <a class="card" href="demo.html">
+              <h2>📺 인터랙티브 데모 (5탭)</h2>
+              <p>Dashboard · Catalog · Test Run · Judge Result · Vision Bench — 클릭 가능한 운영 화면 미리보기</p>
+            </a>
+
+            <a class="card" href="STB-AI-자동화-요약.html">
+              <h2>📄 요약 HTML</h2>
+              <p>기획 · 전체개요 · 구조 · 진행방식 · 사용가이드 — 한 페이지 인쇄 친화 보고서</p>
+            </a>
+
+            <a class="card" href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation">
+              <h2>📚 GitHub 저장소</h2>
+              <p>33개 docs / 코드 / CHANGELOG — 전체 자료 탐색</p>
+            </a>
+
+            <footer>
+              자동 배포 · docs/ 변경 시 GitHub Actions가 갱신 · 한국어 파일명 UTF-8 인코딩
+            </footer>
+          </body>
+          </html>
+          HTML
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
