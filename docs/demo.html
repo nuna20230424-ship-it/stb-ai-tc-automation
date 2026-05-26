@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>STB AI 자동화 — 인터랙티브 데모</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --panel2: #273449;
+    --border: #334155;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --dim: #64748b;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --ok: #22c55e;
+    --warn: #facc15;
+    --bad: #ef4444;
+    --gray: #a78bfa;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+      "Pretendard", "Noto Sans KR", sans-serif;
+    font-size: 13px; line-height: 1.55;
+  }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px; background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar .title { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .topbar .title .ver { color: var(--accent); margin-left: 6px; font-size: 11px; }
+  .topbar .badges { display: flex; gap: 8px; }
+  .pill { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 99px;
+    font-size: 11px; font-weight: 600; }
+  .pill-ok { background: rgba(34,197,94,.15); color: var(--ok); border: 1px solid rgba(34,197,94,.3); }
+  .pill-warn { background: rgba(250,204,21,.15); color: var(--warn); border: 1px solid rgba(250,204,21,.3); }
+  .pill-info { background: rgba(56,189,248,.15); color: var(--accent); border: 1px solid rgba(56,189,248,.3); }
+
+  .tabs { display: flex; gap: 4px; background: var(--bg); padding: 8px 20px 0;
+    border-bottom: 1px solid var(--border); }
+  .tab { padding: 10px 18px; cursor: pointer; border-radius: 6px 6px 0 0;
+    border: 1px solid transparent; border-bottom: 0; color: var(--muted);
+    font-weight: 600; font-size: 13px; user-select: none; }
+  .tab:hover { color: var(--fg); background: rgba(56,189,248,.05); }
+  .tab.active { background: var(--panel); color: var(--accent); border-color: var(--border); }
+
+  main { padding: 24px; max-width: 1280px; margin: 0 auto; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  h2 { margin: 0 0 16px; font-size: 18px; }
+  h3 { margin: 18px 0 10px; font-size: 14px; color: var(--accent); }
+  p { margin: 6px 0; color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .g5 { grid-template-columns: repeat(5, 1fr); }
+  @media (max-width: 900px) {
+    .g2, .g3, .g4, .g5 { grid-template-columns: 1fr; }
+  }
+
+  .card { background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; }
+  .card-h { display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; }
+  .card-h h4 { margin: 0; font-size: 13px; color: var(--fg); }
+  .card-h .sub { color: var(--dim); font-size: 11px; }
+  .stat { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  .stat-sub { color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+  /* ── Catalog ── */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .chip { padding: 5px 12px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 99px; font-size: 12px; cursor: pointer; user-select: none; color: var(--muted); }
+  .chip:hover { color: var(--fg); }
+  .chip.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  .scenario-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .scenario { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; cursor: pointer; transition: border-color .15s; }
+  .scenario:hover { border-color: var(--accent); }
+  .scenario.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(56,189,248,.2); }
+  .scenario .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .scenario .id { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: var(--accent); }
+  .scenario .meta { display: flex; gap: 4px; }
+  .scenario .expected { color: var(--muted); font-size: 12px; }
+  .scenario .tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { padding: 1px 7px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 4px; font-size: 10px; color: var(--dim); }
+
+  .priority-P1 { background: rgba(239,68,68,.15); color: var(--bad); }
+  .priority-P2 { background: rgba(250,204,21,.15); color: var(--warn); }
+  .priority-P3 { background: rgba(148,163,184,.15); color: var(--muted); }
+  .category { padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600;
+    background: rgba(56,189,248,.15); color: var(--accent); }
+
+  .detail-panel { background: var(--panel2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; margin-top: 14px; }
+  .detail-panel .row { display: flex; padding: 5px 0; border-bottom: 1px dashed var(--border); }
+  .detail-panel .row:last-child { border-bottom: 0; }
+  .detail-panel .row .k { width: 160px; color: var(--dim); font-size: 12px; }
+  .detail-panel .row .v { flex: 1; font-size: 12.5px; }
+  .mono { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; }
+
+  /* ── Run view ── */
+  .run-stage { display: grid; grid-template-columns: 280px 1fr; gap: 16px; }
+  .run-controls { background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px; }
+  .run-controls select, .run-controls button { width: 100%; }
+  .run-controls select { padding: 8px 10px; background: var(--bg); color: var(--fg);
+    border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; font-size: 12.5px; }
+  .run-controls button { padding: 10px; background: var(--accent); color: var(--bg);
+    border: none; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; }
+  .run-controls button:disabled { opacity: .5; cursor: not-allowed; }
+  .run-controls button:hover:not(:disabled) { filter: brightness(1.1); }
+
+  .timeline { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px; min-height: 280px; }
+  .step-item { padding: 8px 10px; margin-bottom: 6px; border-radius: 6px;
+    display: flex; align-items: center; gap: 10px; background: var(--bg);
+    border-left: 3px solid var(--border); font-size: 12.5px; }
+  .step-item.pending { opacity: .45; }
+  .step-item.running { border-left-color: var(--warn); animation: pulse 1s ease-in-out infinite; }
+  .step-item.done { border-left-color: var(--ok); }
+  .step-item .icon { width: 18px; text-align: center; font-size: 14px; }
+  .step-item .body { flex: 1; }
+  .step-item .latency { color: var(--dim); font-size: 11px; }
+  @keyframes pulse { 0%, 100% { background: var(--bg); } 50% { background: var(--panel2); } }
+
+  /* ── Tier visualization ── */
+  .tier-flow { display: flex; align-items: center; gap: 8px; margin: 14px 0; flex-wrap: wrap; }
+  .tier-node { padding: 12px 16px; border-radius: 8px; border: 2px solid var(--border);
+    background: var(--panel); min-width: 140px; opacity: .3; transition: all .3s; }
+  .tier-node.active { opacity: 1; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+  .tier-node.passed { opacity: .65; border-color: var(--ok); }
+  .tier-node.failed { opacity: .8; border-color: var(--bad); }
+  .tier-node .label { font-size: 11px; color: var(--muted); }
+  .tier-node .name { font-weight: 700; font-size: 14px; margin-top: 2px; }
+  .tier-node .detail { color: var(--dim); font-size: 11px; margin-top: 4px; }
+  .tier-arrow { color: var(--dim); font-size: 18px; }
+
+  /* ── Verdict result ── */
+  .verdict-card { background: var(--panel); border-radius: 12px; padding: 24px;
+    border: 1px solid var(--border); margin-top: 16px; }
+  .verdict-row { display: flex; align-items: center; gap: 16px; }
+  .verdict-icon { width: 64px; height: 64px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 28px; font-weight: 700; }
+  .verdict-normal { background: rgba(34,197,94,.15); color: var(--ok); }
+  .verdict-anomaly { background: rgba(239,68,68,.15); color: var(--bad); }
+  .verdict-info .vh { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .verdict-info .vd { color: var(--muted); font-size: 13px; }
+
+  .judge-detail { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .judge-tier { background: var(--panel2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px; }
+  .judge-tier h5 { margin: 0 0 8px; font-size: 12px; color: var(--accent); }
+  .judge-tier .val { font-family: ui-monospace, Menlo, monospace;
+    background: var(--bg); padding: 6px 8px; border-radius: 4px; font-size: 11.5px; }
+  .judge-tier.skipped { opacity: .4; }
+
+  /* ── Bench bars ── */
+  .bench-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .bench-table th, .bench-table td { padding: 10px 12px; text-align: left;
+    border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .bench-table th { color: var(--muted); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px; }
+  .bar-cell { display: flex; align-items: center; gap: 8px; }
+  .bar { height: 8px; background: var(--accent); border-radius: 99px; min-width: 4px; }
+  .bar-track { flex: 1; height: 8px; background: var(--bg); border-radius: 99px; max-width: 200px; }
+  .winner { background: rgba(34,197,94,.08); }
+
+  /* ── Evidence ── */
+  .evidence-file { display: flex; padding: 8px 10px; border-bottom: 1px solid var(--border);
+    align-items: center; gap: 10px; font-size: 12px; }
+  .evidence-file:last-child { border-bottom: 0; }
+  .evidence-file .ico { width: 24px; text-align: center; }
+  .evidence-file .name { flex: 1; font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; }
+  .evidence-file .size { color: var(--dim); font-size: 11px; }
+
+  /* ── SVG charts placeholder colors ── */
+  svg .grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 4; }
+  svg text { fill: var(--muted); font-size: 10px; font-family: ui-monospace, Menlo, monospace; }
+
+  footer { text-align: center; padding: 24px; color: var(--dim); font-size: 11px;
+    border-top: 1px solid var(--border); margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="title">STB AI 자동화 데모 <span class="ver">v2.0 · Phase 2</span></div>
+  <div class="badges">
+    <span class="pill pill-info">Mock Data</span>
+    <span class="pill pill-ok">● Live · 1m ago</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-view="dashboard">📊 Dashboard</div>
+  <div class="tab" data-view="catalog">📋 Catalog (16 시나리오)</div>
+  <div class="tab" data-view="run">▶️ Test Run</div>
+  <div class="tab" data-view="judge">🔍 Judge Result</div>
+  <div class="tab" data-view="bench">⚡ Vision Bench</div>
+</div>
+
+<main>
+
+<!-- ════════════════════ DASHBOARD ════════════════════ -->
+<section class="view active" data-view="dashboard">
+  <h2>운영 대시보드 — 지난 24시간</h2>
+
+  <div class="grid g4">
+    <div class="card">
+      <div class="card-h"><h4>총 실행</h4><span class="sub">24h</span></div>
+      <div class="stat">2,184</div>
+      <div class="stat-sub" style="color:var(--ok)">▲ 12% vs 어제</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h4>Anomaly 비율</h4><span class="sub">target &lt; 5%</span></div>
+      <div class="stat" style="color:var(--bad)">3.2%</div>
+      <div class="stat-sub">70 / 2184</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h4>회색 지대 비율</h4><span class="sub">target &lt; 10%</span></div>
+      <div class="stat" style="color:var(--warn)">8.7%</div>
+      <div class="stat-sub">vision 호출 190회 ($0.02)</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h4>JIRA 자동 등록</h4><span class="sub">24h</span></div>
+      <div class="stat">23</div>
+      <div class="stat-sub">P1: 8 · P2: 15</div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top: 16px">
+    <div class="card">
+      <div class="card-h"><h4>Tier 분포</h4><span class="sub">3-tier judge</span></div>
+      <svg id="tierPie" viewBox="0 0 320 220" width="100%" height="220"></svg>
+    </div>
+    <div class="card">
+      <div class="card-h"><h4>회색 지대 비율 추이</h4><span class="sub">24h, 1h interval</span></div>
+      <svg id="grayTrend" viewBox="0 0 480 220" width="100%" height="220"></svg>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 16px">
+    <div class="card-h"><h4>카테고리별 평균 Confidence</h4>
+      <span class="sub">낮으면 expected_keywords / 베이스라인 보강 후보</span></div>
+    <svg id="catConf" viewBox="0 0 640 280" width="100%" height="280"></svg>
+  </div>
+</section>
+
+<!-- ════════════════════ CATALOG ════════════════════ -->
+<section class="view" data-view="catalog">
+  <h2>시나리오 카탈로그</h2>
+  <p>실 카탈로그(36 시나리오) 중 카테고리별 대표 16건. 클릭 시 상세 정보 표시.</p>
+
+  <div class="filter-bar" id="catFilter"></div>
+
+  <div class="scenario-grid" id="scenarioGrid"></div>
+
+  <div class="detail-panel" id="scenarioDetail" style="display:none"></div>
+</section>
+
+<!-- ════════════════════ TEST RUN ════════════════════ -->
+<section class="view" data-view="run">
+  <h2>라이브 테스트 실행</h2>
+  <p>4종 시뮬레이션 시나리오 — 각각 다른 verdict / tier 도달 경로 보여줌.</p>
+
+  <div class="run-stage">
+    <div class="run-controls">
+      <h3 style="margin-top:0">시뮬레이션 선택</h3>
+      <select id="runSelect">
+        <option value="normal_embedding">epg_open_7day — 정상(임베딩)</option>
+        <option value="anomaly_embedding">drm_widevine_l1 — 이상(임베딩)</option>
+        <option value="gray_rule">ott_netflix_launch — 회색(룰 통과)</option>
+        <option value="gray_vision">parental_pin_prompt — 회색(vision)</option>
+      </select>
+      <button id="runBtn" onclick="runSimulation()">▶ Run</button>
+      <button id="resetBtn" onclick="resetRun()"
+        style="margin-top:6px; background:var(--panel2); color:var(--fg); border:1px solid var(--border)">
+        Reset
+      </button>
+
+      <div style="margin-top:14px">
+        <h3>총 step</h3>
+        <div id="stepCount" class="mono" style="color:var(--muted)">—</div>
+        <h3>경과 시간</h3>
+        <div id="elapsed" class="mono" style="color:var(--muted)">—</div>
+        <h3>SLA</h3>
+        <div id="slaInfo" class="mono" style="color:var(--muted)">—</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="timeline" id="timeline">
+        <p style="color:var(--dim); text-align:center; padding-top:80px">
+          ◀ 왼쪽에서 시나리오 선택 후 Run 버튼 클릭
+        </p>
+      </div>
+
+      <h3>3-tier Judge 흐름</h3>
+      <div class="tier-flow" id="tierFlow">
+        <div class="tier-node" id="tierEmb">
+          <div class="label">Tier 1</div>
+          <div class="name">임베딩</div>
+          <div class="detail">Qdrant similarity</div>
+        </div>
+        <span class="tier-arrow">→</span>
+        <div class="tier-node" id="tierRule">
+          <div class="label">Tier 2</div>
+          <div class="name">룰 매칭</div>
+          <div class="detail">expected_keywords</div>
+        </div>
+        <span class="tier-arrow">→</span>
+        <div class="tier-node" id="tierVision">
+          <div class="label">Tier 3</div>
+          <div class="name">Vision 재질의</div>
+          <div class="detail">yes/no 판정</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ JUDGE RESULT ════════════════════ -->
+<section class="view" data-view="judge">
+  <h2>Judge Result — 상세</h2>
+  <p>최근 실행 1건의 verdict + 3-tier 판정 근거 + evidence 번들 (mock).</p>
+
+  <div class="verdict-card">
+    <div class="verdict-row">
+      <div class="verdict-icon verdict-normal">✓</div>
+      <div class="verdict-info">
+        <div class="vh">verdict: normal · tier: rule</div>
+        <div class="vd"><span class="mono">ott_netflix_launch</span> · firmware
+          <span class="mono">v1.2.3</span> · confidence <span class="mono">0.78</span></div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <div style="color:var(--ok); font-weight:700">PASS</div>
+        <div style="color:var(--dim); font-size:11px">4,820ms / 5000ms SLA</div>
+      </div>
+    </div>
+
+    <div class="judge-detail">
+      <div class="judge-tier">
+        <h5>Tier 1 · 임베딩 (회색 지대)</h5>
+        <div class="row"><b>best_score:</b></div>
+        <div class="val" style="margin-top:4px">0.912</div>
+        <div style="font-size:11px; color:var(--muted); margin-top:8px">
+          HARD_NORMAL 0.96 미만, HARD_ANOMALY 0.85 초과 → 회색 지대 진입
+        </div>
+      </div>
+      <div class="judge-tier">
+        <h5>Tier 2 · 룰 매칭 (통과 ✓)</h5>
+        <div style="font-size:11px; color:var(--muted); margin-bottom:6px">
+          매칭 키워드 (description ↔ expected_keywords)
+        </div>
+        <div class="val">["Netflix", "My List"]</div>
+        <div style="font-size:11px; color:var(--ok); margin-top:8px">
+          2/3 키워드 hit (hit_ratio 0.67) → normal 결정
+        </div>
+      </div>
+      <div class="judge-tier skipped">
+        <h5>Tier 3 · Vision (skip)</h5>
+        <div style="font-size:11px; color:var(--muted)">
+          룰 tier에서 normal 결판 → vision 재질의 안 함
+        </div>
+        <div style="margin-top:8px; color:var(--dim); font-size:11px">
+          호출 비용 절약: $0.0042 (claude-sonnet-4-6 기준)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:24px">Vision Describe Output</h3>
+  <div class="card">
+    <div class="mono" style="white-space: pre-wrap; color:var(--muted); line-height:1.7">"화면에 <b style="color:var(--accent)">Netflix</b> 로고와 함께 상단 메뉴(홈, 시리즈, 영화, <b style="color:var(--accent)">My List</b>)가 표시되고 있다. 중앙에는 'OO 시리즈'의 추천 콘텐츠 thumbnail이 크게 노출되어 있다. 하단에는 사용자 프로필 아이콘이 보인다."</div>
+  </div>
+
+  <h3 style="margin-top:24px">Evidence Bundle</h3>
+  <div class="card" style="padding:0">
+    <div class="evidence-file">
+      <span class="ico">📁</span>
+      <span class="name">2026-05-26T15:42_ott_netflix_launch_normal/</span>
+      <span class="size">디렉토리</span>
+    </div>
+    <div class="evidence-file">
+      <span class="ico">📄</span>
+      <span class="name">└── scenario.json</span>
+      <span class="size">1.2 KB</span>
+    </div>
+    <div class="evidence-file">
+      <span class="ico">🖼</span>
+      <span class="name">└── capture/seed-1.png</span>
+      <span class="size">142 KB</span>
+    </div>
+    <div class="evidence-file">
+      <span class="ico">📡</span>
+      <span class="name">└── ir/sent.jsonl</span>
+      <span class="size">412 B</span>
+    </div>
+    <div class="evidence-file">
+      <span class="ico">📜</span>
+      <span class="name">└── uart/console.log</span>
+      <span class="size">8.7 KB</span>
+    </div>
+    <div class="evidence-file">
+      <span class="ico">⚡</span>
+      <span class="name">└── mcp/timeline.jsonl</span>
+      <span class="size">2.4 KB</span>
+    </div>
+    <div class="evidence-file">
+      <span class="ico">📝</span>
+      <span class="name">└── README.md</span>
+      <span class="size">512 B</span>
+    </div>
+  </div>
+
+  <div style="margin-top:16px; display:flex; gap:8px">
+    <button onclick="alert('python -m tools.evidence.viewer export <prefix>')"
+      style="padding:8px 14px; background:var(--accent); color:var(--bg); border:none; border-radius:6px; cursor:pointer; font-weight:600">
+      ⬇ Download zip
+    </button>
+    <button onclick="alert('JIRA STBQA-1234 자동 생성 + Slack 알림')"
+      style="padding:8px 14px; background:var(--panel2); color:var(--fg); border:1px solid var(--border); border-radius:6px; cursor:pointer">
+      🔗 JIRA 등록 (STBQA-1234)
+    </button>
+  </div>
+</section>
+
+<!-- ════════════════════ VISION BENCH ════════════════════ -->
+<section class="view" data-view="bench">
+  <h2>Vision Provider 비교 벤치</h2>
+  <p>골든셋 100장 기준 4 provider 비교 (mock). <span class="mono">tools/vision_bench/cli.py</span> 실제 출력 시뮬레이션.</p>
+
+  <div class="card">
+    <div class="card-h">
+      <h4>Objective:
+        <select id="benchObj" onchange="renderBench()"
+          style="background:var(--bg); color:var(--accent); border:1px solid var(--border); padding:4px 8px; border-radius:4px; font-weight:600">
+          <option value="accuracy-first">accuracy-first</option>
+          <option value="cost-first">cost-first</option>
+          <option value="latency-first">latency-first</option>
+        </select>
+      </h4>
+      <span class="sub">100 골든셋 × 4 provider = 400 호출</span>
+    </div>
+
+    <table class="bench-table" id="benchTable"></table>
+
+    <div id="benchRec" style="margin-top:16px; padding:14px; background:var(--panel2); border-radius:6px; border-left: 3px solid var(--ok)"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h4 style="margin:0 0 10px">Production 전환 명령</h4>
+    <div class="mono" style="background:var(--bg); padding:10px; border-radius:4px; color:var(--accent)" id="benchCmd"></div>
+    <p style="margin-top:10px">→ <span class="mono">docker compose up -d --build embedding-mcp</span> 으로 재배포.
+      기본값 <span class="mono">VISION_PROVIDER=ollama</span>는 backward compat 유지.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  STB AI 테스트 자동화 데모 · 2026-05-26 · GitHub <span class="mono">nuna20230424-ship-it/stb-ai-tc-automation</span><br>
+  모든 데이터는 mock — 실 STB 캡처 + 골든셋 라벨링 도착 시 실제 값으로 자동 갱신
+</footer>
+
+<script>
+// ─────────────────── 카탈로그 데이터 (실 카탈로그에서 추출) ───────────────────
+const CATALOG = [{"id":"epg_open_7day","category":"EPG","priority":"P1","expected":"7일치 편성표 그리드 표시","sla_ms":2000,"tags":["category:epg","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["편성표","EPG","7일"],"change_signals":["epg-engine","channel-list","tuner"],"preconditions":["live_tv"],"steps_summary":"ir(EPG) → wait(2.0) → capture(2)"},{"id":"epg_next_day","category":"EPG","priority":"P1","expected":"다음 날 편성표로 이동","sla_ms":1500,"tags":["category:epg","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["편성표"],"change_signals":["epg-engine","channel-list","tuner"],"preconditions":["epg_open"],"steps_summary":"ir(RIGHT) → wait(1.0) → capture(2)"},{"id":"ott_netflix_launch","category":"OTT","priority":"P1","expected":"Netflix 홈 화면 (My List 또는 추천 표시)","sla_ms":5000,"tags":["category:ott","mcp:capture","mcp:ir","mcp:voice"],"risk_weight":4,"expected_keywords":["Netflix","My List","추천"],"change_signals":["ott-launcher","app-runtime","networking"],"preconditions":["home_screen","netflix_logged_in"],"steps_summary":"ir(HOME) → wait(1.0) → voice(넷플릭스 실행해줘) → capture(3)"},{"id":"ott_tving_launch","category":"OTT","priority":"P1","expected":"Tving 홈 화면","sla_ms":5000,"tags":["category:ott","mcp:capture","mcp:voice"],"risk_weight":4,"expected_keywords":["Tving","홈"],"change_signals":["ott-launcher","app-runtime","networking"],"preconditions":["home_screen","tving_logged_in"],"steps_summary":"voice(티빙 실행해줘) → capture(3)"},{"id":"drm_widevine_l1","category":"DRM","priority":"P1","expected":"정상 4K 영상 재생 (HDCP 인증 통과)","sla_ms":8000,"tags":["category:drm","mcp:capture","mcp:navigate"],"risk_weight":4,"expected_keywords":["4K","HDR"],"change_signals":["drm-cdm","video-pipeline","hdcp"],"preconditions":["netflix_logged_in"],"steps_summary":"navigate() → wait(8.0) → capture(3)"},{"id":"drm_playready_iptv","category":"DRM","priority":"P1","expected":"IPTV 채널 정상 재생 (PlayReady 인증)","sla_ms":4000,"tags":["category:drm","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["IPTV"],"change_signals":["drm-cdm","video-pipeline","hdcp"],"preconditions":["live_tv"],"steps_summary":"ir(CH_1) → wait(3.0) → capture(3)"},{"id":"trickplay_pause_resume","category":"TrickPlay","priority":"P1","expected":"일시정지 후 재생 정상 재개","sla_ms":1000,"tags":["category:trickplay","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["재생","Play"],"change_signals":["video-pipeline","media-stack"],"preconditions":["playback_active"],"steps_summary":"ir(PAUSE) → wait(2.0) → capture(1) → ir(PLAY) → wait(1.0) → capture(1)"},{"id":"trickplay_ff_2x","category":"TrickPlay","priority":"P1","expected":"2배속 빨리감기 OSD 표시","sla_ms":800,"tags":["category:trickplay","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["2배속"],"change_signals":["video-pipeline","media-stack"],"preconditions":["playback_active"],"steps_summary":"ir(FF) → wait(1.0) → capture(2)"},{"id":"search_voice_actor","category":"Search","priority":"P1","expected":"송강호 출연작 검색 결과 목록 표시","sla_ms":4000,"tags":["category:search","mcp:capture","mcp:voice"],"risk_weight":4,"expected_keywords":["검색","결과"],"change_signals":["voice-asr","search-engine"],"preconditions":["home_screen"],"steps_summary":"voice(송강호 검색) → wait(3.0) → capture(2)"},{"id":"search_voice_title","category":"Search","priority":"P1","expected":"콘텐츠 제목 검색 결과 (기생충) 표시","sla_ms":4000,"tags":["category:search","mcp:capture","mcp:voice"],"risk_weight":4,"expected_keywords":["기생충","검색"],"change_signals":["voice-asr","search-engine"],"preconditions":["home_screen"],"steps_summary":"voice(기생충 검색) → wait(3.0) → capture(2)"},{"id":"recording_schedule_single","category":"Recording","priority":"P1","expected":"1회 예약 완료 다이얼로그 + 예약 아이콘 표시","sla_ms":3000,"tags":["category:recording","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["예약","녹화"],"change_signals":["pvr-storage","scheduler"],"preconditions":["epg_open"],"steps_summary":"ir(RIGHT) → ir(OK) → wait(1.0) → ir(RED) → wait(1.0) → ir(OK) → wait(1.0) → capture(2)"},{"id":"recording_schedule_series","category":"Recording","priority":"P1","expected":"시리즈 예약 옵션 선택 후 매 회차 자동 예약 표시","sla_ms":3000,"tags":["category:recording","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["시리즈","예약"],"change_signals":["pvr-storage","scheduler"],"preconditions":["epg_open"],"steps_summary":"ir(OK) → wait(1.0) → ir(RED) → wait(1.0) → ir(DOWN) → ir(OK) → wait(1.0) → capture(2)"},{"id":"parental_pin_prompt","category":"Parental","priority":"P1","expected":"성인 콘텐츠 접근 시 PIN 입력 다이얼로그 표시","sla_ms":3500,"tags":["category:parental","mcp:capture","mcp:voice"],"risk_weight":4,"expected_keywords":["PIN"],"change_signals":["parental-control","settings-ui"],"preconditions":["live_tv"],"steps_summary":"voice(성인 채널로 이동) → wait(3.0) → capture(2)"},{"id":"parental_pin_correct","category":"Parental","priority":"P1","expected":"정상 PIN 입력 후 채널 진입 (영상 표시)","sla_ms":5000,"tags":["category:parental","mcp:capture","mcp:ir","mcp:voice"],"risk_weight":4,"expected_keywords":["PIN","채널"],"change_signals":["parental-control","settings-ui"],"preconditions":["live_tv"],"steps_summary":"voice(성인 채널로 이동) → wait(2.0) → ir(0) → wait(2.0) → capture(2)"},{"id":"settings_open_menu","category":"Settings","priority":"P1","expected":"설정 메뉴 진입 (카테고리 목록 표시)","sla_ms":2000,"tags":["category:settings","mcp:capture","mcp:ir"],"risk_weight":4,"expected_keywords":["설정"],"change_signals":["settings-ui","system-config"],"preconditions":["home_screen"],"steps_summary":"ir(SETTINGS) → wait(2.0) → capture(2)"},{"id":"settings_change_language","category":"Settings","priority":"P1","expected":"언어가 변경되어 메뉴 텍스트 갱신","sla_ms":4000,"tags":["category:settings","mcp:capture","mcp:ir","mcp:voice"],"risk_weight":4,"expected_keywords":["언어"],"change_signals":["settings-ui","system-config"],"preconditions":["settings_open"],"steps_summary":"voice(언어 설정) → wait(2.0) → ir(DOWN) → ir(OK) → wait(2.0) → capture(2)"}];
+
+// ─────────────────── Tab switching ───────────────────
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const v = t.dataset.view;
+    document.querySelector(`.view[data-view="${v}"]`).classList.add('active');
+    if (v === 'dashboard') renderDashboard();
+    if (v === 'catalog') renderCatalog();
+    if (v === 'bench') renderBench();
+  });
+});
+
+// ─────────────────── Dashboard charts ───────────────────
+const TIER_COLORS = { embedding: '#22c55e', rule: '#facc15', vision: '#f97316',
+  'rule-fallthrough': '#ef4444', no_baseline: '#a78bfa' };
+
+function renderDashboard() {
+  // Tier 도넛
+  const tierData = [
+    { tier: 'embedding', count: 1820 },
+    { tier: 'rule', count: 124 },
+    { tier: 'vision', count: 56 },
+    { tier: 'rule-fallthrough', count: 10 },
+    { tier: 'no_baseline', count: 174 },
+  ];
+  const total = tierData.reduce((s, d) => s + d.count, 0);
+  const cx = 110, cy = 110, r = 75, ir = 45;
+  let acc = 0;
+  let donut = '';
+  tierData.forEach(d => {
+    const a1 = (acc / total) * 2 * Math.PI - Math.PI / 2;
+    const a2 = ((acc + d.count) / total) * 2 * Math.PI - Math.PI / 2;
+    const large = a2 - a1 > Math.PI ? 1 : 0;
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    const xi1 = cx + ir * Math.cos(a1), yi1 = cy + ir * Math.sin(a1);
+    const xi2 = cx + ir * Math.cos(a2), yi2 = cy + ir * Math.sin(a2);
+    donut += `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${ir} ${ir} 0 ${large} 0 ${xi1} ${yi1} Z" fill="${TIER_COLORS[d.tier]}" opacity="0.85"/>`;
+    acc += d.count;
+  });
+  // legend
+  let legend = '';
+  tierData.forEach((d, i) => {
+    const y = 30 + i * 22;
+    legend += `<rect x="220" y="${y-8}" width="12" height="12" fill="${TIER_COLORS[d.tier]}"/>`;
+    legend += `<text x="240" y="${y+2}" fill="#e2e8f0">${d.tier}</text>`;
+    legend += `<text x="240" y="${y+14}" fill="#94a3b8" font-size="9">${d.count} (${(d.count/total*100).toFixed(1)}%)</text>`;
+  });
+  document.getElementById('tierPie').innerHTML = donut + legend;
+
+  // 회색 지대 추이 (24시간, 1h 간격)
+  const points = Array.from({length: 24}, (_, i) => ({
+    h: i, ratio: 0.05 + Math.random() * 0.10 + (i > 18 ? 0.05 : 0)
+  }));
+  const w = 480, hgt = 220, pad = 30;
+  let line = `<line x1="${pad}" y1="${hgt-pad}" x2="${w-10}" y2="${hgt-pad}" class="grid-line"/>`;
+  // 0.10 threshold line
+  const threshY = hgt - pad - (0.10 / 0.25) * (hgt - 2 * pad);
+  line += `<line x1="${pad}" y1="${threshY}" x2="${w-10}" y2="${threshY}" stroke="#facc15" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>`;
+  line += `<text x="${w-90}" y="${threshY-4}" fill="#facc15">target &lt; 10%</text>`;
+  // 0.25 threshold line
+  const threshY2 = hgt - pad - (0.25 / 0.25) * (hgt - 2 * pad);
+  line += `<line x1="${pad}" y1="${threshY2+pad}" x2="${w-10}" y2="${threshY2+pad}" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>`;
+  // path
+  const pts = points.map((p, i) => {
+    const x = pad + (i / 23) * (w - pad - 10);
+    const y = hgt - pad - (p.ratio / 0.25) * (hgt - 2 * pad);
+    return `${x},${y}`;
+  }).join(' ');
+  line += `<polyline points="${pts}" fill="none" stroke="#38bdf8" stroke-width="2"/>`;
+  // fill area
+  const areaPts = pts + ` ${w-10},${hgt-pad} ${pad},${hgt-pad}`;
+  line += `<polygon points="${areaPts}" fill="#38bdf8" opacity="0.15"/>`;
+  // y-axis labels
+  for (let v = 0; v <= 0.25; v += 0.05) {
+    const y = hgt - pad - (v / 0.25) * (hgt - 2 * pad);
+    line += `<text x="6" y="${y+3}">${(v*100).toFixed(0)}%</text>`;
+  }
+  // x-axis labels
+  [0, 6, 12, 18, 23].forEach(i => {
+    const x = pad + (i / 23) * (w - pad - 10);
+    line += `<text x="${x-8}" y="${hgt-10}">${i}h</text>`;
+  });
+  document.getElementById('grayTrend').innerHTML = line;
+
+  // 카테고리별 confidence (가로 막대)
+  const catData = [
+    { cat: 'EPG', conf: 0.94 },
+    { cat: 'OTT', conf: 0.82 },
+    { cat: 'DRM', conf: 0.88 },
+    { cat: 'TrickPlay', conf: 0.91 },
+    { cat: 'Search', conf: 0.76 },
+    { cat: 'Recording', conf: 0.86 },
+    { cat: 'Parental', conf: 0.71 },
+    { cat: 'Settings', conf: 0.89 },
+  ];
+  const cw = 640, ch = 280, cpad = 90;
+  let bars = '';
+  catData.forEach((d, i) => {
+    const y = 15 + i * 30;
+    const bw = (d.conf) * (cw - cpad - 80);
+    const color = d.conf >= 0.85 ? '#22c55e' : d.conf >= 0.70 ? '#facc15' : '#ef4444';
+    bars += `<text x="${cpad - 8}" y="${y+12}" text-anchor="end" fill="#e2e8f0" font-size="11">${d.cat}</text>`;
+    bars += `<rect x="${cpad}" y="${y}" width="${cw-cpad-80}" height="18" fill="#0f172a" rx="4"/>`;
+    bars += `<rect x="${cpad}" y="${y}" width="${bw}" height="18" fill="${color}" opacity="0.85" rx="4"/>`;
+    bars += `<text x="${cpad + bw + 8}" y="${y+12}" fill="#e2e8f0" font-size="11">${d.conf.toFixed(3)}</text>`;
+  });
+  // threshold lines
+  [0.70, 0.85].forEach(t => {
+    const x = cpad + t * (cw - cpad - 80);
+    bars += `<line x1="${x}" y1="10" x2="${x}" y2="${15+catData.length*30-15}" stroke="#475569" stroke-width="1" stroke-dasharray="2 4"/>`;
+    bars += `<text x="${x-12}" y="${15+catData.length*30}" fill="#64748b" font-size="9">${t.toFixed(2)}</text>`;
+  });
+  document.getElementById('catConf').innerHTML = bars;
+}
+
+// ─────────────────── Catalog ───────────────────
+let catFilter = 'all';
+let selectedScenarioId = null;
+
+function renderCatalog() {
+  const cats = ['all', ...new Set(CATALOG.map(s => s.category))];
+  document.getElementById('catFilter').innerHTML = cats.map(c =>
+    `<div class="chip ${c === catFilter ? 'active' : ''}" onclick="setCatFilter('${c}')">${c === 'all' ? `전체 (${CATALOG.length})` : c}</div>`
+  ).join('');
+
+  const visible = CATALOG.filter(s => catFilter === 'all' || s.category === catFilter);
+  document.getElementById('scenarioGrid').innerHTML = visible.map(s => `
+    <div class="scenario ${s.id === selectedScenarioId ? 'selected' : ''}" onclick="selectScenario('${s.id}')">
+      <div class="top">
+        <span class="id">${s.id}</span>
+        <span class="meta">
+          <span class="pill category">${s.category}</span>
+          <span class="pill priority-${s.priority}">${s.priority}</span>
+        </span>
+      </div>
+      <div class="expected">${s.expected}</div>
+      <div class="tags">
+        ${s.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  if (selectedScenarioId) {
+    const s = CATALOG.find(x => x.id === selectedScenarioId);
+    if (s) renderScenarioDetail(s);
+  }
+}
+
+function setCatFilter(c) {
+  catFilter = c;
+  renderCatalog();
+}
+
+function selectScenario(id) {
+  selectedScenarioId = id;
+  renderCatalog();
+  document.getElementById('scenarioDetail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderScenarioDetail(s) {
+  document.getElementById('scenarioDetail').style.display = 'block';
+  document.getElementById('scenarioDetail').innerHTML = `
+    <h3 style="margin-top:0">시나리오 상세 — <span class="mono" style="color:var(--accent)">${s.id}</span></h3>
+    <div class="row"><div class="k">expected</div><div class="v">${s.expected}</div></div>
+    <div class="row"><div class="k">expected_keywords (룰 tier)</div>
+      <div class="v">${s.expected_keywords.map(k => `<span class="tag" style="background:rgba(56,189,248,.15); color:var(--accent); border-color:var(--accent)">${k}</span>`).join(' ')}</div></div>
+    <div class="row"><div class="k">preconditions</div><div class="v mono">${s.preconditions.join(', ') || '—'}</div></div>
+    <div class="row"><div class="k">steps</div><div class="v mono">${s.steps_summary}</div></div>
+    <div class="row"><div class="k">sla_ms</div><div class="v mono">${s.sla_ms}</div></div>
+    <div class="row"><div class="k">risk_weight</div><div class="v mono">${s.risk_weight}</div></div>
+    <div class="row"><div class="k">change_signals (TIA)</div>
+      <div class="v">${s.change_signals.map(c => `<span class="tag">${c}</span>`).join(' ')}</div></div>
+  `;
+}
+
+// ─────────────────── Test Run simulation ───────────────────
+const SIMULATIONS = {
+  normal_embedding: {
+    scenario_id: 'epg_open_7day',
+    sla_ms: 2000,
+    steps: [
+      { type: 'precondition', name: 'apply live_tv', ms: 1200 },
+      { type: 'ir', name: 'IR send: EPG', ms: 150 },
+      { type: 'wait', name: 'wait 2.0s', ms: 2000 },
+      { type: 'capture', name: 'capture 2s', ms: 2000 },
+      { type: 'detect', name: 'detection-mcp /check/screen', ms: 850 },
+    ],
+    tierPath: ['emb-pass'],
+    verdict: { v: 'normal', tier: 'embedding', score: 0.974, conf: 0.974 },
+    total_elapsed: 6200,
+  },
+  anomaly_embedding: {
+    scenario_id: 'drm_widevine_l1',
+    sla_ms: 8000,
+    steps: [
+      { type: 'precondition', name: 'apply netflix_logged_in', ms: 3500 },
+      { type: 'navigate', name: 'navigate to 4K content', ms: 2000 },
+      { type: 'wait', name: 'wait 8.0s', ms: 8000 },
+      { type: 'capture', name: 'capture 3s', ms: 3000 },
+      { type: 'detect', name: 'detection-mcp /check/screen', ms: 920 },
+    ],
+    tierPath: ['emb-fail'],
+    verdict: { v: 'anomaly', tier: 'embedding', score: 0.812, conf: 0.188 },
+    total_elapsed: 17420,
+  },
+  gray_rule: {
+    scenario_id: 'ott_netflix_launch',
+    sla_ms: 5000,
+    steps: [
+      { type: 'precondition', name: 'apply netflix_logged_in', ms: 2200 },
+      { type: 'ir', name: 'IR send: HOME', ms: 150 },
+      { type: 'wait', name: 'wait 1.0s', ms: 1000 },
+      { type: 'voice', name: '"넷플릭스 실행해줘"', ms: 1800 },
+      { type: 'capture', name: 'capture 3s', ms: 3000 },
+      { type: 'detect', name: 'detection-mcp /check/screen', ms: 1100 },
+    ],
+    tierPath: ['emb-gray', 'rule-pass'],
+    verdict: { v: 'normal', tier: 'rule', score: 0.912, conf: 0.78 },
+    total_elapsed: 9250,
+  },
+  gray_vision: {
+    scenario_id: 'parental_pin_prompt',
+    sla_ms: 3500,
+    steps: [
+      { type: 'precondition', name: 'apply live_tv', ms: 1200 },
+      { type: 'voice', name: '"성인 채널로 이동"', ms: 2200 },
+      { type: 'wait', name: 'wait 3.0s', ms: 3000 },
+      { type: 'capture', name: 'capture 2s', ms: 2000 },
+      { type: 'detect', name: 'detection-mcp /check/screen', ms: 850 },
+      { type: 'detect', name: '└ vision 재질의 (회색지대)', ms: 1850 },
+    ],
+    tierPath: ['emb-gray', 'rule-fail', 'vision-pass'],
+    verdict: { v: 'normal', tier: 'vision', score: 0.887, conf: 0.6 },
+    total_elapsed: 11100,
+  },
+};
+
+function resetRun() {
+  document.getElementById('timeline').innerHTML = `
+    <p style="color:var(--dim); text-align:center; padding-top:80px">
+      ◀ 왼쪽에서 시나리오 선택 후 Run 버튼 클릭
+    </p>`;
+  ['tierEmb','tierRule','tierVision'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active', 'passed', 'failed');
+  });
+  document.getElementById('stepCount').textContent = '—';
+  document.getElementById('elapsed').textContent = '—';
+  document.getElementById('slaInfo').textContent = '—';
+}
+
+async function runSimulation() {
+  const key = document.getElementById('runSelect').value;
+  const sim = SIMULATIONS[key];
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  resetRun();
+
+  document.getElementById('stepCount').textContent = `${sim.steps.length} step`;
+  document.getElementById('slaInfo').textContent = `${sim.sla_ms} ms`;
+
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = sim.steps.map((s, i) =>
+    `<div class="step-item pending" id="st-${i}">
+      <span class="icon">${stepIcon(s.type)}</span>
+      <span class="body">${s.name}</span>
+      <span class="latency"></span>
+    </div>`
+  ).join('');
+
+  let cumulative = 0;
+  for (let i = 0; i < sim.steps.length; i++) {
+    const s = sim.steps[i];
+    const el = document.getElementById(`st-${i}`);
+    el.classList.remove('pending');
+    el.classList.add('running');
+    const speed = 6; // 6배속
+    await sleep(Math.min(s.ms / speed, 800));
+    cumulative += s.ms;
+    el.classList.remove('running');
+    el.classList.add('done');
+    el.querySelector('.latency').textContent = `${s.ms}ms`;
+    document.getElementById('elapsed').textContent = `${cumulative} ms`;
+  }
+
+  // tier path 시각화
+  await sleep(300);
+  for (const step of sim.tierPath) {
+    const [tier, status] = step.split('-');
+    const map = { emb: 'tierEmb', rule: 'tierRule', vision: 'tierVision' };
+    const el = document.getElementById(map[tier]);
+    el.classList.add('active');
+    await sleep(500);
+    el.classList.remove('active');
+    el.classList.add(status === 'pass' ? 'passed' : status === 'fail' ? 'failed' :
+                     status === 'gray' ? 'passed' : 'passed');
+  }
+
+  // 결과 banner
+  const v = sim.verdict;
+  const bannerColor = v.v === 'normal' ? 'var(--ok)' : 'var(--bad)';
+  const bannerBg = v.v === 'normal' ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
+  tl.insertAdjacentHTML('beforeend', `
+    <div style="margin-top:14px; padding:12px 16px; background:${bannerBg};
+                border-left: 3px solid ${bannerColor}; border-radius: 6px; font-size: 13px">
+      <b style="color:${bannerColor}">${v.v.toUpperCase()}</b>
+      · tier=<span class="mono">${v.tier}</span>
+      · score=<span class="mono">${v.score.toFixed(3)}</span>
+      · confidence=<span class="mono">${v.conf.toFixed(3)}</span>
+      ${v.v === 'anomaly' ? ' · <span style="color:var(--warn)">JIRA STBQA-1234 자동 등록</span>' : ''}
+    </div>
+  `);
+
+  btn.disabled = false;
+}
+
+function stepIcon(t) {
+  return ({ precondition: '⚙', ir: '📡', voice: '🎤', wait: '⏱',
+    capture: '📸', navigate: '🧭', detect: '🔍' })[t] || '•';
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─────────────────── Vision Bench ───────────────────
+const BENCH = [
+  { provider: 'anthropic', model: 'claude-sonnet-4-6',  acc: 0.94, p50: 1850, p95: 3200, cost: 0.00420, total: 0.4200 },
+  { provider: 'openai',    model: 'gpt-4o',             acc: 0.92, p50: 1400, p95: 2400, cost: 0.00310, total: 0.3100 },
+  { provider: 'anthropic', model: 'claude-haiku-4-5',   acc: 0.88, p50:  720, p95: 1200, cost: 0.00090, total: 0.0900 },
+  { provider: 'gemini',    model: 'gemini-2.5-flash',   acc: 0.88, p50:  980, p95: 1600, cost: 0.00012, total: 0.0120 },
+  { provider: 'openai',    model: 'gpt-4o-mini',        acc: 0.85, p50: 1100, p95: 1900, cost: 0.00050, total: 0.0500 },
+  { provider: 'ollama',    model: 'llava:latest',       acc: 0.78, p50: 4200, p95: 7100, cost: 0.00000, total: 0.0000 },
+];
+
+function renderBench() {
+  const obj = document.getElementById('benchObj').value;
+  const sorted = [...BENCH].sort((a, b) => {
+    if (obj === 'accuracy-first') return (b.acc - a.acc) || (a.cost - b.cost) || (a.p50 - b.p50);
+    if (obj === 'cost-first') return (a.cost - b.cost) || (b.acc - a.acc) || (a.p50 - b.p50);
+    if (obj === 'latency-first') return (a.p50 - b.p50) || (b.acc - a.acc) || (a.cost - b.cost);
+    return 0;
+  });
+  const maxLat = Math.max(...BENCH.map(b => b.p50));
+  const maxCost = Math.max(...BENCH.map(b => b.cost));
+
+  const rows = sorted.map((b, i) => {
+    const winner = i === 0;
+    const accColor = b.acc >= 0.90 ? 'var(--ok)' : b.acc >= 0.80 ? 'var(--warn)' : 'var(--bad)';
+    return `<tr class="${winner ? 'winner' : ''}">
+      <td>${winner ? '🏆 ' : ''}<span class="mono" style="color:var(--accent)">${b.provider}/${b.model}</span></td>
+      <td><div class="bar-cell">
+        <div class="bar-track"><div class="bar" style="width:${b.acc*100}%; background:${accColor}"></div></div>
+        <span style="color:${accColor}; font-weight:600">${(b.acc*100).toFixed(1)}%</span>
+      </div></td>
+      <td><div class="bar-cell">
+        <div class="bar-track"><div class="bar" style="width:${(b.p50/maxLat)*100}%; background:#818cf8"></div></div>
+        <span>${b.p50}ms</span>
+      </div></td>
+      <td><div class="bar-cell">
+        <div class="bar-track"><div class="bar" style="width:${(b.cost/maxCost)*100}%; background:#f97316"></div></div>
+        <span>$${b.cost.toFixed(5)}</span>
+      </div></td>
+      <td class="mono">$${b.total.toFixed(4)}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('benchTable').innerHTML = `
+    <thead><tr>
+      <th>Provider/Model</th><th>Accuracy</th><th>Latency p50</th><th>Cost/Call</th><th>Total (100건)</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  `;
+
+  const best = sorted[0];
+  document.getElementById('benchRec').innerHTML = `
+    <b style="color:var(--ok)">💡 권장</b> — <span class="mono" style="color:var(--accent)">${best.provider}/${best.model}</span>
+    · accuracy <b>${(best.acc*100).toFixed(1)}%</b> · p50 <b>${best.p50}ms</b>
+    · 호출당 <b>$${best.cost.toFixed(5)}</b> · 100건 총 <b>$${best.total.toFixed(4)}</b>
+  `;
+
+  const envName = best.provider === 'ollama' ? 'VISION_MODEL'
+    : best.provider === 'anthropic' ? 'ANTHROPIC_VISION_MODEL'
+    : best.provider === 'openai' ? 'OPENAI_VISION_MODEL'
+    : 'GEMINI_VISION_MODEL';
+  document.getElementById('benchCmd').textContent =
+    `export VISION_PROVIDER=${best.provider}\nexport ${envName}=${best.model}`;
+}
+
+// ─────────────────── Initial render ───────────────────
+renderDashboard();
+</script>
+</body>
+</html>
