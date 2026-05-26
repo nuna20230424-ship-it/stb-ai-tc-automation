@@ -2,6 +2,67 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 34) — Phase 2 종결: vision provider 벤치 + Tier 3 다변화
+
+detection-mcp Tier 3에서 사용할 vision 모델을 데이터 기반으로 선택하고
+production에서 swap 가능하도록 routing 도입. Phase 2 코드 측면 8/8 항목 close.
+
+### 🧪 `tools/vision_bench/` — 4 provider 비교 벤치
+- `providers.py`: 통합 인터페이스 `VisionResponse(description, latency, tokens, cost, ...)`
+  · `OllamaProvider` (LLaVA / Qwen-VL — 비용 0)
+  · `AnthropicProvider` (claude-sonnet-4-6 / opus-4-7 / haiku-4-5)
+  · `OpenAIProvider` (gpt-4o / gpt-4o-mini)
+  · `GeminiProvider` (gemini-2.5-flash / pro)
+  · SDK lazy import — 사용 provider만 로드
+  · 가격표(per 1M tokens) 하드코딩 — `compute_cost` 함수
+- `runner.py`: `run_bench` + `summarize` + `rank_summary` (accuracy-first / cost-first / latency-first)
+  · `parse_yes_no` — detection-mcp Tier 3와 동일 (첫 단어 y/예/맞 시작)
+- `cli.py`:
+  · 골든셋 + 카탈로그 expected 결합 → `BenchItem` 구성
+  · `--providers ollama,anthropic` / `--objective` / `--save-report`
+  · 출력: provider/model별 acc/err/p50/p95/$ 테이블 + 환경변수 export 명령
+
+### 🔀 embedding-mcp — `VISION_PROVIDER` 라우팅
+- `VISION_PROVIDER ∈ {"ollama"(기본) | "anthropic" | "openai" | "gemini"}`
+- `/vision/describe` provider dispatch — SDK lazy import
+- `/health`에 활성 provider/model 노출
+- backward compat: 기본 `ollama`로 기존 LLaVA 동작 유지
+- docker-compose.yml에 신규 env 노출:
+  · `VISION_PROVIDER` / `ANTHROPIC_VISION_MODEL` / `OPENAI_VISION_MODEL` / `GEMINI_VISION_MODEL`
+  · API 키 3종 (`ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY`)
+- `requirements.txt`에 `anthropic` / `openai` / `google-genai` 추가 (lazy import이므로 사용 안 하면 zero overhead)
+
+### 🧪 단위 테스트 (`tools/tests/test_vision_bench.py`, +32건)
+- `compute_cost` 선형성 + pricing table 완성도 (sonnet-4-6, opus-4-7, gpt-4o, gemini-2.5-flash)
+- `make_provider` factory + 키 없을 때 명확한 에러
+- `available_providers` env-key 게이팅 (ollama는 항상, 클라우드는 키 있을 때)
+- `parse_yes_no` 12종 엣지케이스 (한국어/영어/공백/잘못된 위치)
+- `run_bench` mock provider → correct / incorrect / error 분기
+- `summarize` accuracy / error_rate / latency p50 / cost 집계
+- `rank_summary` 3종 objective 정렬 + 알 수 없는 objective 거부
+- **전체 66/66 통과** (seed 11 + grafana 7 + golden 16 + vision 32)
+
+### 📚 docs/32-vision-bench.md
+- 4-provider 비교표 (강점/약점)
+- 아키텍처 다이어그램 (bench ↔ production 분리)
+- objective 비교 + 출력 예 + production 전환 절차
+- 가격표 (per 1M tokens, 100 호출 추정 비용 포함)
+- 후속 아이디어: 시나리오 우선순위별 하이브리드 라우팅 / 다중 provider 합의 / 로컬 vision FT
+
+### 🚩 Phase 2 최종 상태 (8/8 코드 완료)
+- [x] detection-mcp v2 3-tier judge (`63ff719`)
+- [x] Evidence 도구 (bundler + viewer)
+- [x] 카탈로그 `expected_keywords` 필드 (`219d993`)
+- [x] baseline_vector_id 자동 시드 (`998dd12`)
+- [x] Grafana judge-pipeline 대시보드 (`b46e6ce`)
+- [x] 골든셋 라벨링·튜닝·회귀 도구 (`a7ae78b`)
+- [x] **vision provider 벤치** (이번 커밋)
+- [x] **vision Tier 3 다변화 — embedding-mcp `VISION_PROVIDER`** (이번 커밋)
+- [ ] 자체 골든셋 100장 라벨링 ← 도구 준비됨, 실 STB 캡처 도착 시 즉시 가능
+- [ ] 임계 튜닝 ← 동일 (`tune_thresholds.py` 1줄)
+
+→ Phase 2 코드 측면 완전 종결. 남은 건 하드웨어 가동 + 데이터 수집.
+
 ## 2026-05-26 (업데이트 33) — Phase 2: 골든셋 라벨링 + 임계 튜닝 도구
 
 Phase 2 잔여의 하드웨어 블로커는 풀 수 없지만, 캡처가 도착하는 즉시

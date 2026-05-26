@@ -127,7 +127,15 @@ services:
       # 호스트 네이티브 Ollama 사용 (Metal/MLX 가속)
       - OLLAMA_URL=http://host.docker.internal:11434
       - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+      # Vision provider 다변화 — 기본 ollama (LLaVA). 벤치 후 anthropic/openai/gemini 전환.
+      - VISION_PROVIDER=${VISION_PROVIDER:-ollama}
       - VISION_MODEL=${VISION_MODEL:-llava:latest}
+      - ANTHROPIC_VISION_MODEL=${ANTHROPIC_VISION_MODEL:-claude-sonnet-4-6}
+      - OPENAI_VISION_MODEL=${OPENAI_VISION_MODEL:-gpt-4o}
+      - GEMINI_VISION_MODEL=${GEMINI_VISION_MODEL:-gemini-2.5-flash}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

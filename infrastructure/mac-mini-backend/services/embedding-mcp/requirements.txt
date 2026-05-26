@@ -2,3 +2,10 @@ fastapi==0.115.0
 uvicorn[standard]==0.32.0
 pydantic==2.9.0
 httpx==0.27.2
+
+# Vision provider 다변화 — Phase 2.
+# 기본 VISION_PROVIDER=ollama는 위 deps만으로 충분.
+# 클라우드 provider 전환 시 해당 SDK가 필요 (main.py는 lazy import).
+anthropic>=0.45
+openai>=1.50
+google-genai>=0.3
