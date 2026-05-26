@@ -7,10 +7,12 @@
 ```
 infrastructure/mac-mini-backend/grafana/provisioning/
 ├── datasources/
-│   └── influxdb.yml          ← InfluxDB Flux 자동 등록 (token은 .env 주입)
+│   └── influxdb.yml             ← InfluxDB Flux 자동 등록 (token은 .env 주입)
 └── dashboards/
-    ├── dashboards.yml        ← 폴더 자동 생성 + 파일 워치
-    └── stb-channel-zap.json  ← 본 대시보드 (UID: stb-channel-zap)
+    ├── dashboards.yml           ← 폴더 자동 생성 + 파일 워치
+    ├── stb-channel-zap.json     ← UID: stb-channel-zap (Sprint 1)
+    ├── stb-voice-bluetooth.json ← UID: stb-voice-bluetooth (Sprint 1)
+    └── stb-judge-pipeline.json  ← UID: stb-judge-pipeline (Phase 2, 본 문서 §7)
 ```
 
 `mac-mini-backend/docker-compose.yml`이 이미 `./grafana/provisioning:/etc/grafana/provisioning:ro`를 마운트하므로 `docker compose up -d`만으로 자동 로딩.
@@ -95,3 +97,45 @@ docker compose up -d --build grafana
 - **펌웨어 비교 뷰** — 같은 시나리오의 v1.2.3 vs v1.3.0 P95 비교
 - **PR별 자동 회귀 결과** — GitHub Actions에서 PR 라벨 → Grafana 변수
 - **MinIO 영상 직링크** — Recent Incidents 테이블에 evidence URL 컬럼 추가
+
+## 7. Judge Pipeline 대시보드 (Phase 2)
+
+> UID `stb-judge-pipeline`. detection-mcp v2의 3-tier judge 가시화.
+
+### 패널 구성 (3 행, 8 패널)
+
+```
+┌─────── Row 1: Tier 분포 — 3-tier judge 흐름 ───────────────────────────┐
+│  Tier Donut (전체 비중)     │   Tier Stacked Bar (시간대별 추이)        │
+├──────── Row 2: 회색 지대 — 임계 튜닝 신호 (target < 10%) ──────────────┤
+│  Gray Zone Gauge            │   Gray Zone Ratio 추이 (시계열)           │
+│  회색 지대 tier별 빈도 (barchart, rule/vision/fallthrough/no_baseline)    │
+├──────── Row 3: 카테고리별 Confidence ─────────────────────────────────┤
+│  평균 Confidence (barchart)  │  Confidence 추이 (timeseries, 카테고리별) │
+│  카테고리 × Tier 매트릭스 (table, color-background)                       │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### 핵심 패널 설명
+
+| 패널 | 데이터 | Threshold / 색상 | 의미 |
+|---|---|---|---|
+| **Tier Donut** | `catalog_runs` group by tier, count | embedding=green, rule=yellow, vision=orange, rule-fallthrough=red, no_baseline=purple | 1차에서 처리되는 비중이 클수록 건강 |
+| **Tier Stacked Bar** | aggregateWindow count by tier | 동일 색 매핑 | 펌웨어 릴리스 시점 비교에 유용 |
+| **Gray Zone Gauge** | (rule+vision+fallthrough+no_baseline) / total | 10% 경고 / 25% 위험 | docs/29 §7 임계 튜닝 신호 |
+| **Gray Zone 추이** | 동일 식 시계열 | 0.10/0.25 라인 | 회색 지대 trend |
+| **Gray Zone 분해** | 회색 지대 tier별 count | — | vision 빈도 → 비용 모니터링 |
+| **카테고리별 confidence** | `catalog_runs.confidence` group by category, mean | 0.70 yellow / 0.85 green | 낮으면 baseline 재시드/expected_keywords 보강 후보 |
+| **Confidence 추이** | 동일 식 시계열 | 동일 색 | 점진적 하락은 baseline stale 신호 |
+| **카테고리 × Tier 매트릭스** | group by [category, tier], mean → pivot | color-background | 어느 카테고리가 어느 tier로 새는지 |
+
+### 템플릿 변수
+- `$category` — multi (EPG/OTT/DRM/TrickPlay/Search/Recording/Parental/Settings)
+- `$priority` — multi (P1/P2/P3)
+- 어노테이션은 channel-zap과 동일하게 `jira_incidents`
+
+### 읽는 법 (Phase 2 운영 사이클)
+1. **출근하면 Gray Zone Gauge** 먼저 보고 10% 넘으면 임계(`THRESHOLD_HARD_NORMAL/HARD_ANOMALY`) 재튜닝 검토
+2. **vision 비중 증가** = LLaVA 호출 비용 증가 → 회색 지대 분해 패널에서 카테고리 식별
+3. **카테고리 × Tier 매트릭스 빨강 셀** = 그 카테고리의 expected_keywords/baseline 보강 후보
+4. **JIRA 어노테이션과 confidence 하락** 일치 = 실 결함; 어노테이션 없이 confidence만 하락 = baseline stale

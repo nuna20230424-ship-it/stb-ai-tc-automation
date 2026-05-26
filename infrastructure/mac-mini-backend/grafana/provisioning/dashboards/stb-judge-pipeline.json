@@ -1,0 +1,343 @@
+{
+  "uid": "stb-judge-pipeline",
+  "title": "STB QA — Judge Pipeline v2 (Phase 2)",
+  "tags": ["stb", "qa", "judge", "phase2"],
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "Asia/Seoul",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      {
+        "name": "category",
+        "label": "Category",
+        "type": "query",
+        "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"stb-metrics\", tag: \"category\", predicate: (r) => r._measurement == \"catalog_runs\")",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "current": {"selected": false, "text": "All", "value": "$__all"},
+        "sort": 1
+      },
+      {
+        "name": "priority",
+        "label": "Priority",
+        "type": "query",
+        "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"stb-metrics\", tag: \"priority\", predicate: (r) => r._measurement == \"catalog_runs\")",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "current": {"selected": false, "text": "All", "value": "$__all"},
+        "sort": 1
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "JIRA incidents",
+        "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+        "enable": true,
+        "iconColor": "red",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jira_incidents\" and r._field == \"created\")",
+        "titleField": "scenario",
+        "textField": "jira_key"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Tier 분포 — 3-tier judge 흐름 가시화",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 10,
+      "type": "piechart",
+      "title": "Tier 비중 (전체)",
+      "description": "embedding → rule → vision → rule-fallthrough → no_baseline. 1차에서 떨어질수록 위험.",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": true},
+        "pieType": "donut",
+        "displayLabels": ["percent", "name"],
+        "legend": {"showLegend": true, "placement": "right", "values": ["value", "percent"]}
+      },
+      "fieldConfig": {
+        "defaults": {"unit": "short", "decimals": 0},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "embedding"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "green"}}]},
+          {"matcher": {"id": "byName", "options": "rule"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "yellow"}}]},
+          {"matcher": {"id": "byName", "options": "vision"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "orange"}}]},
+          {"matcher": {"id": "byName", "options": "rule-fallthrough"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]},
+          {"matcher": {"id": "byName", "options": "no_baseline"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "purple"}}]}
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> group(columns: [\"tier\"])\n  |> count()\n  |> map(fn: (r) => ({_value: r._value, _field: r.tier}))"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Tier 추이 (시간대별 stacked)",
+      "description": "시점별 tier 분포 변화 — 펌웨어 업데이트 후 회색 지대 증가/감소 감지.",
+      "gridPos": {"h": 8, "w": 16, "x": 8, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "stacking": {"mode": "normal", "group": "tier"},
+            "lineInterpolation": "linear"
+          }
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "embedding"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "green"}}]},
+          {"matcher": {"id": "byName", "options": "rule"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "yellow"}}]},
+          {"matcher": {"id": "byName", "options": "vision"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "orange"}}]},
+          {"matcher": {"id": "byName", "options": "rule-fallthrough"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]},
+          {"matcher": {"id": "byName", "options": "no_baseline"},
+           "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "purple"}}]}
+        ]
+      },
+      "options": {"legend": {"showLegend": true, "placement": "right", "calcs": ["sum"]}, "tooltip": {"mode": "multi"}},
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> group(columns: [\"tier\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: count, createEmpty: false)\n  |> yield(name: \"tier_count\")"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "row",
+      "title": "회색 지대 — 임계 튜닝 신호 (target < 10%)",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 9},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 20,
+      "type": "gauge",
+      "title": "Gray Zone Ratio",
+      "description": "(rule + vision + rule-fallthrough + no_baseline) / total. 10% 넘으면 임계 재튜닝 신호 (docs/29 §7).",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 10},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "reduceOptions": {"calcs": ["lastNotNull"]}
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.10},
+              {"color": "red", "value": 0.25}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "gray = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> filter(fn: (r) => r.tier == \"rule\" or r.tier == \"vision\" or r.tier == \"rule-fallthrough\" or r.tier == \"no_baseline\")\n  |> group()\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\ntotal = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> group()\n  |> count()\n  |> findRecord(fn: (key) => true, idx: 0)\n\nimport \"array\"\narray.from(rows: [{_value: if total._value == 0 then 0.0 else float(v: gray._value) / float(v: total._value)}])"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Gray Zone Ratio 추이",
+      "description": "회색 지대 비율의 시간 추이. 펌웨어 릴리스 시점과 함께 보세요.",
+      "gridPos": {"h": 8, "w": 16, "x": 8, "y": 10},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "decimals": 2,
+          "custom": {"drawStyle": "line", "lineInterpolation": "smooth", "fillOpacity": 20, "showPoints": "auto"},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.10},
+              {"color": "red", "value": 0.25}
+            ]
+          }
+        }
+      },
+      "options": {"legend": {"showLegend": false}, "tooltip": {"mode": "single"}},
+      "targets": [
+        {
+          "refId": "A",
+          "query": "base = from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> group()\n\ngray = base\n  |> filter(fn: (r) => r.tier == \"rule\" or r.tier == \"vision\" or r.tier == \"rule-fallthrough\" or r.tier == \"no_baseline\")\n  |> aggregateWindow(every: v.windowPeriod, fn: count, createEmpty: true)\n  |> map(fn: (r) => ({_time: r._time, _value: if exists r._value then r._value else 0}))\n\ntotal = base\n  |> aggregateWindow(every: v.windowPeriod, fn: count, createEmpty: true)\n  |> map(fn: (r) => ({_time: r._time, _value: if exists r._value then r._value else 0}))\n\njoin(tables: {g: gray, t: total}, on: [\"_time\"])\n  |> map(fn: (r) => ({_time: r._time, _value: if r._value_t == 0 then 0.0 else float(v: r._value_g) / float(v: r._value_t), _field: \"gray_zone_ratio\"}))\n  |> yield(name: \"gray_zone_ratio\")"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "type": "barchart",
+      "title": "회색 지대 tier별 빈도",
+      "description": "rule / vision / rule-fallthrough / no_baseline 각 카운트. vision이 많으면 비용 모니터링 필요.",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 18},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "orientation": "horizontal",
+        "showValue": "always",
+        "legend": {"showLegend": false}
+      },
+      "fieldConfig": {
+        "defaults": {"unit": "short", "decimals": 0}
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> filter(fn: (r) => r.tier == \"rule\" or r.tier == \"vision\" or r.tier == \"rule-fallthrough\" or r.tier == \"no_baseline\")\n  |> group(columns: [\"tier\"])\n  |> count()"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "row",
+      "title": "Confidence — 카테고리별 판정 신뢰도",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 26},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 30,
+      "type": "barchart",
+      "title": "평균 Confidence (카테고리별)",
+      "description": "낮은 카테고리는 expected_keywords 보강 / 베이스라인 재시드 후보.",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 27},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {
+        "orientation": "horizontal",
+        "showValue": "always",
+        "legend": {"showLegend": false}
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "max": 1,
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 0.70},
+              {"color": "green", "value": 0.85}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> group(columns: [\"category\"])\n  |> mean()"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "type": "timeseries",
+      "title": "Confidence 추이 (카테고리별)",
+      "description": "0.85 위 green / 0.70~0.85 yellow / 미만 red. 점진적 하락은 베이스라인 stale 신호.",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 27},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "max": 1,
+          "decimals": 3,
+          "custom": {"drawStyle": "line", "lineInterpolation": "smooth", "fillOpacity": 5, "showPoints": "auto"},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 0.70},
+              {"color": "green", "value": 0.85}
+            ]
+          }
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "right", "calcs": ["mean", "min"]}, "tooltip": {"mode": "multi"}},
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> group(columns: [\"category\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"confidence\")"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "type": "table",
+      "title": "카테고리 × Tier 매트릭스 (mean confidence)",
+      "description": "어느 카테고리에서 어느 tier로 빠지는지 + 그때의 confidence. embedding 외 tier에 빈번하면 베이스라인 보강 후보.",
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 35},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"showHeader": true, "cellHeight": "sm"},
+      "fieldConfig": {
+        "defaults": {
+          "custom": {"align": "left", "displayMode": "color-background"},
+          "unit": "none",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 0.70},
+              {"color": "green", "value": 0.85}
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"catalog_runs\" and r._field == \"confidence\")\n  |> filter(fn: (r) => contains(value: r.category, set: ${category:json}))\n  |> filter(fn: (r) => contains(value: r.priority, set: ${priority:json}))\n  |> group(columns: [\"category\", \"tier\"])\n  |> mean()\n  |> group()\n  |> pivot(rowKey: [\"category\"], columnKey: [\"tier\"], valueColumn: \"_value\")"
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,38 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 32) — Phase 2: Grafana judge-pipeline 대시보드
+
+3-tier judge의 운영 가시성. catalog_runs measurement(`tier` tag + `confidence` field)를
+docs/29 §7에서 요구한 3개 패널 카테고리로 시각화 — 임계 튜닝 신호를 매일 한 눈에.
+
+### 📊 신규 대시보드 (`stb-judge-pipeline.json`, UID: stb-judge-pipeline)
+3 행 8 패널 구성:
+- **Tier 분포**: 도넛 + stacked timeseries (embedding/rule/vision/rule-fallthrough/no_baseline 색 분리)
+- **회색 지대**: gauge (target < 10%) + ratio 추이 + tier별 count
+- **카테고리별 confidence**: barchart 평균 + 추이 + 카테고리 × tier 매트릭스(pivot table, color-background)
+
+### 🎚 튜닝 임계값
+- gray zone ratio: 0.10 yellow / 0.25 red (docs/29 §7 권고)
+- confidence: 0.70 yellow / 0.85 green (낮으면 baseline 재시드/expected_keywords 보강 후보)
+
+### 🔍 템플릿 변수 + 어노테이션
+- `$category` (multi), `$priority` (multi) — 모든 패널에 자동 적용
+- JIRA incidents 어노테이션 (channel-zap과 동일)
+
+### 🧪 단위 테스트 (`tools/tests/test_grafana_dashboards.py`)
+- 모든 dashboard JSON의 well-formed + datasource/targets 보유 검증 (parametrize)
+- judge-pipeline 전용: 3개 패널 카테고리 포함 / catalog_runs 조회 / $category·$priority 필터
+- UID 유일성 검증
+- 7건 신규, 전체 18/18 통과
+
+### 📚 문서
+- docs/14-grafana-dashboards.md §7 신설 — 패널 표 + 운영 사이클 가이드 4단계
+- 자동 프로비저닝: dashboards.yml의 file watcher가 JSON 추가만으로 등록
+
+### 🚧 Phase 2 잔여
+- [ ] 골든셋 100장 라벨링 + 임계 튜닝 (실 STB 캡처 — 블로커)
+
 ## 2026-05-26 (업데이트 31) — Phase 2: baseline_vector_id 자동 시드
 
 판정 파이프라인의 1차(Qdrant) 베이스라인을 카탈로그와 동기화하는 마지막 미싱링크.
