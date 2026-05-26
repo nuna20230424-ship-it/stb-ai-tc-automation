@@ -7,5 +7,7 @@
 !.env.example
 !*.env.example
 __pycache__/
+*.bak
+drafts/
 *.pyc
 node_modules/

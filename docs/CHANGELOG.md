@@ -2,6 +2,41 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 28) — Phase 1 완료: 카탈로그 머지 + PR 템플릿
+
+### 🔀 tools/catalog/merge.py
+drafts/*.json → 메인 카탈로그 안전 append. Phase 1 워크플로 마지막 청크.
+- ID 충돌 처리 3 모드: `abort` (기본) / `skip` / `overwrite`
+- 자동 백업: `catalog.json.YYYY-MM-DD-HHMMSS.bak`
+- 머지 후 `infer_defaults` 적용 (tags / change_signals 자동 추론)
+- 4단계 검증: main / 각 draft / drafts 사이 ID 중복 / 머지 결과
+- 검증 4건 통과 (test1 신규 / test2 abort / test3 skip / test4 overwrite)
+
+### 📋 PR 템플릿
+`.github/PULL_REQUEST_TEMPLATE.md` 신설.
+- 변경 유형 분류 (시나리오 / precondition / 도구 / 보안)
+- 카탈로그 변경 시 강제 체크: schema validate / migrate / merge / preflight
+- QA SME 검토 체크리스트: ID 규칙 / KNOWN_PRECONDITIONS / 5종 action /
+  capture 강제 / 측정 가능 expected / sla 도메인 부합 / risk_weight / owner
+- Precondition 추가 시 4-파일 동기화 체크 (macros / fixtures / conftest / smoke test)
+
+### 🔒 .gitignore
+- `*.bak` (머지 도구 백업)
+- `drafts/` (LLM 출력은 로컬 검토용, 카탈로그 머지 후 추적 안 함)
+
+### 📚 docs/28-catalog-merge.md
+- 흐름 다이어그램 + 3 모드 비교 + 4단계 검증
+- End-to-end 워크플로 (importer → edge-gen → merge → validate → commit)
+- 후속: 카탈로그 정렬 도구 / CI 워크플로 / baseline_vector_id 시드 (Phase 2)
+
+### ✅ Phase 1 docs/23 체크 상태
+- [x] 카탈로그 v2 스키마 + pydantic + 36 마이그레이션 (커밋 4b9c559)
+- [x] 시나리오 작성 파이프라인 3종 (커밋 2154306)
+- [x] **카탈로그 머지 도구 + PR 템플릿** (이번 커밋)
+- [ ] 사내 보안 검토 후 실 Excel 첫 batch 변환 (외부 작업)
+
+→ Phase 1 코드 측면 완료. 다음은 Phase 2 (Judge 파이프라인 재설계).
+
 ## 2026-05-25 (업데이트 27) — Phase 1 두 번째 청크: 시나리오 작성 파이프라인 3종
 
 300~500 TC 스케일 전략 docs/23 Phase 1의 시나리오 작성 파이프라인 핵심 3종 신설.
