@@ -165,11 +165,21 @@ class EmbeddingClient(_Base):
 
 
 class DetectionClient(_Base):
-    def check_screen(self, scenario: str, image_path: str | Path, firmware: str | None = None) -> dict:
+    def check_screen(
+        self,
+        scenario: str,
+        image_path: str | Path,
+        firmware: str | None = None,
+        expected: str | None = None,                       # v2: 룰 매칭용
+        expected_keywords: list[str] | None = None,         # v2: 명시 키워드
+    ) -> dict:
         b64 = base64.b64encode(Path(image_path).read_bytes()).decode()
-        r = self.client.post("/check/screen", json={
-            "scenario": scenario, "image_base64": b64, "firmware": firmware,
-        }, timeout=240)
+        payload = {"scenario": scenario, "image_base64": b64, "firmware": firmware}
+        if expected is not None:
+            payload["expected"] = expected
+        if expected_keywords is not None:
+            payload["expected_keywords"] = expected_keywords
+        r = self.client.post("/check/screen", json=payload, timeout=240)
         r.raise_for_status()
         return r.json()
 

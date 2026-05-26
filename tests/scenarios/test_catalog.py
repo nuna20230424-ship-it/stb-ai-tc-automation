@@ -12,11 +12,19 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import sys
+
 import pytest
 from influxdb_client import Point, WritePrecision
 
 from preconditions.fixtures import apply_preconditions
 from utils import extract_middle_frame
+
+# Phase 2: evidence-bundler 통합 — 실패/회색 지대 시 자동 패키지
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+from tools.evidence.bundler import EvidenceBundler  # noqa: E402
 
 CATALOG_PATH = (
     Path(__file__).resolve().parents[2]
@@ -37,18 +45,20 @@ def _ids(scenarios: list[dict]) -> list[str]:
     return [s["id"] for s in scenarios]
 
 
-def _exec_step(step: dict, gateway, env) -> Path | None:
-    """단일 step 실행. action별 분기. 마지막 capture는 frame 경로 반환."""
+def _exec_step(step: dict, gateway, env, bundler: EvidenceBundler) -> Path | None:
+    """단일 step 실행. evidence-bundler에 자료 누적."""
     action = step["action"]
     repeat = step.get("repeat", 1)
 
     if action == "ir":
+        bundler.record_ir(step["key"], repeat)
         for _ in range(repeat):
             gateway.ir.send(env["ir_codeset"], step["key"])
             time.sleep(0.15)
         return None
 
     if action == "voice":
+        bundler.record_voice(step["utterance"])
         gateway.voice.speak(step["utterance"])
         return None
 
@@ -59,7 +69,9 @@ def _exec_step(step: dict, gateway, env) -> Path | None:
     if action == "capture":
         label = step.get("label", "step")
         cap = gateway.capture.capture("dut", duration_sec=step.get("duration", 2), label=label)
-        return extract_middle_frame(Path(cap["path"]))
+        frame = extract_middle_frame(Path(cap["path"]))
+        bundler.record_capture(frame)
+        return frame
 
     if action == "navigate":
         # PoC: 자연어 navigate는 운영자 안내 또는 사전 정의 매크로 (Sprint 2 확장)
@@ -71,43 +83,75 @@ def _exec_step(step: dict, gateway, env) -> Path | None:
 
 
 def _run_scenario(scenario: dict, gateway, backend, metrics, env, request):
-    """카탈로그 시나리오 1건 실행 → preconditions 자동 도달 → 마지막 capture 프레임 검증."""
+    """카탈로그 시나리오 1건 실행 → preconditions 자동 도달 → 마지막 capture 프레임 검증.
+
+    Phase 2: detection-mcp에 expected 전달 (룰 tier 입력) + 실패/회색 지대 시 evidence 번들.
+    """
     scenario_id = scenario["id"]
     last_frame: Path | None = None
 
     # Sprint 2: preconditions 자동 적용 (fixture 동적 dispatch)
     apply_preconditions(request, scenario.get("preconditions", []))
 
+    # Phase 2: evidence-bundler 시작
+    bundler = EvidenceBundler(
+        scenario_id=scenario_id,
+        verdict="running",   # 종료 시 갱신
+        firmware=env["firmware"],
+        expected=scenario.get("expected"),
+        sla_ms=scenario.get("sla_ms"),
+    )
+
     t0 = time.monotonic()
     for step in scenario["steps"]:
-        result = _exec_step(step, gateway, env)
+        result = _exec_step(step, gateway, env, bundler)
         if isinstance(result, Path):
             last_frame = result
 
     elapsed_ms = int((time.monotonic() - t0) * 1000)
+    bundler.elapsed_ms = elapsed_ms
 
     if last_frame is None:
+        bundler.verdict = "error"
+        bundler.write()
         pytest.fail(f"{scenario_id}: capture step이 없어 검증 불가")
 
+    bundler.record_mcp_call("detection-mcp", "check/screen",
+                            scenario=scenario_id, firmware=env["firmware"])
     verdict = backend.detection.check_screen(
         scenario=scenario_id,
         image_path=last_frame,
         firmware=env["firmware"],
+        expected=scenario.get("expected"),   # Phase 2 v2: 룰 tier 입력
     )
+    bundler.detection_result = verdict
+    bundler.verdict = verdict["verdict"]
     metrics.detection_result(scenario_id, verdict["best_score"], verdict["verdict"])
 
-    # catalog_runs measurement 기록
+    # catalog_runs measurement 기록 (tier 추가 — Phase 2)
     point = (Point("catalog_runs")
              .tag("scenario", scenario_id)
              .tag("category", scenario["category"])
              .tag("priority", scenario["priority"])
              .tag("verdict", verdict["verdict"])
+             .tag("tier", verdict.get("tier", "embedding"))
              .field("elapsed_ms", elapsed_ms)
              .field("score", float(verdict["best_score"]))
+             .field("confidence", float(verdict.get("confidence", verdict["best_score"])))
              .time(datetime.utcnow(), WritePrecision.NS))
     metrics.write_api.write(bucket=metrics.bucket, org=metrics.org, record=point)
 
-    # 이상 시 JIRA 등록
+    # Phase 2: anomaly OR 회색 지대(tier=rule|vision) 모두 evidence 번들
+    needs_evidence = (
+        verdict["verdict"] == "anomaly"
+        or verdict.get("tier") in ("rule", "vision", "rule-fallthrough")
+    )
+    if needs_evidence:
+        evidence_dir = bundler.write()
+    else:
+        evidence_dir = None
+
+    # 이상 시 JIRA 등록 + evidence URL 포함
     if verdict["verdict"] == "anomaly":
         backend.report.create_incident(
             scenario=scenario_id,
@@ -116,9 +160,12 @@ def _run_scenario(scenario: dict, gateway, backend, metrics, env, request):
             description=(
                 f"기대 화면: {scenario['expected']}\n"
                 f"실행 시간: {elapsed_ms}ms (SLA {scenario['sla_ms']}ms)\n"
+                f"판정 tier: {verdict.get('tier', 'embedding')} / "
+                f"confidence: {verdict.get('confidence', 'n/a')}\n"
+                f"Evidence: {evidence_dir.name if evidence_dir else 'n/a'}\n"
                 f"Vision 묘사: {verdict.get('description', 'N/A')}\n"
             ),
-            evidence_url=str(last_frame),
+            evidence_url=str(evidence_dir or last_frame),
         )
         pytest.fail(f"{scenario_id} anomaly: {verdict}")
 

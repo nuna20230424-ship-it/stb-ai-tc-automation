@@ -2,6 +2,49 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 29) — Phase 2 시작 + 오류 로그 추출 도구
+
+### 🧠 detection-mcp v2 — 3-tier judge 파이프라인
+docs/29-judge-pipeline-v2.md.
+- 임베딩 1차 (HARD_NORMAL 0.96 / HARD_ANOMALY 0.85 / 사이는 회색)
+- 룰 2차 (description ↔ expected 키워드 매칭, 한/영/숫자 토큰 추출)
+- vision 3차 (회색 지대 최종 — "expected와 부합?" yes/no 재질의)
+- 응답에 `tier` / `confidence` / `rule_match` / `vision_verdict` 추가
+- 환경변수: THRESHOLD_HARD_NORMAL / HARD_ANOMALY / RULE_MIN_KEYWORD_HITS / VISION_TIER_ENABLED
+- LLaVA를 "1차 오라클"에서 "회색 지대 보조 검증기"로 강등
+  (docs/23 Phase 2 권고 반영, Witbe Agentic SDK / Netflix RMSE dual-mode 패턴)
+
+### 📦 Evidence Tooling — 오류 로그 추출 메뉴
+docs/30-evidence-tooling.md.
+- tools/evidence/bundler.py — 시나리오 실패/회색 지대 시 디버깅 패키지 자동 생성
+  * scenario.json + capture/ + ir/ + uart/ + mcp/timeline.jsonl + README.md
+  * 디렉토리명: <ISO timestamp>_<scenario_id>_<VERDICT>
+- tools/evidence/viewer.py — CLI 메뉴:
+  * `list` — 최근 실패 목록 (--limit / --scenario / --verdict 필터)
+  * `show <prefix>` — 디렉토리명 prefix 매칭, 메타 + 파일 목록 출력
+  * `export <prefix>` — zip 추출 (JIRA 첨부 / 슬랙 공유용)
+  * `prune --older-than 30d` — 오래된 evidence 정리
+- 자동 번들 조건: verdict=anomaly OR tier∈(rule, vision, rule-fallthrough)
+  → Phase 2 후반 임계 튜닝 / 골든셋 라벨링 직접 활용 가능
+
+### 🔌 통합
+- tests/clients.py: DetectionClient.check_screen에 `expected` / `expected_keywords` 추가
+- tests/scenarios/test_catalog.py:
+  * _exec_step이 EvidenceBundler에 IR/voice/capture 누적
+  * _run_scenario가 detection-mcp에 expected 전달 (룰 tier 입력)
+  * 실패/회색 지대 시 bundler.write() 자동 호출
+  * report-mcp evidence_url이 단일 캡처 → evidence 디렉토리로 변경
+- catalog_runs InfluxDB measurement에 `tier` tag + `confidence` field 추가
+
+### 🔒 .gitignore
+- `evidence/` 추가 (캡처/PII 포함 가능, 저장소 추적 X)
+
+### 🚧 Phase 2 잔여 작업 (후속 PR)
+- [ ] 자체 골든셋 100장 라벨링 + 임계 튜닝
+- [ ] Grafana 패널 — tier 분포 / 회색 지대 비율 / 카테고리별 confidence
+- [ ] 카탈로그 `expected_keywords` 필드
+- [ ] baseline_vector_id 자동 시드 (카탈로그 머지 → 베이스라인 등록)
+
 ## 2026-05-26 (업데이트 28) — Phase 1 완료: 카탈로그 머지 + PR 템플릿
 
 ### 🔀 tools/catalog/merge.py
