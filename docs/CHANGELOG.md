@@ -2,6 +2,75 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 36) — Anomaly Injector — STB anomaly 캡처 자동화
+
+Phase 2 골든셋 100장 확보 시 anomaly 30~40장이 사람 손에 의존하던 부분
+(케이블 뽑기, SSH로 시계 조작, 리모컨 연타)을 완전 자동화. 네트워크/시계/IR
+3축에서 인위 anomaly 유발 → evidence-bundler가 자동 캡처.
+
+### 🧰 `tools/anomaly_injector/` — 5개 모듈
+
+- **`base.py`** — Target("host"|"stb") 추상, `run()` (로컬/SSH 분기 + sudo + dry-run),
+  `install_restore()` 컨텍스트 매니저 (finally + SIGINT/SIGTERM 양쪽 보장,
+  idempotent)
+- **`network.py`** — `network_drop` / `network_latency` / `network_loss`
+  · macOS host: pfctl + anchor 격리
+  · Linux host / stb: iptables (`stb-anomaly` 코멘트로 태깅) + tc netem
+  · 인터페이스명 정규식 검증으로 명령 주입 차단
+- **`time_skew.py`** — `+1y`, `-30d`, `+2h`, `-15m`, `+10s` 파서 + STB date 조작
+  · NTP 일시 정지(systemd-timesyncd / ntpd / chronyd best-effort)
+  · 복원 시 (진입 시각 + 경과 시간)으로 정확히 되돌림
+  · host target 거부 (백엔드 컴포넌트 시계 의존성 보호), 자식 프로세스용 `faked_env()` 제공
+- **`ir_chaos.py`** — ir-mcp `/send` 4 패턴
+  · `rapid-fire`: 같은 키 N회 반복
+  · `invalid-sequence`: 존재하지 않는 키 (404 누적)
+  · `conflict`: UP/DOWN, LEFT/RIGHT, MENU/BACK, PLAY/STOP 상충 폭주
+  · `reentry-storm`: MENU ↔ BACK 토글
+  · httpx.Client 주입 가능 (테스트용)
+- **`cli.py` + `__main__.py`** — `python -m tools.anomaly_injector <domain> ...`
+  · 서브커맨드 network / time / ir
+  · 공통 `--dry-run` / `--verbose` / `--target` 옵션
+  · 종료 시 친절 stderr 메시지 (✅ restored)
+
+### 🧪 단위 테스트 (`tools/tests/test_anomaly_injector.py`, +35건)
+- base: build_cmd host/stb 분기, SSH 옵션 합성, sudo 프리펜드, dry-run 격리, restore 1회 보장
+- network: iptables/tc 명령 합성, comment 태깅, macOS host 거부, loss_pct 범위 검증
+- time_skew: 5단위 파서, host 거부, set+restore 호출, NTP stop/start
+- ir_chaos: 4 패턴 시퀀스, dry-run http 미호출, MockTransport로 200/404 집계, ConnectError 매핑
+- **전체 회귀 101/101 통과** (기존 66 + anomaly 35)
+
+### 📚 `docs/33-anomaly-injector.md`
+- 아키텍처 다이어그램 (anomaly 주입 ↔ STB ↔ 캡처 흐름)
+- 9 환경변수 표 (STB_HOST/STB_USER/STB_KEY/STB_NETIFACE/HOST_NETIFACE/IR_MCP_URL/IR_CODESET/FAKETIME_LIBRARY)
+- 각 anomaly가 어떤 STB 시나리오 anomaly를 잡는지 매핑 표
+- pytest fixture 통합 예 (`with network_drop(...): run_scenario(...)`)
+- 보안/안전 (코멘트 태깅, anchor 격리, BatchMode SSH, 정규식 검증)
+- 한계 (macOS host latency 미지원, 진짜 펌웨어 버그 화면은 여전히 사람)
+
+### ⚙️ 설계 핵심 결정
+- **함수 이름과 모듈 이름 충돌 회피** — `time_skew()` / `ir_chaos()` 함수를 `__init__.py`에서 노출하지 않음. 라이브러리 사용자는 `from tools.anomaly_injector.time_skew import time_skew` 형태로 직접 import. 모듈/함수 shadowing 방지가 import 패턴 깨짐보다 안전.
+- **HTTP 기반 IR** — ir-mcp가 이미 LAN HTTP 서비스라 target=host/stb 무관. SSH 분기 불필요.
+- **idempotent restore** — `check=False`로 정리 명령 실패해도 다음 정리 명령 계속.
+
+### 🔜 Phase 2 워크플로 자동화 (총 사람 시간 단축)
+
+이번 업데이트로 캡처 단계가 다음과 같이 자동화됨:
+
+```bash
+# (1) normal 36~50장 — 기존 자동
+pytest tests/test_catalog.py
+
+# (2) IR anomaly 20장 — anomaly_injector 자동 (신규)
+pytest tests/test_catalog.py -k anomaly_ir
+
+# (3) network/time anomaly 30장 — fixture 통합 (신규)
+pytest tests/test_anomaly_catalog.py
+
+# → 100% 캡처 자동. 라벨링만 사람(8시간) 필요.
+```
+
+이전 1.5~2일 작업 → **0.5~1일로 단축** (캡처카드 가동 가정).
+
 ## 2026-05-26 (업데이트 35) — 데모·요약 HTML 공개 + GitHub Pages 배포 활성화
 
 코드 측면 Phase 2 종결(업데이트 34) 이후, 비개발자 이해관계자가 별도 빌드 없이
