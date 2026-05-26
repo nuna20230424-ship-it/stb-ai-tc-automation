@@ -129,8 +129,9 @@ Grafana 대시보드 후속 작업:
 
 ## 7. Phase 2 잔여 작업 (후속 PR)
 
-- [ ] **자체 골든셋 100장 라벨링** + LLaVA/Qwen-VL/GPT-4V 비교 벤치
-- [ ] 임계 튜닝 (`THRESHOLD_*` 환경변수)
+- [ ] **자체 골든셋 100장 라벨링** ← 도구는 준비됨 (`tools/golden_set/label_cli.py`, docs/31). 실 STB 캡처 도착 시 즉시 라벨링 가능.
+- [ ] 임계 튜닝 (`THRESHOLD_*` 환경변수) ← `tools/golden_set/tune_thresholds.py` grid search 준비됨
+- [ ] LLaVA/Qwen-VL/GPT-4V 비교 벤치 (vision 모델 선택)
 - [x] Grafana 패널 — tier 분포 / 회색 지대 비율 / 카테고리별 confidence (`stb-judge-pipeline.json`, 2026-05-26)
 - [x] 카탈로그 `expected_keywords` 필드 (v2.1, 2026-05-26)
 - [ ] vision tier 모델 다변화 (LLaVA 외 GPT-4V / Claude vision 옵션)

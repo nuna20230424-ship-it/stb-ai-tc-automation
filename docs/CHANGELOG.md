@@ -2,6 +2,65 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-26 (업데이트 33) — Phase 2: 골든셋 라벨링 + 임계 튜닝 도구
+
+Phase 2 잔여의 하드웨어 블로커는 풀 수 없지만, 캡처가 도착하는 즉시
+라벨링→튜닝→회귀가 자동화되도록 도구 일체를 준비.
+
+### 🏷 라벨링 (`tools/golden_set/label_cli.py`)
+- 단일 캡처 / `--from-evidence` (evidence-bundler 디렉토리에서 scenario·image 자동 추출)
+- 비대화 모드: `--verdict --tier --yes --no-preview --no-detection-call`
+- detection-mcp 현재 응답 출력 → 사람이 ground truth 입력하며 비교 가시화
+- macOS Preview 자동 open (다른 OS는 경로만 표시)
+- 저장: `tests/baselines/golden_set/<scenario>/<label_id>/{image.png, meta.json}`
+
+### 🎚 임계 튜닝 (`tools/golden_set/tune_thresholds.py`)
+- detection-mcp 1회 호출로 raw 응답 snapshot → local grid search (수천 조합)
+- 4종 objective: `accuracy` / `balanced`(기본) / `fn-minimize` / `gray-minimize`
+- Metric: accuracy / FP rate / FN rate / gray_zone_ratio / tier_mismatch
+- 출력: TOP-N + `export THRESHOLD_HARD_NORMAL=… HARD_ANOMALY=…` 한 줄
+- `--save-report` JSON 아카이브, `--refresh-cache` snapshot 재수집
+
+### 📐 스키마 (`tools/golden_set/schema.py`)
+- `GoldenItem` pydantic 모델 — scenario_id, image_path, firmware,
+  ground_truth_verdict/tier, notes, labeler, labeled_at, evidence_dir, detection_snapshot
+- `load_all` / `save_item` / `make_label_id` 헬퍼
+
+### 🔁 Replay 로직 (`tools/golden_set/replay.py`)
+- detection-mcp의 3-tier verdict 결정을 순수 함수로 재구현
+- snapshot의 (best_score, rule_match, vision_verdict)에 임계만 다르게 적용
+- 임계 변경 후에도 동일 raw data로 결과 재현 가능
+
+### 🧪 회귀 + 단위 테스트 (+16건, 전체 34/34 통과)
+- `tests/scenarios/test_golden_set.py` — pytest marker `golden_set`, 골든셋 비면 skip
+  · `detection-mcp.check_screen` verdict ↔ ground_truth_verdict 매트릭스 검증
+- `tools/tests/test_golden_set.py`
+  · replay_verdict 5종 분기 (HN/HA short-circuit, rule, vision yes/no, vision-disabled fallthrough)
+  · schema save/load round-trip, label_id 포맷, invalid id 거부
+  · evaluate FP/FN/gray 카운트 정확성, grid_search 범위 필터, objective 4종 평가
+
+### 📁 디렉토리 + marker
+- `tests/baselines/golden_set/.gitkeep` 추가 — 빈 상태 commit
+- `tests/pytest.ini`에 `golden_set` marker 등록
+
+### 📚 docs/31-golden-set.md
+- 전체 워크플로 5단계 다이어그램
+- label_cli 3가지 사용법 + "완전 grid search" 시 임시 임계 우회 방법
+- objective 4종 비교표 + 출력 예
+- **100장 수집 가이드** — 카테고리×verdict 균형 매트릭스 (47 normal / 38 anomaly / 15 회색 지대)
+- 한계: snapshot 임계 의존성 / 라벨러 일관성 / vision verdict 정확도 별도 metric (후속)
+
+### 🚧 Phase 2 상태
+- [x] detection-mcp v2 3-tier judge (커밋 63ff719)
+- [x] Evidence 도구 (bundler + viewer)
+- [x] 카탈로그 expected_keywords 필드 (커밋 219d993)
+- [x] baseline_vector_id 자동 시드 (커밋 998dd12)
+- [x] Grafana 패널 (커밋 b46e6ce)
+- [x] 골든셋 라벨링·튜닝 도구 + 회귀 테스트 (**이번 커밋**)
+- [ ] 자체 골든셋 100장 라벨링 + 임계 튜닝 ← 실 STB 작업, 도구는 준비 완료
+
+→ Phase 2 코드 측면 6/6 완료. 남은 건 하드웨어 가동 + 사람 클릭.
+
 ## 2026-05-26 (업데이트 32) — Phase 2: Grafana judge-pipeline 대시보드
 
 3-tier judge의 운영 가시성. catalog_runs measurement(`tier` tag + `confidence` field)를
