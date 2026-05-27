@@ -1,0 +1,82 @@
+{
+  "uid": "stb-triage",
+  "title": "STB QA — Auto Triage",
+  "tags": ["stb", "qa", "triage", "rca"],
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "Asia/Seoul",
+  "editable": true,
+  "graphTooltip": 1,
+  "time": {"from": "now-30d", "to": "now"},
+  "refresh": "",
+  "panels": [
+    {"id": 1, "type": "row", "title": "🧩 트리아지 압축 (실패 → 클러스터)",
+     "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0}, "collapsed": false, "panels": []},
+
+    {
+      "id": 10, "type": "gauge", "title": "압축률 (1 - 클러스터/실패)",
+      "gridPos": {"h": 7, "w": 6, "x": 0, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "showThresholdMarkers": true},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit", "min": 0, "max": 1, "decimals": 2,
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "red", "value": null},
+            {"color": "yellow", "value": 0.5},
+            {"color": "green", "value": 0.8}
+          ]}
+        }
+      },
+      "targets": [{"refId": "A", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"triage_summary\" and r._field == \"compression_ratio\")\n  |> last()"}]
+    },
+
+    {
+      "id": 11, "type": "stat", "title": "실패 / 클러스터 (최근)",
+      "gridPos": {"h": 7, "w": 6, "x": 6, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value", "textMode": "value_and_name"},
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "targets": [
+        {"refId": "A", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"triage_summary\" and r._field == \"failures\")\n  |> last()"},
+        {"refId": "B", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"triage_summary\" and r._field == \"clusters\")\n  |> last()"}
+      ]
+    },
+
+    {
+      "id": 12, "type": "piechart", "title": "컴포넌트별 클러스터 분포",
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"legend": {"showLegend": true, "placement": "right", "values": ["value"]}, "pieType": "donut", "reduceOptions": {"calcs": ["sum"]}},
+      "targets": [{"refId": "A", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"triage_cluster\" and r._field == \"size\")\n  |> group(columns: [\"component\"])\n  |> sum()"}]
+    },
+
+    {"id": 2, "type": "row", "title": "📈 추세",
+     "gridPos": {"h": 1, "w": 24, "x": 0, "y": 8}, "collapsed": false, "panels": []},
+
+    {
+      "id": 20, "type": "timeseries", "title": "압축률 추세 (회귀별)",
+      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 9},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit", "min": 0, "max": 1,
+          "custom": {"drawStyle": "line", "lineInterpolation": "stepAfter", "fillOpacity": 10, "showPoints": "always"}
+        }
+      },
+      "options": {"legend": {"showLegend": false}, "tooltip": {"mode": "single"}},
+      "targets": [{"refId": "A", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"triage_summary\" and r._field == \"compression_ratio\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"compression\")"}]
+    },
+
+    {
+      "id": 21, "type": "timeseries", "title": "컴포넌트별 클러스터 크기 추세",
+      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 9},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {"unit": "short", "custom": {"drawStyle": "bars", "fillOpacity": 70, "stacking": {"mode": "normal"}}}
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}, "tooltip": {"mode": "multi"}},
+      "targets": [{"refId": "A", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"triage_cluster\" and r._field == \"size\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> group(columns: [\"component\"])\n  |> yield(name: \"size\")"}]
+    }
+  ]
+}

@@ -56,6 +56,7 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [tools/ir-learner/](tools/ir-learner/) — 🎓 IR codeset 자동 학습 CLI (BroadLink / iTach iLearner 백엔드)
 - [tools/gpio-pusher/](tools/gpio-pusher/) — 🤖 Raspberry Pi GPIO 푸셔 서비스 (BT 페어링 자동화, Sprint 2)
 - [tools/tc_selector/](tools/tc_selector/) — ⚡ Smart Test Selection (변경 영향 분석 + 리스크 가중 + flake 격리) · [docs/26](docs/26-test-selection.md)
+- [tools/triage/](tools/triage/) — 🧩 자동 트리아지 (실패 클러스터링 → 컴포넌트 라벨 → 1 JIRA, LogSage) · [docs/27](docs/27-triage-mcp.md)
 - [12-executive-briefing.md](docs/12-executive-briefing.md) — 📄 **경영진 1페이지 브리핑** (결재용)
 - [12-executive-briefing-slides.md](docs/12-executive-briefing-slides.md) — 🎯 **경영진 슬라이드 데크** (Marp, PDF/HTML/PPTX 변환 가능)
 - [13-kickoff-day1-slides.md](docs/13-kickoff-day1-slides.md) — 🚀 **Day 1 킥오프 미팅 슬라이드 (실무진용, 18장)**

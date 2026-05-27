@@ -2,6 +2,28 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-27 (업데이트 38) — Phase 4: 자동 트리아지 (triage)
+
+docs/23 §3-6 / §5 Phase 4 산출물. LogSage 패턴 — 야간 회귀 실패 evidence를
+컴포넌트 라벨링 + 클러스터링 → 동일 라벨 1 JIRA로 집계. 매일 5~20건 빨강
+트리아지를 시간 → 분으로 압축. report-mcp /incident + Ollama 재사용(배치 도구).
+
+### 🧰 `tools/triage/` — 4 엔진 모듈 + CLI
+- `components.py`: 10종 컴포넌트 택소노미 + UART 룰 키워드 + 카테고리 힌트 + 심각도
+- `signature.py`: evidence 번들(scenario.json+uart+ir) → FailureSignature, UART 정규화(타임스탬프/주소/숫자 마스킹), 번들 탐색
+- `labeler.py`: 룰 1차(결정론) + LLM 2차(저신뢰 시 Ollama /api/generate) 결합
+- `cluster.py`: component + 상위 오류 토큰 시그니처 클러스터링 + 압축비
+- `cli.py` + `__main__.py`: `run` — 라벨링→클러스터→report-mcp 1 JIRA/클러스터 + InfluxDB(triage_summary/triage_cluster)
+- 실측: 4 실패 → 3 클러스터(네트워크 2건 병합), 25% 압축
+
+### 📊 Grafana
+- `stb-triage` 대시보드: 압축률 gauge, 실패/클러스터, 컴포넌트 분포(도넛), 추세
+
+### ✅ 테스트 / 문서
+- `tools/tests/test_triage.py` — 25 passed (normalize/label/llm/cluster/signature I/O)
+- `docs/27-triage-mcp.md`, `tools/triage/README.md`
+- 회귀 누계: 128 → **153** 통과
+
 ## 2026-05-27 (업데이트 37) — Phase 3: Smart Test Selection (tc_selector)
 
 docs/23 §5 Phase 3 산출물. 빌드 변경 영향 분석(TIA) + 리스크 가중 + flake 격리로
