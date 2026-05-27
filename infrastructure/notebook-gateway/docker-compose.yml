@@ -70,6 +70,9 @@ services:
       - ITACH_PORT=${ITACH_PORT:-4998}
       - BROADLINK_HOST=${BROADLINK_HOST:-192.168.1.50}
       - ADB_TARGET=${ADB_TARGET:-}
+      - RDK_HOST=${RDK_HOST:-10.0.10.60}
+      - RDK_PORT=${RDK_PORT:-9998}
+      - RDK_TOKEN=${RDK_TOKEN:-}
       - IR_CODESET_DIR=/data/ir-codesets
     # ADB 네트워크 디바이스 접근을 위한 host network 옵션 (선택)
     # network_mode: host  # ADB 사용 시 활성화 권장 (Linux)

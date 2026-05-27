@@ -1,0 +1,33 @@
+{
+  "_comment": "STB UI 상태 그래프. 노드=화면 상태(preconditions reach 매크로와 1:1), 엣지=전이 액션. BFS로 navigate 경로 자동 생성. 키/발화는 사내 펌웨어에 맞게 튜닝.",
+  "root": "home_screen",
+  "nodes": [
+    "home_screen", "live_tv", "epg_open",
+    "netflix_logged_in", "netflix_home", "netflix_playing", "drm_content_playing",
+    "tving_logged_in",
+    "playback_active", "vod_playing",
+    "search_open", "recording_list_open", "settings_open", "pin_unlocked"
+  ],
+  "edges": [
+    {"from": "home_screen", "to": "live_tv", "action": {"type": "ir", "key": "LIVE"}},
+    {"from": "live_tv", "to": "home_screen", "action": {"type": "ir", "key": "HOME"}},
+    {"from": "live_tv", "to": "epg_open", "action": {"type": "ir", "key": "EPG"}},
+    {"from": "epg_open", "to": "live_tv", "action": {"type": "ir", "key": "BACK"}},
+
+    {"from": "home_screen", "to": "search_open", "action": {"type": "ir", "key": "SEARCH"}},
+    {"from": "home_screen", "to": "settings_open", "action": {"type": "ir", "key": "MENU"}},
+    {"from": "home_screen", "to": "recording_list_open", "action": {"type": "ir", "key": "REC_LIST"}},
+    {"from": "home_screen", "to": "pin_unlocked", "action": {"type": "ir", "key": "OK"}, "requires": ["pin"]},
+
+    {"from": "home_screen", "to": "playback_active", "action": {"type": "ir", "key": "PLAY"}},
+    {"from": "home_screen", "to": "vod_playing", "action": {"type": "voice", "utterance": "VOD 콘텐츠 재생"}},
+
+    {"from": "home_screen", "to": "netflix_logged_in", "action": {"type": "voice", "utterance": "넷플릭스 실행해줘"}, "requires": ["netflix_credentials"]},
+    {"from": "netflix_logged_in", "to": "netflix_home", "action": {"type": "wait", "sec": 2}},
+    {"from": "netflix_home", "to": "netflix_playing", "action": {"type": "ir", "key": "PLAY"}},
+    {"from": "netflix_home", "to": "drm_content_playing", "action": {"type": "voice", "utterance": "4K HDR 콘텐츠 재생"}},
+    {"from": "netflix_playing", "to": "netflix_home", "action": {"type": "ir", "key": "BACK"}},
+
+    {"from": "home_screen", "to": "tving_logged_in", "action": {"type": "voice", "utterance": "티빙 실행해줘"}, "requires": ["tving_credentials"]}
+  ]
+}

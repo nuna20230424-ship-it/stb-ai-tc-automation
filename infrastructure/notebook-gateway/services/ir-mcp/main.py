@@ -4,6 +4,8 @@
   - itach   : Global Caché iTach IP2IR (TCP 4998 sendir)         [송신 only by default]
   - broadlink: BroadLink RM4 Mini (python-broadlink, UDP)         [송신 + 학습]
   - itach-ilearner: iTach Flex/iLearner (TCP 4998 get_IRL)         [송신 + 학습]
+  - adb     : Android TV (adb shell input keyevent)               [송신, 학습 불필요]
+  - rdk     : RDK Thunder RDKShell.injectKey (JSON-RPC)           [송신, IR 폴백]
 
 IR_BACKEND 환경변수로 전환. 기본 itach.
 """
@@ -21,6 +23,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from keyevents import ANDROID_TV_KEYEVENTS
+from rdk_keymap import RDK_KEYCODES
 
 app = FastAPI(title="stb-ir-mcp")
 
@@ -30,6 +33,10 @@ ITACH_PORT = int(os.getenv("ITACH_PORT", "4998"))
 BROADLINK_HOST = os.getenv("BROADLINK_HOST", "192.168.1.50")
 # ADB: 네트워크 디바이스(예: "192.168.1.100:5555") 또는 USB 시리얼(예: "ABCD1234")
 ADB_TARGET = os.getenv("ADB_TARGET", "")
+# RDK Thunder (WPEFramework JSON-RPC)
+RDK_HOST = os.getenv("RDK_HOST", "10.0.10.60")
+RDK_PORT = int(os.getenv("RDK_PORT", "9998"))
+RDK_TOKEN = os.getenv("RDK_TOKEN", "")
 CODESET_DIR = Path(os.getenv("IR_CODESET_DIR", "/data/ir-codesets"))
 
 
@@ -111,6 +118,31 @@ def _send_via_adb(payload: str) -> str:
     return _adb_cmd(["shell", "input", "keyevent", keyevent])
 
 
+def _send_via_rdk(payload: str) -> str:
+    """payload가 'rdk:keycode:<NUM>'이면 RDKShell.injectKey JSON-RPC 호출."""
+    import httpx
+    if payload.startswith("rdk:keycode:"):
+        keycode = int(payload[len("rdk:keycode:"):])
+    elif payload.isdigit():
+        keycode = int(payload)
+    else:
+        raise HTTPException(400, "RDK 백엔드는 'rdk:keycode:<NUM>' 형식이 필요합니다")
+    body = {"jsonrpc": "2.0", "id": 1, "method": "org.rdk.RDKShell.1.injectKey",
+            "params": {"keyCode": keycode, "modifiers": []}}
+    headers = {"Content-Type": "application/json"}
+    if RDK_TOKEN:
+        headers["Authorization"] = f"Bearer {RDK_TOKEN}"
+    try:
+        r = httpx.post(f"http://{RDK_HOST}:{RDK_PORT}/jsonrpc", json=body, headers=headers, timeout=5)
+        r.raise_for_status()
+    except httpx.HTTPError as e:
+        raise HTTPException(502, f"RDK Thunder unreachable: {e}")
+    data = r.json()
+    if "error" in data:
+        raise HTTPException(502, f"RDK injectKey error: {data['error']}")
+    return "ok"
+
+
 def _send(payload: str) -> str:
     if IR_BACKEND in ("itach", "itach-ilearner"):
         return _send_via_itach(payload)
@@ -118,6 +150,8 @@ def _send(payload: str) -> str:
         return _send_via_broadlink(payload)
     if IR_BACKEND in ("adb", "android-tv", "androidtv"):
         return _send_via_adb(payload)
+    if IR_BACKEND in ("rdk", "thunder"):
+        return _send_via_rdk(payload)
     raise HTTPException(500, f"unsupported IR_BACKEND: {IR_BACKEND}")
 
 
@@ -186,6 +220,7 @@ def health():
         "itach": f"{ITACH_HOST}:{ITACH_PORT}" if "itach" in IR_BACKEND else None,
         "broadlink": BROADLINK_HOST if IR_BACKEND == "broadlink" else None,
         "adb_target": ADB_TARGET if IR_BACKEND.startswith("adb") or IR_BACKEND.startswith("android") else None,
+        "rdk": f"{RDK_HOST}:{RDK_PORT}" if IR_BACKEND in ("rdk", "thunder") else None,
     }
     # ADB 백엔드는 연결 상태도 확인
     if IR_BACKEND in ("adb", "android-tv", "androidtv") and ADB_TARGET:
@@ -215,6 +250,18 @@ def autogen_android_tv():
     data = _autogen_android_tv_codeset()
     _save_codeset("android_tv", data)
     return {"codeset": "android_tv", "keys": len(ANDROID_TV_KEYEVENTS), "path": str(_codeset_path("android_tv"))}
+
+
+@app.post("/codesets/rdk/autogen")
+def autogen_rdk():
+    """RDK 표준 keyCode 매핑을 codeset JSON으로 자동 생성 (학습 불필요)."""
+    if IR_BACKEND not in ("rdk", "thunder"):
+        raise HTTPException(400, "IR_BACKEND=rdk 일 때만 사용 가능")
+    data = {"_meta": {"backend": "rdk", "auto": True}} | {
+        key: f"rdk:keycode:{code}" for key, code in RDK_KEYCODES.items()
+    }
+    _save_codeset("rdk", data)
+    return {"codeset": "rdk", "keys": len(RDK_KEYCODES), "path": str(_codeset_path("rdk"))}
 
 
 @app.post("/send")

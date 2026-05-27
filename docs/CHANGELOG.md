@@ -2,6 +2,32 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-27 (업데이트 39) — Phase 5: State Graph + RDK 폴백 + KT/SKB 케이스 스터디
+
+docs/23 §5 Phase 5(운영: 신규 펌웨어/모델 자동 적응) 3개 산출물.
+
+### 🧭 `tools/navgraph/` — State Graph Navigation
+- state_map.json: 14개 상태 노드(preconditions reach와 1:1) + 16 엣지(IR/voice/wait + requires 게이트)
+- graph.py: StateGraph 모델 + 무결성 검증(reachable_from)
+- pathfind.py: BFS 최단 경로 + navigate_steps + required_credentials
+- cli.py: path / validate / states / dot(Graphviz)
+- `navigate` 액션 진화 — 신규 펌웨어는 그래프만 갱신
+
+### 📡 `tools/rdk/` + ir-mcp IR_BACKEND=rdk — RDK API 폴백
+- thunder.py: Thunder JSON-RPC 클라이언트(injectKey/launchApplication/systemVersions), transport 주입형(mock 테스트)
+- keymap.py: STB 키 → Linux input keyCode
+- ir-mcp 5번째 백엔드 rdk + /codesets/rdk/autogen + rdk_keymap.py 내장본
+- IR_BACKEND 어댑터: itach|broadlink|itach-ilearner|adb|rdk
+
+### 🏆 docs/36 — KT/SKB 입찰용 케이스 스터디
+- 시장 기회(공개 사례 부족=여백) + RDK 친화 + 한국 도메인 차별화
+- 정량 효과(tc_selector 77~93%, triage 25%+, 회귀 200+), 5분 데모 시나리오, 경쟁 포지셔닝
+
+### ✅ 테스트 / 문서
+- test_navgraph.py 20 + test_rdk.py 12 → 전체 **186 passed**
+- docs/34-state-graph-navigation.md, docs/35-rdk-fallback.md, docs/36-kt-skb-case-study.md
+- tools/navgraph/README, tools/rdk/README, .env.example + docker-compose RDK 환경변수
+
 ## 2026-05-27 (업데이트 38) — Phase 4: 자동 트리아지 (triage)
 
 docs/23 §3-6 / §5 Phase 4 산출물. LogSage 패턴 — 야간 회귀 실패 evidence를
