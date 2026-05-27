@@ -1,0 +1,143 @@
+{
+  "uid": "stb-test-selection",
+  "title": "STB QA — Smart Test Selection",
+  "tags": ["stb", "qa", "tia", "selection"],
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "Asia/Seoul",
+  "editable": true,
+  "graphTooltip": 1,
+  "time": {"from": "now-30d", "to": "now"},
+  "refresh": "",
+  "templating": {
+    "list": [
+      {
+        "name": "firmware",
+        "label": "Firmware",
+        "type": "query",
+        "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"stb-metrics\", tag: \"firmware\", predicate: (r) => r._measurement == \"tc_selection\")",
+        "refresh": 2, "multi": true, "includeAll": true,
+        "current": {"selected": false, "text": "All", "value": "$__all"}
+      }
+    ]
+  },
+  "panels": [
+    {"id": 1, "type": "row", "title": "⚡ Test Impact Analysis 효과",
+     "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0}, "collapsed": false, "panels": []},
+
+    {
+      "id": 10, "type": "gauge", "title": "Compute 절약률 (최근)",
+      "gridPos": {"h": 7, "w": 6, "x": 0, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "showThresholdMarkers": true},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100, "decimals": 1,
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "red", "value": null},
+            {"color": "yellow", "value": 15},
+            {"color": "green", "value": 30}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"savings_pct\")\n  |> last()"
+      }]
+    },
+
+    {
+      "id": 11, "type": "stat", "title": "선택 / 전체 TC",
+      "gridPos": {"h": 7, "w": 6, "x": 6, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value", "textMode": "value_and_name"},
+      "fieldConfig": {"defaults": {"unit": "short", "color": {"mode": "fixed", "fixedColor": "blue"}}},
+      "targets": [
+        {"refId": "A", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"selected_count\")\n  |> last()"},
+        {"refId": "B", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"skipped_count\")\n  |> last()"}
+      ]
+    },
+
+    {
+      "id": 12, "type": "stat", "title": "예상 회귀 시간 (선택)",
+      "gridPos": {"h": 7, "w": 6, "x": 12, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value", "graphMode": "area"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 10800},
+            {"color": "red", "value": 14400}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"selected_sec\")\n  |> last()"
+      }]
+    },
+
+    {
+      "id": 13, "type": "stat", "title": "격리(Quarantine) TC",
+      "gridPos": {"h": 7, "w": 6, "x": 18, "y": 1},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short", "decimals": 0,
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "red", "value": 1}
+          ]}
+        }
+      },
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"quarantined_count\")\n  |> last()"
+      }]
+    },
+
+    {"id": 2, "type": "row", "title": "📈 추세",
+     "gridPos": {"h": 1, "w": 24, "x": 0, "y": 8}, "collapsed": false, "panels": []},
+
+    {
+      "id": 20, "type": "timeseries", "title": "절약률 추세 (빌드별)",
+      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 9},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "custom": {"drawStyle": "line", "lineInterpolation": "stepAfter", "fillOpacity": 10, "showPoints": "always"},
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "red", "value": null}, {"color": "green", "value": 30}
+          ]}
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}, "tooltip": {"mode": "multi"}},
+      "targets": [{
+        "refId": "A",
+        "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"savings_pct\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"savings_pct\")"
+      }]
+    },
+
+    {
+      "id": 21, "type": "timeseries", "title": "선택 vs 영향초과(deferred) TC 수",
+      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 9},
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {"drawStyle": "bars", "fillOpacity": 60, "stacking": {"mode": "normal"}}
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}, "tooltip": {"mode": "multi"}},
+      "targets": [
+        {"refId": "A", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"selected_count\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"selected\")"},
+        {"refId": "B", "query": "from(bucket: \"stb-metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"tc_selection\" and r._field == \"deferred_count\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"deferred\")"}
+      ]
+    }
+  ]
+}

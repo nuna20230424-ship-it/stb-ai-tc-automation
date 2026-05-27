@@ -1,0 +1,31 @@
+{
+  "_comment": "STB 펌웨어 소스 경로(glob) → change_signals 매핑. 빌드 시스템의 변경 파일 목록을 카탈로그 change_signals 어휘로 번역. 사내 펌웨어 트리에 맞게 조정.",
+  "map": {
+    "src/epg/**": ["epg-engine", "channel-list"],
+    "src/guide/**": ["epg-engine"],
+    "src/tuner/**": ["tuner", "channel-list"],
+    "src/channel/**": ["channel-list", "tuner"],
+    "src/video/**": ["video-pipeline"],
+    "src/render/**": ["video-pipeline"],
+    "src/audio/**": ["media-stack"],
+    "src/media/**": ["media-stack", "video-pipeline"],
+    "src/voice/**": ["voice-asr"],
+    "src/asr/**": ["voice-asr"],
+    "src/search/**": ["search-engine"],
+    "src/pvr/**": ["pvr-storage", "scheduler"],
+    "src/recording/**": ["pvr-storage", "scheduler"],
+    "src/scheduler/**": ["scheduler"],
+    "src/parental/**": ["parental-control"],
+    "src/settings/**": ["settings-ui", "system-config"],
+    "src/config/**": ["system-config"],
+    "src/ui/**": ["settings-ui"],
+    "src/ott/**": ["ott-launcher", "app-runtime"],
+    "src/apps/**": ["app-runtime"],
+    "src/launcher/**": ["ott-launcher"],
+    "src/net/**": ["networking"],
+    "src/network/**": ["networking"],
+    "src/drm/**": ["drm-cdm", "hdcp"],
+    "src/secure/**": ["drm-cdm", "hdcp"],
+    "src/hdcp/**": ["hdcp"]
+  }
+}

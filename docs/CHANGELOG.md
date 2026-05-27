@@ -2,6 +2,26 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-27 (업데이트 37) — Phase 3: Smart Test Selection (tc_selector)
+
+docs/23 §5 Phase 3 산출물. 빌드 변경 영향 분석(TIA) + 리스크 가중 + flake 격리로
+500 TC를 야간 윈도우(4h) 안에 회귀. Microsoft TIA·Facebook PTS 패턴 적용.
+
+### 🧰 `tools/tc_selector/` — 5개 모듈 + CLI
+- `component_map.py` (+ `.json`): 변경 경로(glob)/컴포넌트명 → change_signals 번역, 미매핑 경로 추적
+- `selector.py`: 영향 분석(change_signals 교집합) + risk_weight 내림차순 예산 그리디 + savings/runtime 추정 + firmware 매트릭스 (순수 함수)
+- `flake.py`: flake 점수 / quarantine 판정(min_runs·max_fail_rate) / flake_history 원자 갱신
+- `cli.py` + `__main__.py`: `select` / `quarantine` / `explain` + InfluxDB `tc_selection` emit
+- 실측: voice-asr+epg-engine 변경 → 9/36 선택(77% 절약), drm-cdm → 3/36(93% 절약)
+
+### 📊 Grafana
+- `stb-test-selection` 대시보드: 절약률 gauge(15/30% threshold), 선택/전체 TC, 예상 회귀 시간(3h/4h), 격리 TC, 절약률·deferred 추세
+
+### ✅ 테스트 / 문서
+- `tools/tests/test_tc_selector.py` — 26 passed (component_map/selector/flake/explain)
+- `docs/26-test-selection.md`, `tools/tc_selector/README.md`
+- 회귀 누계: 101 → **127** 통과
+
 ## 2026-05-26 (업데이트 36) — Anomaly Injector — STB anomaly 캡처 자동화
 
 Phase 2 골든셋 100장 확보 시 anomaly 30~40장이 사람 손에 의존하던 부분
