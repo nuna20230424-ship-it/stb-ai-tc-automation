@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>STB AI 자동화 — 반드시 구매 품목</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#0f1014; --panel:#1a1c22; --panel2:#22252e;
+    --fg:#e6e8ee; --sub:#9aa0b0; --accent:#7dd3fc; --ok:#4ade80;
+    --warn:#fbbf24; --err:#f87171; --border:#2d3140;
+    --mono:'SF Mono','Menlo','Consolas',monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 15px/1.55 -apple-system,'Apple SD Gothic Neo','Pretendard',sans-serif;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 18px; margin-bottom: 28px; }
+  h1 { margin: 0 0 6px; font-size: 26px; }
+  .lede { color: var(--sub); font-size: 14px; }
+  .totals { display: flex; gap: 18px; margin: 18px 0 6px; flex-wrap: wrap; }
+  .pill {
+    background: var(--panel); padding: 12px 18px; border-radius: 8px;
+    border: 1px solid var(--border); flex: 1 1 200px;
+  }
+  .pill .k { color: var(--sub); font-size: 12px; }
+  .pill .v { font-size: 22px; font-weight: 700; color: var(--accent); margin-top: 4px; }
+  .pill .vsub { font-size: 12px; color: var(--sub); margin-top: 4px; }
+
+  section { margin-top: 32px; }
+  h2 {
+    font-size: 18px; margin: 0 0 14px; padding: 8px 12px;
+    background: var(--panel2); border-radius: 6px; border-left: 4px solid var(--accent);
+  }
+  h2.tier1 { border-left-color: var(--ok); }
+  h2.tier2 { border-left-color: var(--warn); }
+  h2.exclude { border-left-color: var(--sub); }
+
+  .item {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 18px 20px; margin-bottom: 16px;
+  }
+  .item-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .item-title { font-size: 16px; font-weight: 700; }
+  .item-title .badge {
+    display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 10px;
+    background: var(--panel2); color: var(--accent); font-size: 11px; font-weight: 600;
+  }
+  .item-price { font-family: var(--mono); color: var(--ok); white-space: nowrap; }
+  .item-price .krw { color: var(--sub); font-size: 12px; }
+
+  .item-meta {
+    display: grid; grid-template-columns: 90px 1fr; gap: 6px 14px;
+    margin-top: 12px; font-size: 14px;
+  }
+  .item-meta dt { color: var(--sub); }
+  .item-meta dd { margin: 0; }
+  .item-meta dd a { color: var(--accent); text-decoration: none; word-break: break-all; }
+  .item-meta dd a:hover { text-decoration: underline; }
+  .why { margin-top: 12px; padding: 10px 14px; background: var(--panel2); border-radius: 4px; font-size: 13px; color: var(--sub); border-left: 2px solid var(--accent); }
+  .why strong { color: var(--fg); }
+
+  .links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .links a {
+    background: var(--panel2); padding: 4px 10px; border-radius: 4px;
+    font-size: 12px; text-decoration: none; color: var(--accent); border: 1px solid var(--border);
+  }
+  .links a:hover { background: var(--bg); }
+
+  .mono { font-family: var(--mono); }
+  .note { background: var(--panel2); border-left: 3px solid var(--warn); padding: 10px 14px; border-radius: 4px; font-size: 13px; margin: 12px 0; }
+  .note.err { border-left-color: var(--err); }
+
+  table.summary { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+  table.summary th, table.summary td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  table.summary th { background: var(--panel2); color: var(--sub); font-weight: 600; }
+  table.summary td.num { text-align: right; font-family: var(--mono); }
+
+  footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--sub); font-size: 12px; }
+  footer code { background: var(--panel2); padding: 2px 6px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>STB AI 자동화 — 반드시 구매 품목</h1>
+  <p class="lede">
+    PoC 가동에 정말로 필요한 품목만 추렸습니다.
+    <strong>제품명·제조사 공식 URL·주요 구매처를 2026-05-28 기준으로 직접 검증</strong>했고,
+    가격은 USD 기준 (한국 배송·관세·환율 별도, ₩1,350/USD 환산 참고).
+    Test Server는 <strong>사내 자산 Mac mini M4 Pro</strong>로 대체되어 구매 목록에서 제외.
+  </p>
+
+  <div class="totals">
+    <div class="pill"><div class="k">Tier 1 (반드시)</div><div class="v">약 $810</div><div class="vsub">≈ ₩109만 (배송·세금 별도)</div></div>
+    <div class="pill"><div class="k">Tier 2 (조건부 필수)</div><div class="v">약 $370</div><div class="vsub">≈ ₩50만 — STB·시나리오 종속</div></div>
+    <div class="pill"><div class="k">최소 시작 (Tier 1만)</div><div class="v">5 품목</div><div class="vsub">Tier 2는 진행하며 결정</div></div>
+  </div>
+</header>
+
+<!-- ═══════════════════════ TIER 1 ═══════════════════════ -->
+<section>
+  <h2 class="tier1">🟢 Tier 1 · 반드시 구매 — 없으면 PoC 시작 불가</h2>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">HDMI 캡처카드 <span class="badge">USB 3.0</span></div>
+      <div class="item-price">$320 × 2 = $640 <span class="krw">≈ ₩86만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>Magewell USB Capture HDMI 4K Plus (모델 32090)</dd>
+      <dt>수량/용도</dt><dd>2개 — Reference STB + DUT 동시 화면 캡처 (Vision AI 입력)</dd>
+      <dt>제조사</dt><dd><a href="https://www.magewell.com/products/usb-capture-hdmi-4k-plus" target="_blank" rel="noopener">magewell.com/products/usb-capture-hdmi-4k-plus</a></dd>
+      <dt>사양</dt><dd><a href="https://www.magewell.com/tech-specs/usb-capture-hdmi-4k-plus" target="_blank">tech-specs</a> · 4K30 캡처, USB 3.1, UVC 표준 (macOS/Linux/Win plug&play)</dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.amazon.com/Magewell-USB-Capture-HDMI-Plus/dp/B0754C5XLW" target="_blank">Amazon</a>
+      <a href="https://www.bhphotovideo.com/c/product/1358688-REG/magewell_32090_usb_3_0_dongle_1_channel.html" target="_blank">B&amp;H Photo</a>
+      <a href="https://www.newegg.com/p/2CX-002X-00059" target="_blank">Newegg</a>
+      <a href="https://www.bestbuy.com/product/magewell-usb-capture-hdmi-4k-plus-black/B2YGQ994SG/sku/11676754" target="_blank">Best Buy</a>
+      <a href="https://search.danawa.com/dsearch.php?query=Magewell+USB+Capture+HDMI+4K+Plus" target="_blank">다나와 검색</a>
+      <a href="https://www.coupang.com/np/search?q=Magewell+USB+Capture+HDMI+4K+Plus" target="_blank">쿠팡 검색</a>
+    </div>
+    <div class="why"><strong>왜 필수:</strong> 화면 검증은 PoC 핵심. STB는 WebDriver가 없어 HDMI 캡처 + Vision AI가 유일한 검증 경로. UVC 표준이라 OS 무관 인식.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">IR 송신·학습 모듈 <span class="badge">Wi-Fi · 학습+송신</span></div>
+      <div class="item-price">$26 × 1 <span class="krw">≈ ₩3.5만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>BroadLink RM4 Mini (Wi-Fi IR Blaster, 학습 기능 내장)</dd>
+      <dt>수량/용도</dt><dd>1개 — 리모컨 키 자동 송신 + codeset 학습 (<code class="mono">tools/ir-learner</code>)</dd>
+      <dt>제조사</dt><dd><a href="https://ebroadlink.com/products/broadlink-rm4-mini-universal-remote-wi-fi-ir-control-hub_certified-wwa-work-with-alexa_-black" target="_blank">ebroadlink.com/products/broadlink-rm4-mini</a></dd>
+      <dt>인터페이스</dt><dd>로컬 HTTP/UDP (python-broadlink) — 클라우드 의존 없음</dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.amazon.com/Broadlink-RM4-Universal-Control-Compatible/dp/B07ZSF46BX" target="_blank">Amazon</a>
+      <a href="https://www.walmart.com/ip/BroadLink-Smart-IR-Remote-Control-Hub-2-4-Ghz-WIFI-Only-WiFi-IR-Blaster-Smart-Home-Automation-TV-Remote-Compatible-Google-Assistant-IFTTT-RM4-mini/355898472" target="_blank">Walmart</a>
+      <a href="https://search.danawa.com/dsearch.php?query=BroadLink+RM4+Mini" target="_blank">다나와 검색</a>
+      <a href="https://www.coupang.com/np/search?q=BroadLink+RM4+Mini" target="_blank">쿠팡 검색</a>
+    </div>
+    <div class="note">
+      <strong>STB 종류에 따라 면제 가능:</strong>
+      ① Android TV STB → <code class="mono">IR_BACKEND=adb</code> (0원),
+      ② RDK 박스(Comcast/Sky 일부) → <code class="mono">IR_BACKEND=rdk</code> Thunder API (0원),
+      ③ HDMI-CEC 지원 → libcec (0원).
+      위 셋 다 해당 없으면 BroadLink가 가성비 1위 (iTach IP2IR은 18만~).
+    </div>
+    <div class="why"><strong>왜 BroadLink RM4 Mini로 결정:</strong> docs/18 저가 대안 분석 — 학습+송신 단일 보드, 로컬 제어 가능, ₩3만대로 iTach 대비 86% 절감.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">관리형 8포트 스위치 <span class="badge">L2+ Managed</span></div>
+      <div class="item-price">$140 × 1 <span class="krw">≈ ₩19만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>TP-Link TL-SG3210 (8× Gigabit + 2× SFP, JetStream L2+)</dd>
+      <dt>수량/용도</dt><dd>1개 — VLAN 4종 분리 (Mgmt · STB-WAN · STB-LAN · OTA)</dd>
+      <dt>제조사</dt><dd><a href="https://www.tp-link.com/us//service-provider/managed-switch/tl-sg3210/" target="_blank">tp-link.com/.../tl-sg3210</a></dd>
+      <dt>사양</dt><dd>VLAN(802.1Q), ACL, IP-MAC binding, IGMP snooping, web/CLI/Omada 관리</dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.newegg.com/tp-link-tl-sg3210-8-x-rj45-2-x-sfp/p/N82E16833704092" target="_blank">Newegg</a>
+      <a href="https://www.walmart.com/ip/TP-Link-TL-SG3210-JetStream-8-Port-Gigabit-L2-Managed-Switch-2-SFP-Slots-Omada-SDN-Integrated-L2-Smart-Managed-IPv6-Static-Routing-L2-L3-L4-QoS-IGMP/927442552" target="_blank">Walmart</a>
+      <a href="https://www.bhphotovideo.com/c/product/855326-REG/TP_Link_tl_sg3210_JetStream_8_Port_Gigabit_L2.html" target="_blank">B&amp;H</a>
+      <a href="https://search.danawa.com/dsearch.php?query=TP-Link+TL-SG3210" target="_blank">다나와 검색</a>
+      <a href="https://www.coupang.com/np/search?q=TP-Link+TL-SG3210" target="_blank">쿠팡 검색</a>
+    </div>
+    <div class="why"><strong>왜 필수:</strong> 캡처카드·iTach·Smart Plug·노트북·Mac mini를 같은 평면 네트워크에 두면 트래픽 격리·OTA 시뮬레이션 불가. VLAN 지원 스위치 1대로 4 망 분리.</div>
+    <div class="note"><strong>대안:</strong> MikroTik <a href="https://mikrotik.com/product/crs305_1g_4s_in" target="_blank">CRS305-1G-4S+IN</a>($120~) 도 가능하나 4×SFP+ 위주라 일반 Ethernet 다중 연결엔 부적합. 본 워크로드는 RJ45 8포트가 적합.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">HDMI 분배기 1→2 <span class="badge">4K HDR 지원</span></div>
+      <div class="item-price">약 $25 × 3 = $75 <span class="krw">≈ ₩10만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>HDMI 1×2 Splitter (4K@60Hz, HDR, HDCP 2.2 지원 모델)</dd>
+      <dt>수량/용도</dt><dd>3개 — Reference STB / DUT / 예비. 캡처카드와 모니터 동시 출력</dd>
+      <dt>구매</dt><dd>commodity 품목 — 4K HDR · HDCP 2.2 지원 명시 모델 선택</dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.amazon.com/s?k=hdmi+splitter+1x2+4k+hdr+hdcp+2.2" target="_blank">Amazon 검색</a>
+      <a href="https://search.danawa.com/dsearch.php?query=HDMI+분배기+1대2+4K+HDR" target="_blank">다나와 검색</a>
+      <a href="https://www.coupang.com/np/search?q=HDMI+분배기+1대2+4K+HDR" target="_blank">쿠팡 검색</a>
+    </div>
+    <div class="why"><strong>왜 필수:</strong> 캡처카드가 HDMI를 끊지 않게 STB → 분배기 → (캡처카드 + 모니터) 분기. 4K HDR/HDCP 미지원이면 DRM 시나리오 실패.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">Powered Thunderbolt 4 Dock <span class="badge">캡처카드 2개+ 필수</span></div>
+      <div class="item-price">$279 × 1 <span class="krw">≈ ₩37만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>OWC 11-Port Thunderbolt 4 Dock (모델 OWCTB4DOCK)</dd>
+      <dt>수량/용도</dt><dd>1개 — Mac mini/노트북 USB 포트 부족 해소 + 캡처카드 안정 전력 공급</dd>
+      <dt>제조사</dt><dd><a href="https://www.owc.com/solutions/thunderbolt-dock" target="_blank">owc.com/solutions/thunderbolt-dock</a></dd>
+    </dl>
+    <div class="links">
+      <a href="https://eshop.macsales.com/shop/owc-thunderbolt-dock" target="_blank">OWC 공식</a>
+      <a href="https://www.amazon.com/OWC-Thunderbolt-Dock-Compatible-Equipped/dp/B097TVLB4F" target="_blank">Amazon</a>
+      <a href="https://www.newegg.com/p/1DN-006H-00023" target="_blank">Newegg</a>
+      <a href="https://search.danawa.com/dsearch.php?query=OWC+Thunderbolt+4+Dock" target="_blank">다나와 검색</a>
+      <a href="https://www.coupang.com/np/search?q=OWC+Thunderbolt+4+Dock" target="_blank">쿠팡 검색</a>
+    </div>
+    <div class="why"><strong>왜 필수:</strong> Magewell 4K 캡처카드가 2개 이상이면 노트북·Mac mini 직결 시 USB 대역폭·전력 부족으로 끊김 발생. Powered Dock이 안정 전력 + Thunderbolt 4 대역폭 보장 (docs/07 §6).</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ TIER 2 ═══════════════════════ -->
+<section>
+  <h2 class="tier2">🟡 Tier 2 · 조건부 필수 — 시나리오/STB 종류에 따라</h2>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">Smart Power Plug <span class="badge">전원 자동 제어</span></div>
+      <div class="item-price">$25 × 2 = $50 <span class="krw">≈ ₩7만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>Shelly Plus Plug (Wi-Fi + Bluetooth, HTTP RPC API)</dd>
+      <dt>수량/용도</dt><dd>2개 — Reference STB + DUT 자동 리셋/재부팅 (anomaly 시나리오·야간 무인 운영)</dd>
+      <dt>제조사</dt><dd><a href="https://us.shelly.com/products/shelly-plus-plug-us-2-pack" target="_blank">us.shelly.com (US 콘센트)</a> · <a href="https://www.shelly.com" target="_blank">shelly.com (글로벌)</a></dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.amazon.com/Shelly-Plus-Plug-US-Measurement/dp/B0CK8JBZ3V/" target="_blank">Amazon (2-pack)</a>
+      <a href="https://www.bestbuy.com/product/shelly-plus-plug--wifi-operated-smart-plug-with-power-measurement--home-automation--bluetooth-gateway--ios-android-white/JV5QKC8V2S/sku/11496228" target="_blank">Best Buy</a>
+      <a href="https://search.danawa.com/dsearch.php?query=Shelly+Plus+Plug" target="_blank">다나와</a>
+      <a href="https://www.coupang.com/np/search?q=스마트+플러그+HTTP+API" target="_blank">쿠팡 (HTTP API 멀티탭)</a>
+    </div>
+    <div class="note err">
+      <strong>한국 콘센트 주의:</strong> Shelly Plus Plug는 US/EU/UK 콘센트 전용. 한국 220V/접지 콘센트엔 변환 어댑터 필요 또는
+      <strong>한국형 IoT 스마트플러그 + 로컬 HTTP API</strong>(예: SmartThings Outlet, ESPHome 호환 모델) 사용 권장.
+      <code class="mono">power-mcp</code>의 HTTP 인터페이스만 유지하면 어떤 제품이든 가능.
+    </div>
+    <div class="why"><strong>언제 필수:</strong> anomaly_injector(전원 사이클) + 야간 무인 회귀(부팅 자동 복구) 시. 수동 리셋 가능하면 보류 가능.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">USB-UART 케이블 (FTDI) <span class="badge">시리얼 로그</span></div>
+      <div class="item-price">$15 × 2 = $30 <span class="krw">≈ ₩4만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>FTDI TTL-232R-3V3 (3.3V 시리얼) · 또는 동급 CP2102/CH340 모듈</dd>
+      <dt>수량/용도</dt><dd>2개 — Reference STB + DUT 펌웨어 UART 로그 수집 (triage 컴포넌트 라벨링 입력)</dd>
+      <dt>제조사</dt><dd><a href="https://ftdichip.com/products/ttl-232r-3v3/" target="_blank">ftdichip.com/products/ttl-232r-3v3</a></dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.adafruit.com/product/70" target="_blank">Adafruit (TTL-232R-3V3)</a>
+      <a href="https://www.amazon.com/s?k=FTDI+TTL-232R-3V3" target="_blank">Amazon 검색</a>
+      <a href="https://search.danawa.com/dsearch.php?query=FTDI+USB+UART+3.3V" target="_blank">다나와 검색</a>
+      <a href="https://www.coupang.com/np/search?q=FTDI+USB+UART+3.3V" target="_blank">쿠팡 검색</a>
+    </div>
+    <div class="why"><strong>언제 필수:</strong> 사내 STB가 UART 핀(TX/RX/GND)을 외부로 노출하는 경우. 펌웨어 팀 협조 필요 (Sprint 0 Day 11~14). UART 미노출 STB는 ADB/JTAG 대체 또는 로그 미수집(triage 정확도↓).</div>
+  </div>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">1U 랙 마운트 키트 (Mac mini) <span class="badge">랙 운용 시</span></div>
+      <div class="item-price">약 $75 <span class="krw">≈ ₩10만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>제품명</dt><dd>Sonnet xMac mini Server Rackmount · 또는 호환 1U 마운트</dd>
+      <dt>수량/용도</dt><dd>1개 — 사내 안정성 랙에 Mac mini M4 Pro 마운트</dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.amazon.com/s?k=Sonnet+xMac+mini+rackmount" target="_blank">Amazon 검색</a>
+      <a href="https://search.danawa.com/dsearch.php?query=Mac+mini+rack+mount" target="_blank">다나와 검색</a>
+      <a href="https://www.coupang.com/np/search?q=Mac+mini+rack+mount" target="_blank">쿠팡 검색</a>
+    </div>
+    <div class="why"><strong>언제 필수:</strong> 사내 랙에 Mac mini를 올리는 운영 모델일 때. 데스크탑 모드면 불필요.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="item-title">HDMI Dummy Plug <span class="badge">헤드리스 운영</span></div>
+      <div class="item-price">약 $10 <span class="krw">≈ ₩1.5만</span></div>
+    </div>
+    <dl class="item-meta">
+      <dt>용도</dt><dd>Mac mini 헤드리스 운영 시 GUI 해상도 유지 (모니터 없이 부팅 시 일부 macOS 기능 제한 방지)</dd>
+    </dl>
+    <div class="links">
+      <a href="https://www.amazon.com/s?k=HDMI+dummy+plug+4K" target="_blank">Amazon 검색</a>
+      <a href="https://search.danawa.com/dsearch.php?query=HDMI+더미+플러그" target="_blank">다나와 검색</a>
+    </div>
+    <div class="why"><strong>언제 필수:</strong> Mac mini를 모니터 없이 랙에서 24/7 운영할 때. 모니터 연결되면 불필요.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ EXCLUDE ═══════════════════════ -->
+<section>
+  <h2 class="exclude">⚪ 명시적 제외 — 구매 대상 아님</h2>
+  <table class="summary">
+    <thead><tr><th>품목</th><th>이유</th><th>대안 / 비고</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Test Server (Mac mini M4 Pro)</strong></td>
+        <td>사내 안정성 랙 기존 자산 활용</td>
+        <td>신규 구매 0원 — 225만원 절감 (docs/07)</td>
+      </tr>
+      <tr>
+        <td>운영 노트북</td>
+        <td>운영자 기존 노트북 활용</td>
+        <td>TB 4/5 + USB-A 2+ 포트 확인</td>
+      </tr>
+      <tr>
+        <td>SaaS 라이선스 (Suitest / Witbe)</td>
+        <td>평가용 시범 — 결재 별도</td>
+        <td>6개월 시범 후 자체 안 5로 대체</td>
+      </tr>
+      <tr>
+        <td>외부 LLM API 키 (Anthropic / OpenAI / Gemini)</td>
+        <td>기본 스택 로컬 Ollama로 100% 동작</td>
+        <td>정책상 허용된 키만 vision_bench에서 비교 측정 (docs/32)</td>
+      </tr>
+      <tr>
+        <td>GPIO 푸셔 (Pi4 + 서보 + PCA9685)</td>
+        <td>Sprint 2 BT 페어링 자동화용 — 후순위</td>
+        <td>Sprint 1은 운영자 수동 트리거 / 약 ₩15만 (docs/20)</td>
+      </tr>
+      <tr>
+        <td>BT 디바이스 매트릭스 (AirPods · Sony WH · JBL …)</td>
+        <td>BT 호환성 시나리오 본격 시작 시</td>
+        <td>P1 디바이스 2종만 우선 (₩60~70만, docs/15)</td>
+      </tr>
+      <tr>
+        <td>스튜디오 모니터 스피커</td>
+        <td>음성 시나리오 본격 시작 시</td>
+        <td>약 ₩10만 (docs/15)</td>
+      </tr>
+      <tr>
+        <td>27" 4K 모니터 ×2</td>
+        <td>사내 모니터로 대체 가능</td>
+        <td>없으면 약 ₩70만 — 사내 자산 확인 우선</td>
+      </tr>
+      <tr>
+        <td>방화벽 / Traffic Shaper</td>
+        <td>anomaly_injector network 시나리오 본격화 시</td>
+        <td>OPNsense Mini PC 자체 구성 약 ₩40만 — 후순위</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════ SUMMARY ═══════════════════════ -->
+<section>
+  <h2>📋 발주 요약표 (Tier 1 + Tier 2)</h2>
+  <table class="summary">
+    <thead><tr><th>품목</th><th>모델</th><th>수량</th><th class="num">단가 (USD)</th><th class="num">소계 (USD)</th><th class="num">≈ 원화</th></tr></thead>
+    <tbody>
+      <tr><td>HDMI 캡처카드</td><td>Magewell USB Capture HDMI 4K Plus (32090)</td><td>2</td><td class="num">$320</td><td class="num">$640</td><td class="num">₩864,000</td></tr>
+      <tr><td>IR 송신·학습</td><td>BroadLink RM4 Mini</td><td>1</td><td class="num">$26</td><td class="num">$26</td><td class="num">₩35,000</td></tr>
+      <tr><td>관리형 스위치</td><td>TP-Link TL-SG3210</td><td>1</td><td class="num">$140</td><td class="num">$140</td><td class="num">₩189,000</td></tr>
+      <tr><td>HDMI 분배기 1×2 4K HDR</td><td>commodity (HDCP 2.2)</td><td>3</td><td class="num">$25</td><td class="num">$75</td><td class="num">₩101,000</td></tr>
+      <tr><td>Thunderbolt 4 Dock</td><td>OWC 11-Port (OWCTB4DOCK)</td><td>1</td><td class="num">$279</td><td class="num">$279</td><td class="num">₩377,000</td></tr>
+      <tr style="background:var(--panel2)"><td colspan="4"><strong>Tier 1 소계</strong></td><td class="num"><strong>$1,160</strong></td><td class="num"><strong>≈ ₩1,566,000</strong></td></tr>
+      <tr><td>Smart Power Plug</td><td>Shelly Plus Plug (또는 한국형 IoT)</td><td>2</td><td class="num">$25</td><td class="num">$50</td><td class="num">₩68,000</td></tr>
+      <tr><td>USB-UART 케이블</td><td>FTDI TTL-232R-3V3</td><td>2</td><td class="num">$15</td><td class="num">$30</td><td class="num">₩41,000</td></tr>
+      <tr><td>1U 랙 마운트 키트</td><td>Sonnet xMac mini Server</td><td>1</td><td class="num">$75</td><td class="num">$75</td><td class="num">₩101,000</td></tr>
+      <tr><td>HDMI Dummy Plug</td><td>commodity</td><td>1</td><td class="num">$10</td><td class="num">$10</td><td class="num">₩14,000</td></tr>
+      <tr style="background:var(--panel2)"><td colspan="4"><strong>Tier 2 소계</strong></td><td class="num"><strong>$165</strong></td><td class="num"><strong>≈ ₩224,000</strong></td></tr>
+      <tr style="background:var(--panel)"><td colspan="4"><strong>합계 (Tier 1 + Tier 2)</strong></td><td class="num"><strong>$1,325</strong></td><td class="num"><strong>≈ ₩1,790,000</strong></td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:12px; color:var(--sub); font-size:13px">
+    * 환산은 ₩1,350/USD 기준 참고치. <strong>해외 배송비·관세·부가세 별도</strong>.
+    국내 유통사 구매가 유리한 품목(특히 캡처카드·스위치)은 다나와/쿠팡에서 비교 후 결정 권장.
+  </p>
+</section>
+
+<footer>
+  <strong>검증 일자:</strong> 2026-05-28 (제조사 공식 URL · 주요 글로벌 리테일러 4개사 교차 확인 완료) ·
+  <strong>저장소:</strong> <code>nuna20230424-ship-it/stb-ai-tc-automation</code> ·
+  <strong>관련 문서:</strong> <a href="06-test-environment.md" style="color:var(--accent)">docs/06 BOM</a> ·
+  <a href="18-low-cost-alternatives.md" style="color:var(--accent)">docs/18 저가 대안</a> ·
+  <a href="19-procurement-quotation.md" style="color:var(--accent)">docs/19 견적/품의서</a><br>
+  ⚠️ 가격은 시기·환율·재고에 따라 변동. <strong>발주 직전 각 링크 재확인 필수</strong>. 한국 유통가가 글로벌가보다 낮은 경우가 있으니 다나와 비교 후 결정.
+</footer>
+
+</div>
+</body>
+</html>
