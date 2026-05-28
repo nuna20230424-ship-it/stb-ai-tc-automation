@@ -204,10 +204,11 @@
 
 <div class="tabs">
   <div class="tab active" data-view="dashboard">📊 Dashboard</div>
-  <div class="tab" data-view="catalog">📋 Catalog (16 시나리오)</div>
+  <div class="tab" data-view="catalog">📋 Catalog (200 시나리오)</div>
   <div class="tab" data-view="run">▶️ Test Run</div>
   <div class="tab" data-view="judge">🔍 Judge Result</div>
   <div class="tab" data-view="bench">⚡ Vision Bench</div>
+  <div class="tab" data-view="ops">🔧 Phase 3~5 Ops</div>
 </div>
 
 <main>
@@ -464,6 +465,100 @@
     <div class="mono" style="background:var(--bg); padding:10px; border-radius:4px; color:var(--accent)" id="benchCmd"></div>
     <p style="margin-top:10px">→ <span class="mono">docker compose up -d --build embedding-mcp</span> 으로 재배포.
       기본값 <span class="mono">VISION_PROVIDER=ollama</span>는 backward compat 유지.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ PHASE 3~5 OPS ════════════════════ -->
+<section class="view" data-view="ops">
+  <h2>Phase 3~5 운영 도구 — 5종</h2>
+  <p>docs/23 로드맵 Phase 3~5의 코드 산출물. <strong>모두 키 불필요, 결정론.</strong></p>
+
+  <div class="card">
+    <div class="card-h">
+      <h4>🎯 Smart Test Selection (tc_selector) · <a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation/blob/main/docs/26-test-selection.md" style="color:var(--accent)">docs/26</a></h4>
+      <span class="sub">Microsoft TIA / Facebook PTS 패턴</span>
+    </div>
+    <p>빌드 변경 영향 분석 + 리스크 가중 + flake 격리로 200 TC를 야간 4h 윈도우 안에 회귀.</p>
+    <table class="bench-table">
+      <thead><tr><th>변경 컴포넌트</th><th>선택 TC</th><th>절약률</th><th>예상 시간</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono">voice-asr</span></td><td>58 / 200</td><td style="color:var(--ok)"><strong>71%</strong></td><td>686s</td></tr>
+        <tr><td><span class="mono">ott-launcher, app-runtime</span></td><td>34 / 200</td><td style="color:var(--ok)"><strong>78%</strong></td><td>514s</td></tr>
+        <tr><td><span class="mono">drm-cdm</span></td><td>~15 / 200</td><td style="color:var(--ok)"><strong>~90%</strong></td><td>~250s</td></tr>
+        <tr><td><span class="mono">--full</span> (정기 풀회귀)</td><td>200 / 200</td><td>0%</td><td>2360s</td></tr>
+      </tbody>
+    </table>
+    <div class="mono" style="margin-top:10px; background:var(--bg); padding:10px; border-radius:4px; color:var(--accent)">python -m tools.tc_selector select --changed-components voice-asr --budget-min 240 --emit-pytest-k k.txt</div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-h">
+      <h4>🧩 Auto Triage (triage) · <a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation/blob/main/docs/27-triage-mcp.md" style="color:var(--accent)">docs/27</a></h4>
+      <span class="sub">LogSage 패턴 (F1 +38%p, precision 98%+)</span>
+    </div>
+    <p>야간 회귀 실패 evidence → 컴포넌트 라벨링(룰 1차 + LLM 2차) → 클러스터링 → 동일 라벨 묶음을 1 JIRA로 집계.
+      <strong>매일 5~20건 빨강 트리아지를 시간 → 분으로 압축.</strong></p>
+    <div style="background:var(--bg); padding:12px; border-radius:4px; font-family:var(--mono)">
+      🧩 실패 4건 → 클러스터 3개 (압축 25%)<br>
+      &nbsp;&nbsp;[P2] network  ×2  — OTT 2건 동일 UART 시그니처 병합<br>
+      &nbsp;&nbsp;[P1] drm      ×1<br>
+      &nbsp;&nbsp;[P1] video    ×1
+    </div>
+    <p style="margin-top:10px">10종 컴포넌트(video/audio/ui/network/drm/input-ir·bt/voice/system/unknown) × UART 룰 키워드 + 카테고리 힌트.
+      report-mcp <span class="mono">/incident</span> 재사용 → 클러스터당 1 JIRA.</p>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-h">
+      <h4>🧭 State Graph Navigation (navgraph) · <a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation/blob/main/docs/34-state-graph-navigation.md" style="color:var(--accent)">docs/34</a></h4>
+      <span class="sub">stb-tester + BFS 패턴</span>
+    </div>
+    <p><span class="mono">navigate</span> 액션을 하드코딩 reach 매크로에서 그래프 BFS로 진화. 신규 펌웨어는 <span class="mono">state_map.json</span>만 갱신하면 임의 상태 간 경로 자동 생성.</p>
+    <table class="bench-table">
+      <thead><tr><th>요청</th><th>경로 (BFS 최단)</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono">home → epg_open</span></td><td>2-step: <code>LIVE → EPG</code></td></tr>
+        <tr><td><span class="mono">home → drm_content_playing</span></td><td>❌ <code>netflix_credentials</code> 필요 (게이트)</td></tr>
+        <tr><td><span class="mono">home → drm_content_playing</span> + netflix 자격</td><td>3-step: voice "넷플릭스" → wait → voice "4K HDR"</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">노드 14개 (preconditions 1:1) + 엣지 16개 + <span class="mono">requires</span> 자격 게이트. <span class="mono">python -m tools.navgraph dot | dot -Tpng</span>로 시각화.</p>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-h">
+      <h4>📈 Catalog Expander · <a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation/blob/main/docs/37-catalog-expander.md" style="color:var(--accent)">docs/37</a></h4>
+      <span class="sub">36 → 200 시나리오, LLM/API 키 불필요</span>
+    </div>
+    <p>docs/23 §3-2 "데이터 다양성은 파라미터" — 24 family × 데이터 axis(채널 35 / OTT 8 / 해상도·언어·오디오·네트워크·속도)로 결정론 확장.</p>
+    <table class="bench-table">
+      <thead><tr><th>카테고리</th><th>기존 → 최종</th></tr></thead>
+      <tbody>
+        <tr><td>EPG (채널 자핑 35 — 한국 현장 표준)</td><td>4 → <strong>50</strong></td></tr>
+        <tr><td>OTT (8개 앱 × 실행/검색/이어보기/로그아웃/프로필)</td><td>4 → <strong>34</strong></td></tr>
+        <tr><td>Settings · TrickPlay · Recording · Parental · DRM · Search</td><td>23 → <strong>116</strong></td></tr>
+        <tr><td><strong>합계</strong></td><td><strong>36 → 200</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="mono" style="margin-top:10px; background:var(--bg); padding:10px; border-radius:4px; color:var(--accent)">python -m tools.catalog_expander.cli generate --out drafts/expanded.json && python -m tools.catalog.merge --drafts drafts/expanded.json</div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-h">
+      <h4>🔧 Catalog Tuner · <a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation/blob/main/docs/38-catalog-tuning.md" style="color:var(--accent)">docs/38</a></h4>
+      <span class="sub">QA SME 검토 루프 — lint + overrides</span>
+    </div>
+    <p>생성 시나리오의 키/네비/precondition을 사내 펌웨어에 맞춰 정규화. <strong>lint 6 → 0, 200/200 schema 통과</strong>. CI 게이트(lint --strict)로 회귀 차단.</p>
+    <table class="bench-table">
+      <thead><tr><th>1차 튜닝 항목</th><th>교정</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono">SEARCH</span> 표준 키맵 누락</td><td>STANDARD_KEYS + android keyevents 추가</td></tr>
+        <tr><td><span class="mono">1</span>, <span class="mono">0</span> (PIN 맨 숫자)</td><td><span class="mono">key_remap</span>: → <span class="mono">CH_1</span>, <span class="mono">CH_0</span></td></tr>
+        <tr><td><span class="mono">SETTINGS</span></td><td><span class="mono">key_remap</span>: → <span class="mono">MENU</span></td></tr>
+        <tr><td>드라마틱 자유텍스트 navigate</td><td><span class="mono">scenario_patches</span>: 음성 기반 steps</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">SME 검토 워크북(CSV) export + <span class="mono">overrides.json</span> 결정론 적용 + 백업·재검증.</p>
   </div>
 </section>
 

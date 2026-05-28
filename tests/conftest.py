@@ -33,6 +33,86 @@ def pytest_addoption(parser):
         "--auto", action="store_true", default=False,
         help="페어링/수동 트리거 액션을 자동으로 진행 (CI/GPIO 환경)",
     )
+    parser.addoption(
+        "--anomaly-mode", action="store", default="skip",
+        choices=["skip", "dry-run", "live"],
+        help="anomaly_injector 테스트 모드: skip(기본, 미실행) / dry-run(명령 echo만) / live(실주입)",
+    )
+
+
+@pytest.fixture(scope="session")
+def anomaly_mode(request) -> str:
+    """anomaly 테스트 모드 — --anomaly-mode CLI 옵션.
+
+    dry-run 모드에선 STB SSH 타깃이 없어도 wiring을 검증할 수 있도록 더미 호스트 기본값 주입.
+    live 모드는 실 STB_HOST 필수 — 누락 시 anomaly_injector가 명확한 에러로 중단.
+    """
+    mode = request.config.getoption("--anomaly-mode")
+    if mode == "dry-run":
+        os.environ.setdefault("STB_HOST", "dry-run-stb.local")
+        os.environ.setdefault("STB_USER", "root")
+    return mode
+
+
+def _import_anomaly():
+    """tools/anomaly_injector를 import 가능하게 sys.path 보강 후 모듈 반환."""
+    import sys
+    from pathlib import Path
+    repo = Path(__file__).resolve().parents[1]
+    if str(repo) not in sys.path:
+        sys.path.insert(0, str(repo))
+    from tools.anomaly_injector import ir_chaos as ir_mod
+    from tools.anomaly_injector import network as net_mod
+    from tools.anomaly_injector import time_skew as ts_mod
+    return net_mod, ts_mod, ir_mod
+
+
+@pytest.fixture
+def with_network_drop(anomaly_mode):
+    """factory: with with_network_drop(dst='cdn.example.com'): ... — OUTPUT 트래픽 차단."""
+    if anomaly_mode == "skip":
+        pytest.skip("anomaly 테스트 — --anomaly-mode=dry-run|live 필요")
+    net, _, _ = _import_anomaly()
+
+    from contextlib import contextmanager
+
+    @contextmanager
+    def _factory(**kwargs):
+        kwargs.setdefault("dry_run", anomaly_mode == "dry-run")
+        with net.network_drop(**kwargs):
+            yield
+    return _factory
+
+
+@pytest.fixture
+def with_time_skew(anomaly_mode):
+    """factory: with with_time_skew(skew='+1y'): ... — STB 시계 이동 (DRM 만료 검증용)."""
+    if anomaly_mode == "skip":
+        pytest.skip("anomaly 테스트 — --anomaly-mode=dry-run|live 필요")
+    _, ts, _ = _import_anomaly()
+
+    from contextlib import contextmanager
+
+    @contextmanager
+    def _factory(**kwargs):
+        kwargs.setdefault("dry_run", anomaly_mode == "dry-run")
+        with ts.time_skew(**kwargs):
+            yield
+    return _factory
+
+
+@pytest.fixture
+def with_ir_chaos(anomaly_mode):
+    """one-shot: with_ir_chaos(pattern='rapid_repeat', key='OK', count=30) — 리모컨 연타/플러드."""
+    if anomaly_mode == "skip":
+        pytest.skip("anomaly 테스트 — --anomaly-mode=dry-run|live 필요")
+    _, _, ir = _import_anomaly()
+
+    def _run(**kwargs):
+        kwargs.setdefault("dry_run", anomaly_mode == "dry-run")
+        kwargs.setdefault("ir_mcp_url", os.getenv("IR_MCP_URL", "http://localhost:8002"))
+        return ir.ir_chaos(**kwargs)
+    return _run
 
 
 @dataclass

@@ -2,6 +2,36 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-28 (업데이트 42) — 코드만으로 가능한 잔여 3건 마무리 (A+B+C)
+
+장비 없이 코드만으로 닫을 수 있는 모든 미완 항목 종결. 진정한 "코드 트랙 완료" 상태.
+
+### A. CI 연동 (회귀 차단 게이트)
+- `.github/workflows/lint.yml` 확장:
+  - **catalog-lint 잡**: `python -m tools.catalog_tuner.cli lint --strict` + `catalog.validate`
+  - **tools-tests 잡**: `pytest tools/tests/` (212 회귀 안전망) — 매 PR/push에서 자동 실행
+- `.github/workflows/e2e-nightly.yml` 확장:
+  - **Smart Test Selection 단계** — `tc_selector select`로 영향 TC만 pytest -k에 전달 (--changed_components 입력)
+  - **Auto-triage 단계** — `if: always()`로 실패해도 evidence 클러스터링 + 1 JIRA/클러스터
+  - Step Summary에 selection/triage 결과 자동 출력 (selected_count / 절약률 / 압축률)
+
+### B. demo.html (이해관계자 표면 갱신)
+- 🔧 "Phase 3~5 Ops" 탭 신규 — 5종 도구 카드: tc_selector / triage / navgraph / catalog_expander / catalog_tuner
+- Catalog 탭 라벨 "16 시나리오" → **"200 시나리오"**
+- 각 카드: mock 정량 데이터(절약률·압축률·BFS 경로·확장 결과·튜닝 결과) + 명령어 예시 + docs 직링크
+
+### C. anomaly_injector pytest fixture 통합
+- `tests/conftest.py`: `--anomaly-mode={skip|dry-run|live}` CLI 옵션 + 3 fixture(`with_network_drop`, `with_time_skew`, `with_ir_chaos`)
+- dry-run 모드에서 STB SSH 더미 자동 설정 → 하드웨어 없이 wiring 검증
+- `tests/scenarios/test_anomaly_catalog.py`: 11 테스트 (network drop ×2 + latency 1 + time skew ×2 + IR chaos parametrize 4 + 에러 처리 2)
+- `pytest.ini` `anomaly` 마커 추가
+- 검증: **skip 모드 11 skipped (기본, CI 노이즈 0), dry-run 모드 10 passed + 1 skip(macOS netem)**
+
+### 통합 회귀
+- tools/tests/ **212 passed** 유지
+- catalog lint 0 / 200 schema 통과 유지
+- demo.html 6 탭 / 6 section 정합
+
 ## 2026-05-28 (업데이트 41) — 시나리오 steps/키 펌웨어 튜닝 (catalog_tuner)
 
 expander 생성 200개의 키/네비 일관성을 사내 펌웨어 기준으로 정규화. lint(검출) →

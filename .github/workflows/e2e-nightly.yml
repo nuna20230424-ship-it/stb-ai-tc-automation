@@ -7,9 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       markers:
-        description: "pytest -m 표현식"
+        description: "pytest -m 표현식 (catalog로 200건 풀회귀 / channel_zap)"
         required: false
-        default: "channel_zap"
+        default: "catalog"
+      changed_components:
+        description: "tc_selector 영향 분석 입력 (콤마구분, 예: voice-asr,epg-engine). 비우면 --full"
+        required: false
+        default: ""
       iterations:
         description: "반복 횟수"
         required: false
@@ -72,12 +76,57 @@ jobs:
           curl -fsS $DETECTION_MCP_URL/health
           curl -fsS $REPORT_MCP_URL/health
 
-      - name: Run pytest
+      - name: Smart Test Selection (tc_selector) — 변경 영향 TC만
+        id: select
+        working-directory: .
+        run: |
+          source tests/.venv/bin/activate
+          CHANGED="${{ github.event.inputs.changed_components }}"
+          if [ -n "$CHANGED" ]; then
+            python -m tools.tc_selector select \
+              --changed-components "$CHANGED" \
+              --firmware "$DUT_FIRMWARE" \
+              --budget-min 240 \
+              --emit-pytest-k tests/reports/selected.k \
+              --emit-influx --out tests/reports/selection.json
+            echo "use_k=true" >> "$GITHUB_OUTPUT"
+          else
+            python -m tools.tc_selector select \
+              --full --firmware "$DUT_FIRMWARE" --budget-min 240 \
+              --emit-influx --out tests/reports/selection.json
+            echo "use_k=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run pytest (선택된 TC 또는 전체)
         id: pytest
+        continue-on-error: true   # 실패해도 triage 단계까지 진행
         run: |
           source .venv/bin/activate
-          MARKERS="${{ github.event.inputs.markers || 'channel_zap' }}"
-          python -m pytest -m "$MARKERS" --junitxml=reports/junit.xml
+          MARKERS="${{ github.event.inputs.markers || 'catalog' }}"
+          if [ "${{ steps.select.outputs.use_k }}" = "true" ] && [ -s reports/selected.k ]; then
+            K_EXPR=$(cat reports/selected.k)
+            python -m pytest -m "$MARKERS" -k "$K_EXPR" --junitxml=reports/junit.xml
+          else
+            python -m pytest -m "$MARKERS" --junitxml=reports/junit.xml
+          fi
+
+      - name: Auto-triage (실패 evidence 클러스터링 → 1 JIRA/클러스터)
+        if: always()
+        working-directory: .
+        env:
+          OLLAMA_URL: ${{ vars.OLLAMA_URL }}
+        run: |
+          source tests/.venv/bin/activate
+          if [ -d tests/evidence ] && [ "$(ls -A tests/evidence 2>/dev/null)" ]; then
+            python -m tools.triage run \
+              --evidence-dir tests/evidence \
+              --catalog infrastructure/notebook-gateway/data/scenarios-catalog.json \
+              ${OLLAMA_URL:+--use-llm} \
+              --emit-jira --emit-influx \
+              --out tests/reports/triage-report.json
+          else
+            echo "ℹ️  evidence 디렉토리 비어있음 — triage skip"
+          fi
 
       - name: Upload reports
         if: always()
@@ -88,6 +137,7 @@ jobs:
             tests/reports/
             tests/data/captures/
             tests/data/frames/
+            tests/evidence/
           retention-days: 14
 
       - name: Upload UART logs
@@ -100,11 +150,27 @@ jobs:
 
       - name: Summarize
         if: always()
+        working-directory: .
         run: |
           {
             echo "## E2E Nightly 결과"
             echo "- 시작: ${{ github.event.repository.updated_at }}"
             echo "- DUT 펌웨어: ${DUT_FIRMWARE:-unknown}"
-            echo "- 결과: ${{ steps.pytest.outcome }}"
+            echo "- pytest: ${{ steps.pytest.outcome }}"
+            if [ -f tests/reports/selection.json ]; then
+              echo ""
+              echo "### Smart Selection"
+              python -c "import json,sys;d=json.load(open('tests/reports/selection.json'));print(f\"- 선택 {d['selected_count']}개 / 미영향 {len(d['skipped_not_impacted'])}개 / 격리 {len(d['quarantined'])}개\");print(f\"- 절약 {d['savings_pct']}% (예상 {d['selected_sec']:.0f}s / 전체 {d['eligible_sec']:.0f}s)\")"
+            fi
+            if [ -f tests/reports/triage-report.json ]; then
+              echo ""
+              echo "### Triage"
+              python -c "import json;d=json.load(open('tests/reports/triage-report.json'));print(f\"- 실패 {d['failures']}건 → 클러스터 {d['clusters']}개 (압축 {d['compression_ratio']*100:.0f}%)\")"
+            fi
+            echo ""
             echo "- 리포트: artifact \`e2e-reports-${{ github.run_id }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: pytest 실패 시 워크플로 실패 처리
+        if: steps.pytest.outcome == 'failure'
+        run: exit 1

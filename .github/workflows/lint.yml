@@ -48,3 +48,36 @@ jobs:
             rules:
               line-length: disable
               truthy: disable
+
+  catalog-lint:
+    # docs/38 §7 — 신규 시나리오의 비표준 키/네비/precondition을 머지 전 차단
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install schema deps
+        run: pip install pydantic==2.9.0
+      - name: catalog_tuner lint --strict
+        run: python -m tools.catalog_tuner.cli lint --strict
+      - name: catalog schema validate
+        run: python -m tools.catalog.validate infrastructure/notebook-gateway/data/scenarios-catalog.json
+
+  tools-tests:
+    # tools/ 순수 함수 회귀 — 212/212 안전망
+    # (catalog_expander/tuner/tc_selector/triage/navgraph/rdk/golden_set/vision_bench/anomaly_injector)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install -r tools/requirements.txt
+          pip install pytest==8.3.3 httpx==0.27.2 pillow==10.4.0
+      - name: pytest tools/tests
+        run: python -m pytest tools/tests/ -q
