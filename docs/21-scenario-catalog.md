@@ -130,12 +130,14 @@ python -m baselines.seed_catalog --firmware v1.2.3 --category OTT --iterations 1
 
 ## 9. 카탈로그 확장 로드맵
 
-| 시점 | 추가 카테고리 | 시나리오 수 |
+| 시점 | 추가 | 시나리오 수 |
 |---|---|---|
 | Sprint 1 | EPG / OTT / DRM / TrickPlay | 16 |
-| Sprint 2 (현재) | Search / Recording / Parental / Settings | +20 (= 36) |
-| Sprint 3 | Multi-room, OTA Update, Diagnostics, Stress | +30 |
-| 운영 | 100+ 시나리오 — 100% 자동화 목표 | — |
+| Sprint 2 | Search / Recording / Parental / Settings | +20 (= 36) |
+| **Phase 1 (2026-05-28)** | **catalog_expander 파라미터 확장 (8 카테고리 내 데이터 축)** | **+164 (= 200)** ✅ |
+| 운영 | 200 → 500 (axis 확장 또는 scenario_drafter) | — |
+
+> **현재 200 시나리오** — 8 카테고리(EPG 50 / OTT 34 / Settings 30 / TrickPlay 23 / Recording 17 / Parental 16 / DRM 15 / Search 15). 확장 도구·방법은 [37-catalog-expander.md](37-catalog-expander.md).
 
 ## 10. Claude Code 활용 (5번째 팀원)
 

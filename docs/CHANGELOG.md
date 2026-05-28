@@ -2,6 +2,26 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-28 (업데이트 40) — 카탈로그 36 → 200 확장 (catalog_expander)
+
+docs/23 §3-2 "데이터 다양성은 파라미터" — LLM/API 키 없이 결정론적 파라미터 확장으로
+36 → **200 시나리오** 달성 (코드만, 재현 가능).
+
+### 🧰 `tools/catalog_expander/`
+- expander.py: 플레이스홀더 재귀 치환 + family 확장 + 충돌 검사 (순수)
+- param_spec.json: 24 family × axis (채널 35 / OTT앱 8 / 해상도·언어·오디오·네트워크 / 속도 등)
+- cli.py: generate / count
+- 생성 164개 → tools.catalog.merge(infer_defaults+백업+재검증) → **200/200 schema 통과**
+
+### 📊 카테고리 분포 (200)
+- EPG 50 / OTT 34 / Settings 30 / TrickPlay 23 / Recording 17 / Parental 16 / DRM 15 / Search 15
+- 우선순위 P1 48 / P2 139 / P3 13
+
+### ✅ 검증 / 테스트
+- test_catalog_expander.py 13 pass (치환/확장/164 schema-valid/충돌) → 전체 **199 passed**
+- tc_selector 200 규모 sanity: voice-asr 58/200(71% 절약), ott-launcher 34/200(78%)
+- docs/37-catalog-expander.md, docs/21 갱신, tools/catalog_expander/README
+
 ## 2026-05-27 (업데이트 39) — Phase 5: State Graph + RDK 폴백 + KT/SKB 케이스 스터디
 
 docs/23 §5 Phase 5(운영: 신규 펌웨어/모델 자동 적응) 3개 산출물.

@@ -1968,5 +1968,8196 @@
       "네트워크",
       "IP"
     ]
+  },
+  {
+    "id": "epg_zap_kbs1",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "KBS1 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "KBS1 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "KBS1"
+    ]
+  },
+  {
+    "id": "epg_zap_kbs2",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "KBS2 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "KBS2 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "KBS2"
+    ]
+  },
+  {
+    "id": "epg_zap_mbc",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "MBC 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "MBC 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "MBC"
+    ]
+  },
+  {
+    "id": "epg_zap_sbs",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "SBS 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "SBS 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "SBS"
+    ]
+  },
+  {
+    "id": "epg_zap_ebs1",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "EBS1 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "EBS1 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "EBS1"
+    ]
+  },
+  {
+    "id": "epg_zap_ebs2",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "EBS2 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "EBS2 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "EBS2"
+    ]
+  },
+  {
+    "id": "epg_zap_jtbc",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "JTBC 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "JTBC 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "JTBC"
+    ]
+  },
+  {
+    "id": "epg_zap_tvn",
+    "category": "EPG",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "tvN 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "tvN 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "tvN"
+    ]
+  },
+  {
+    "id": "epg_zap_ocn",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "OCN 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "OCN 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "OCN"
+    ]
+  },
+  {
+    "id": "epg_zap_ytn",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "YTN 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "YTN 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "YTN"
+    ]
+  },
+  {
+    "id": "epg_zap_channela",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "채널A 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "채널A 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "채널A"
+    ]
+  },
+  {
+    "id": "epg_zap_mbn",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "MBN 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "MBN 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "MBN"
+    ]
+  },
+  {
+    "id": "epg_zap_tvchosun",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "TV조선 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "TV조선 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "TV조선"
+    ]
+  },
+  {
+    "id": "epg_zap_sbsplus",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "SBS플러스 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "SBS플러스 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "SBS플러스"
+    ]
+  },
+  {
+    "id": "epg_zap_kbsdrama",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "KBS드라마 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "KBS드라마 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "KBS드라마"
+    ]
+  },
+  {
+    "id": "epg_zap_mnet",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "Mnet 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Mnet 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "Mnet"
+    ]
+  },
+  {
+    "id": "epg_zap_otvn",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "OtvN 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "OtvN 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "OtvN"
+    ]
+  },
+  {
+    "id": "epg_zap_skylife",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "스카이라이프 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "스카이라이프 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "스카이라이프"
+    ]
+  },
+  {
+    "id": "epg_zap_yonhapnews",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "연합뉴스TV 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "연합뉴스TV 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "연합뉴스TV"
+    ]
+  },
+  {
+    "id": "epg_zap_arirang",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "아리랑TV 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "아리랑TV 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "아리랑TV"
+    ]
+  },
+  {
+    "id": "epg_zap_disney_ch",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "디즈니채널 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "디즈니채널 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "디즈니채널"
+    ]
+  },
+  {
+    "id": "epg_zap_tooniverse",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "투니버스 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "투니버스 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "투니버스"
+    ]
+  },
+  {
+    "id": "epg_zap_animax",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "애니맥스 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "애니맥스 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "애니맥스"
+    ]
+  },
+  {
+    "id": "epg_zap_golf",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "SBS골프 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "SBS골프 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "SBS골프"
+    ]
+  },
+  {
+    "id": "epg_zap_kbsn_sports",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "KBSN스포츠 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "KBSN스포츠 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "KBSN스포츠"
+    ]
+  },
+  {
+    "id": "epg_zap_history",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "히스토리채널 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "히스토리채널 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "히스토리채널"
+    ]
+  },
+  {
+    "id": "epg_zap_nat_geo",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "내셔널지오그래픽 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "내셔널지오그래픽 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "내셔널지오그래픽"
+    ]
+  },
+  {
+    "id": "epg_zap_homeshop",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "홈쇼핑 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "홈쇼핑 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "홈쇼핑"
+    ]
+  },
+  {
+    "id": "epg_zap_kbs_joy",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "KBS조이 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "KBS조이 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "KBS조이"
+    ]
+  },
+  {
+    "id": "epg_zap_mbc_every1",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "MBC에브리원 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "MBC에브리원 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "MBC에브리원"
+    ]
+  },
+  {
+    "id": "epg_zap_sbs_fune",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "SBS funE 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "SBS funE 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "SBS funE"
+    ]
+  },
+  {
+    "id": "epg_zap_cnn",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "CNN 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "CNN 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "CNN"
+    ]
+  },
+  {
+    "id": "epg_zap_bbc_world",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "BBC월드 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "BBC월드 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "BBC월드"
+    ]
+  },
+  {
+    "id": "epg_zap_espn",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "ESPN 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "ESPN 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "ESPN"
+    ]
+  },
+  {
+    "id": "epg_zap_cartoon_network",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "카툰네트워크 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "카툰네트워크 채널로 전환되어 정상 영상 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "channel-list",
+      "tuner",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "카툰네트워크"
+    ]
+  },
+  {
+    "id": "epg_genre_movie",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "voice",
+        "utterance": "영화"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "영화 장르 편성표 필터 결과 표시",
+    "sla_ms": 2500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "영화",
+      "편성표"
+    ]
+  },
+  {
+    "id": "epg_genre_drama",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "voice",
+        "utterance": "드라마"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "드라마 장르 편성표 필터 결과 표시",
+    "sla_ms": 2500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "드라마",
+      "편성표"
+    ]
+  },
+  {
+    "id": "epg_genre_sports",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "voice",
+        "utterance": "스포츠"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "스포츠 장르 편성표 필터 결과 표시",
+    "sla_ms": 2500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "스포츠",
+      "편성표"
+    ]
+  },
+  {
+    "id": "epg_genre_news",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "voice",
+        "utterance": "뉴스"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "뉴스 장르 편성표 필터 결과 표시",
+    "sla_ms": 2500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "뉴스",
+      "편성표"
+    ]
+  },
+  {
+    "id": "epg_genre_kids",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "voice",
+        "utterance": "키즈"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "키즈 장르 편성표 필터 결과 표시",
+    "sla_ms": 2500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "키즈",
+      "편성표"
+    ]
+  },
+  {
+    "id": "epg_genre_variety",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "voice",
+        "utterance": "예능"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "예능 장르 편성표 필터 결과 표시",
+    "sla_ms": 2500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "예능",
+      "편성표"
+    ]
+  },
+  {
+    "id": "epg_remind_kbs1",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RIGHT",
+        "repeat": 3
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "ir",
+        "key": "GREEN"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "KBS1 프로그램 시청 예약 알림 설정 확인",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "KBS1",
+      "예약"
+    ]
+  },
+  {
+    "id": "epg_remind_mbc",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RIGHT",
+        "repeat": 3
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "ir",
+        "key": "GREEN"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "MBC 프로그램 시청 예약 알림 설정 확인",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "MBC",
+      "예약"
+    ]
+  },
+  {
+    "id": "epg_remind_sbs",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RIGHT",
+        "repeat": 3
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "ir",
+        "key": "GREEN"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "SBS 프로그램 시청 예약 알림 설정 확인",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "SBS",
+      "예약"
+    ]
+  },
+  {
+    "id": "epg_remind_tvn",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RIGHT",
+        "repeat": 3
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "ir",
+        "key": "GREEN"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "tvN 프로그램 시청 예약 알림 설정 확인",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "tvN",
+      "예약"
+    ]
+  },
+  {
+    "id": "epg_remind_jtbc",
+    "category": "EPG",
+    "priority": "P2",
+    "preconditions": [
+      "epg_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RIGHT",
+        "repeat": 3
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "ir",
+        "key": "GREEN"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "JTBC 프로그램 시청 예약 알림 설정 확인",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:epg",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "epg-engine",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "JTBC",
+      "예약"
+    ]
+  },
+  {
+    "id": "ott_launch_wavve",
+    "category": "OTT",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "웨이브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "웨이브 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "웨이브"
+    ]
+  },
+  {
+    "id": "ott_launch_disney_plus",
+    "category": "OTT",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "디즈니플러스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "디즈니플러스 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "디즈니플러스"
+    ]
+  },
+  {
+    "id": "ott_launch_coupang_play",
+    "category": "OTT",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "쿠팡플레이 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "쿠팡플레이 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "쿠팡플레이"
+    ]
+  },
+  {
+    "id": "ott_launch_youtube",
+    "category": "OTT",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "유튜브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "유튜브 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "유튜브"
+    ]
+  },
+  {
+    "id": "ott_launch_watcha",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "왓챠 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "왓챠 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "왓챠"
+    ]
+  },
+  {
+    "id": "ott_launch_prime_video",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "프라임비디오 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "프라임비디오 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "프라임비디오"
+    ]
+  },
+  {
+    "id": "ott_launch_apple_tv",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "애플TV 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "애플TV 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "애플TV"
+    ]
+  },
+  {
+    "id": "ott_launch_laftel",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "HOME"
+      },
+      {
+        "action": "voice",
+        "utterance": "라프텔 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "라프텔 앱 홈 화면 표시",
+    "sla_ms": 6000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "라프텔"
+    ]
+  },
+  {
+    "id": "ott_search_wavve",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "웨이브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "SEARCH"
+      },
+      {
+        "action": "voice",
+        "utterance": "인기 콘텐츠 찾아줘"
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "웨이브 앱 내 검색 결과 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "search-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "웨이브",
+      "검색"
+    ]
+  },
+  {
+    "id": "ott_search_disney_plus",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "디즈니플러스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "SEARCH"
+      },
+      {
+        "action": "voice",
+        "utterance": "인기 콘텐츠 찾아줘"
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "디즈니플러스 앱 내 검색 결과 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "search-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "디즈니플러스",
+      "검색"
+    ]
+  },
+  {
+    "id": "ott_search_coupang_play",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "쿠팡플레이 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "SEARCH"
+      },
+      {
+        "action": "voice",
+        "utterance": "인기 콘텐츠 찾아줘"
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "쿠팡플레이 앱 내 검색 결과 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "search-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "쿠팡플레이",
+      "검색"
+    ]
+  },
+  {
+    "id": "ott_search_youtube",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "유튜브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "SEARCH"
+      },
+      {
+        "action": "voice",
+        "utterance": "인기 콘텐츠 찾아줘"
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "유튜브 앱 내 검색 결과 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "search-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "유튜브",
+      "검색"
+    ]
+  },
+  {
+    "id": "ott_search_watcha",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "왓챠 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "SEARCH"
+      },
+      {
+        "action": "voice",
+        "utterance": "인기 콘텐츠 찾아줘"
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "왓챠 앱 내 검색 결과 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "search-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "왓챠",
+      "검색"
+    ]
+  },
+  {
+    "id": "ott_search_prime_video",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "프라임비디오 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "SEARCH"
+      },
+      {
+        "action": "voice",
+        "utterance": "인기 콘텐츠 찾아줘"
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "프라임비디오 앱 내 검색 결과 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "search-engine"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "프라임비디오",
+      "검색"
+    ]
+  },
+  {
+    "id": "ott_resume_netflix",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "넷플릭스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "넷플릭스 이어보기(continue watching) 재생",
+    "sla_ms": 7000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "넷플릭스"
+    ]
+  },
+  {
+    "id": "ott_resume_wavve",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "웨이브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "웨이브 이어보기(continue watching) 재생",
+    "sla_ms": 7000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "웨이브"
+    ]
+  },
+  {
+    "id": "ott_resume_disney_plus",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "디즈니플러스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "디즈니플러스 이어보기(continue watching) 재생",
+    "sla_ms": 7000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "디즈니플러스"
+    ]
+  },
+  {
+    "id": "ott_resume_coupang_play",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "쿠팡플레이 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "쿠팡플레이 이어보기(continue watching) 재생",
+    "sla_ms": 7000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "쿠팡플레이"
+    ]
+  },
+  {
+    "id": "ott_resume_tving",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "티빙 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "티빙 이어보기(continue watching) 재생",
+    "sla_ms": 7000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "티빙"
+    ]
+  },
+  {
+    "id": "ott_resume_watcha",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "왓챠 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "왓챠 이어보기(continue watching) 재생",
+    "sla_ms": 7000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "왓챠"
+    ]
+  },
+  {
+    "id": "ott_signout_netflix",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "넷플릭스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "MENU"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "넷플릭스 앱 계정/로그아웃 메뉴 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "넷플릭스"
+    ]
+  },
+  {
+    "id": "ott_signout_wavve",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "웨이브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "MENU"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "웨이브 앱 계정/로그아웃 메뉴 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "웨이브"
+    ]
+  },
+  {
+    "id": "ott_signout_disney_plus",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "디즈니플러스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "MENU"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "디즈니플러스 앱 계정/로그아웃 메뉴 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "디즈니플러스"
+    ]
+  },
+  {
+    "id": "ott_signout_youtube",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "유튜브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "MENU"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "유튜브 앱 계정/로그아웃 메뉴 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "유튜브"
+    ]
+  },
+  {
+    "id": "ott_signout_tving",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "티빙 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "MENU"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "티빙 앱 계정/로그아웃 메뉴 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "티빙"
+    ]
+  },
+  {
+    "id": "ott_profile_netflix",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "넷플릭스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "UP"
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "넷플릭스 프로필 전환 화면 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "넷플릭스",
+      "프로필"
+    ]
+  },
+  {
+    "id": "ott_profile_disney_plus",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "디즈니플러스 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "UP"
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "디즈니플러스 프로필 전환 화면 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "디즈니플러스",
+      "프로필"
+    ]
+  },
+  {
+    "id": "ott_profile_wavve",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "웨이브 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "UP"
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "웨이브 프로필 전환 화면 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "웨이브",
+      "프로필"
+    ]
+  },
+  {
+    "id": "ott_profile_watcha",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "왓챠 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "UP"
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "왓챠 프로필 전환 화면 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "왓챠",
+      "프로필"
+    ]
+  },
+  {
+    "id": "ott_profile_tving",
+    "category": "OTT",
+    "priority": "P2",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "티빙 실행해줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "ir",
+        "key": "UP"
+      },
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "티빙 프로필 전환 화면 표시",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:ott",
+      "mcp:capture",
+      "mcp:ir",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "ott-launcher",
+      "app-runtime"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "티빙",
+      "프로필"
+    ]
+  },
+  {
+    "id": "drm_widevine_netflix",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "netflix_home"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "넷플릭스 4K 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 8.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "넷플릭스 Widevine L1 보안 경로로 4K 정상 재생",
+    "sla_ms": 9000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "hdcp",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "넷플릭스"
+    ]
+  },
+  {
+    "id": "drm_widevine_disney_plus",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "netflix_home"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "디즈니플러스 4K 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 8.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "디즈니플러스 Widevine L1 보안 경로로 4K 정상 재생",
+    "sla_ms": 9000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "hdcp",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "디즈니플러스"
+    ]
+  },
+  {
+    "id": "drm_widevine_wavve",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "netflix_home"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "웨이브 4K 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 8.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "웨이브 Widevine L1 보안 경로로 4K 정상 재생",
+    "sla_ms": 9000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "hdcp",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "웨이브"
+    ]
+  },
+  {
+    "id": "drm_widevine_coupang_play",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "netflix_home"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "쿠팡플레이 4K 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 8.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "쿠팡플레이 Widevine L1 보안 경로로 4K 정상 재생",
+    "sla_ms": 9000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "hdcp",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "쿠팡플레이"
+    ]
+  },
+  {
+    "id": "drm_widevine_tving",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "netflix_home"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "티빙 4K 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 8.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "티빙 Widevine L1 보안 경로로 4K 정상 재생",
+    "sla_ms": 9000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "hdcp",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "티빙"
+    ]
+  },
+  {
+    "id": "drm_playready_kbs1",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "KBS1 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "KBS1 IPTV 채널 PlayReady 인증 후 정상 재생",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "tuner"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "KBS1"
+    ]
+  },
+  {
+    "id": "drm_playready_mbc",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "MBC 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "MBC IPTV 채널 PlayReady 인증 후 정상 재생",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "tuner"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "MBC"
+    ]
+  },
+  {
+    "id": "drm_playready_premium_movie",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "프리미엄영화채널 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "프리미엄영화채널 IPTV 채널 PlayReady 인증 후 정상 재생",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "tuner"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "프리미엄영화채널"
+    ]
+  },
+  {
+    "id": "drm_playready_sports_live",
+    "category": "DRM",
+    "priority": "P1",
+    "preconditions": [
+      "live_tv"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "스포츠라이브 틀어줘"
+      },
+      {
+        "action": "wait",
+        "sec": 3.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "스포츠라이브 IPTV 채널 PlayReady 인증 후 정상 재생",
+    "sla_ms": 5000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "drm-cdm",
+      "tuner"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "스포츠라이브"
+    ]
+  },
+  {
+    "id": "drm_hdcp_2160p",
+    "category": "DRM",
+    "priority": "P2",
+    "preconditions": [
+      "drm_content_playing",
+      "hdcp_unsupported_display"
+    ],
+    "steps": [
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "4K 출력에서 HDCP 미지원 시 검은 화면/에러 표시",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "hdcp",
+      "drm-cdm"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "HDCP"
+    ]
+  },
+  {
+    "id": "drm_hdcp_1080p",
+    "category": "DRM",
+    "priority": "P2",
+    "preconditions": [
+      "drm_content_playing",
+      "hdcp_unsupported_display"
+    ],
+    "steps": [
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "FHD 출력에서 HDCP 미지원 시 검은 화면/에러 표시",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "hdcp",
+      "drm-cdm"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "HDCP"
+    ]
+  },
+  {
+    "id": "drm_hdcp_720p",
+    "category": "DRM",
+    "priority": "P2",
+    "preconditions": [
+      "drm_content_playing",
+      "hdcp_unsupported_display"
+    ],
+    "steps": [
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "HD 출력에서 HDCP 미지원 시 검은 화면/에러 표시",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:drm",
+      "mcp:capture"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "hdcp",
+      "drm-cdm"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "HDCP"
+    ]
+  },
+  {
+    "id": "trickplay_ff_8x_vod",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "FF",
+        "repeat": 3
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "VOD VOD 8x 빨리감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "8x"
+    ]
+  },
+  {
+    "id": "trickplay_ff_16x_vod",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "FF",
+        "repeat": 4
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "VOD VOD 16x 빨리감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "16x"
+    ]
+  },
+  {
+    "id": "trickplay_ff_8x_live",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "playback_active"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "FF",
+        "repeat": 3
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Live Live 8x 빨리감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "8x"
+    ]
+  },
+  {
+    "id": "trickplay_ff_16x_live",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "playback_active"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "FF",
+        "repeat": 4
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Live Live 16x 빨리감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "16x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_2x_vod",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "VOD 2x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "2x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_4x_vod",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW",
+        "repeat": 2
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "VOD 4x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "4x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_8x_vod",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW",
+        "repeat": 3
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "VOD 8x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "8x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_16x_vod",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW",
+        "repeat": 4
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "VOD 16x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "16x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_2x_live",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "playback_active"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Live 2x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "2x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_4x_live",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "playback_active"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW",
+        "repeat": 2
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Live 4x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "4x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_8x_live",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "playback_active"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW",
+        "repeat": 3
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Live 8x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "8x"
+    ]
+  },
+  {
+    "id": "trickplay_rew_16x_live",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "playback_active"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "REW",
+        "repeat": 4
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Live 16x 되감기 OSD 표시",
+    "sla_ms": 1000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "16x"
+    ]
+  },
+  {
+    "id": "trickplay_skip_fwd_10",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RIGHT"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "앞으로 10초 점프 후 재생 위치 갱신",
+    "sla_ms": 2000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "10초"
+    ]
+  },
+  {
+    "id": "trickplay_skip_fwd_30",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RIGHT"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "앞으로 30초 점프 후 재생 위치 갱신",
+    "sla_ms": 2000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "30초"
+    ]
+  },
+  {
+    "id": "trickplay_skip_back_10",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "LEFT"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "뒤로 10초 점프 후 재생 위치 갱신",
+    "sla_ms": 2000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "10초"
+    ]
+  },
+  {
+    "id": "trickplay_skip_back_30",
+    "category": "TrickPlay",
+    "priority": "P2",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "LEFT"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "뒤로 30초 점프 후 재생 위치 갱신",
+    "sla_ms": 2000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "30초"
+    ]
+  },
+  {
+    "id": "trickplay_slow_half",
+    "category": "TrickPlay",
+    "priority": "P3",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "PLAY"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "1/2배속 느린 재생 OSD 표시",
+    "sla_ms": 1500,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "1/2배속"
+    ]
+  },
+  {
+    "id": "trickplay_slow_quarter",
+    "category": "TrickPlay",
+    "priority": "P3",
+    "preconditions": [
+      "vod_playing"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "PLAY"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "1/4배속 느린 재생 OSD 표시",
+    "sla_ms": 1500,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:trickplay",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "1/4배속"
+    ]
+  },
+  {
+    "id": "search_director",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "봉준호 감독 작품 찾아줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "봉준호 감독 작품 검색 결과",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "봉준호"
+    ]
+  },
+  {
+    "id": "search_title_partial",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "기생"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "부분 제목 자동완성 검색 결과",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "기생"
+    ]
+  },
+  {
+    "id": "search_genre_kids",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "어린이 만화 찾아줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "키즈 만화 검색 결과",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "만화"
+    ]
+  },
+  {
+    "id": "search_genre_movie",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "액션 영화 찾아줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "액션 영화 검색 결과",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "액션"
+    ]
+  },
+  {
+    "id": "search_autocomplete",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "스트"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "검색어 자동완성 후보 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "스트"
+    ]
+  },
+  {
+    "id": "search_multilang_en",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "Avengers 찾아줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "영문 제목 검색 결과",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "Avengers"
+    ]
+  },
+  {
+    "id": "search_no_result",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "존재하지않는콘텐츠xyz 찾아줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "검색 결과 없음 안내 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "결과"
+    ]
+  },
+  {
+    "id": "search_trending",
+    "category": "Search",
+    "priority": "P2",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "요즘 인기 콘텐츠 보여줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "인기/트렌딩 콘텐츠 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "인기"
+    ]
+  },
+  {
+    "id": "search_recent_clear",
+    "category": "Search",
+    "priority": "P3",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "최근 검색어 지워줘"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "최근 검색어 삭제 확인",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "검색어"
+    ]
+  },
+  {
+    "id": "search_voice_correction",
+    "category": "Search",
+    "priority": "P3",
+    "preconditions": [
+      "search_open"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "어벤져스"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 3
+      }
+    ],
+    "expected": "음성 오인식 보정 후 검색 결과",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:search",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "search-engine",
+      "voice-asr"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "어벤져스"
+    ]
+  },
+  {
+    "id": "recording_conflict_resolve",
+    "category": "Recording",
+    "priority": "P1",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "동시 녹화 충돌 해결 다이얼로그",
+    "sla_ms": 3000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "충돌"
+    ]
+  },
+  {
+    "id": "recording_storage_full",
+    "category": "Recording",
+    "priority": "P1",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "저장공간 부족 경고 표시",
+    "sla_ms": 3000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "저장공간"
+    ]
+  },
+  {
+    "id": "recording_series_cancel",
+    "category": "Recording",
+    "priority": "P2",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RED"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "시리즈 예약 취소 확인",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "취소"
+    ]
+  },
+  {
+    "id": "recording_padding_time",
+    "category": "Recording",
+    "priority": "P2",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "MENU"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "녹화 전후 여유시간 설정",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "여유시간"
+    ]
+  },
+  {
+    "id": "recording_simultaneous_dual",
+    "category": "Recording",
+    "priority": "P2",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "동시 2채널 녹화 상태 표시",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "녹화"
+    ]
+  },
+  {
+    "id": "recording_ffwd_recorded",
+    "category": "Recording",
+    "priority": "P2",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "FF"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "녹화물 빨리감기 정상",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "빨리감기"
+    ]
+  },
+  {
+    "id": "recording_delete_all",
+    "category": "Recording",
+    "priority": "P2",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "BLUE"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "녹화물 전체 삭제 확인",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "삭제"
+    ]
+  },
+  {
+    "id": "recording_protected_lock",
+    "category": "Recording",
+    "priority": "P2",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "GREEN"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "녹화물 보호(잠금) 설정",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "보호"
+    ]
+  },
+  {
+    "id": "recording_sort_by_date",
+    "category": "Recording",
+    "priority": "P3",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "녹화 목록 날짜순 정렬",
+    "sla_ms": 3000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "정렬"
+    ]
+  },
+  {
+    "id": "recording_resume_partial",
+    "category": "Recording",
+    "priority": "P2",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "녹화물 이어보기 재생",
+    "sla_ms": 3000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "이어보기"
+    ]
+  },
+  {
+    "id": "recording_keep_until",
+    "category": "Recording",
+    "priority": "P3",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "MENU"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "녹화물 보관 기한 설정",
+    "sla_ms": 3000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "보관"
+    ]
+  },
+  {
+    "id": "recording_group_by_series",
+    "category": "Recording",
+    "priority": "P3",
+    "preconditions": [
+      "recording_list_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "YELLOW"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "시리즈별 그룹 보기",
+    "sla_ms": 3000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:recording",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "pvr-storage",
+      "scheduler"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "시리즈"
+    ]
+  },
+  {
+    "id": "parental_rating_7",
+    "category": "Parental",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "7세 등급 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "7세 등급 콘텐츠 접근 시 PIN 입력 요구",
+    "sla_ms": 4000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "PIN"
+    ]
+  },
+  {
+    "id": "parental_rating_12",
+    "category": "Parental",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "12세 등급 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "12세 등급 콘텐츠 접근 시 PIN 입력 요구",
+    "sla_ms": 4000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "PIN"
+    ]
+  },
+  {
+    "id": "parental_rating_15",
+    "category": "Parental",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "15세 등급 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "15세 등급 콘텐츠 접근 시 PIN 입력 요구",
+    "sla_ms": 4000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "PIN"
+    ]
+  },
+  {
+    "id": "parental_rating_19",
+    "category": "Parental",
+    "priority": "P1",
+    "preconditions": [
+      "home_screen"
+    ],
+    "steps": [
+      {
+        "action": "voice",
+        "utterance": "19세 등급 콘텐츠 재생"
+      },
+      {
+        "action": "wait",
+        "sec": 2.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "19세 등급 콘텐츠 접근 시 PIN 입력 요구",
+    "sla_ms": 4000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:voice"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "PIN"
+    ]
+  },
+  {
+    "id": "parental_pin_change",
+    "category": "Parental",
+    "priority": "P1",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "PIN 변경 화면",
+    "sla_ms": 4000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "PIN"
+    ]
+  },
+  {
+    "id": "parental_pin_reset",
+    "category": "Parental",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "RED"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "PIN 초기화 (본인인증) 화면",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "초기화"
+    ]
+  },
+  {
+    "id": "parental_block_app",
+    "category": "Parental",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "특정 앱 차단 설정",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "차단"
+    ]
+  },
+  {
+    "id": "parental_unblock_app",
+    "category": "Parental",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "앱 차단 해제",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "해제"
+    ]
+  },
+  {
+    "id": "parental_purchase_pin",
+    "category": "Parental",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "구매 PIN 설정 화면",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "구매"
+    ]
+  },
+  {
+    "id": "parental_time_limit",
+    "category": "Parental",
+    "priority": "P3",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "DOWN"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "시청 시간 제한 설정",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "시간"
+    ]
+  },
+  {
+    "id": "parental_viewing_history",
+    "category": "Parental",
+    "priority": "P3",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "DOWN"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "자녀 시청 기록 표시",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:parental",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "parental-control",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "기록"
+    ]
+  },
+  {
+    "id": "settings_resolution_720p",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "출력 해상도 720p로 변경 적용",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "720p"
+    ]
+  },
+  {
+    "id": "settings_resolution_1080p",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "출력 해상도 1080p로 변경 적용",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "1080p"
+    ]
+  },
+  {
+    "id": "settings_resolution_auto",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "출력 해상도 자동로 변경 적용",
+    "sla_ms": 5000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "video-pipeline"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "자동"
+    ]
+  },
+  {
+    "id": "settings_language_ko",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "시스템 언어 한국어로 변경 적용",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "한국어"
+    ]
+  },
+  {
+    "id": "settings_language_en",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "시스템 언어 English로 변경 적용",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "English"
+    ]
+  },
+  {
+    "id": "settings_language_ja",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "시스템 언어 日本語로 변경 적용",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "日本語"
+    ]
+  },
+  {
+    "id": "settings_language_zh",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "시스템 언어 中文로 변경 적용",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "中文"
+    ]
+  },
+  {
+    "id": "settings_audio_pcm",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "오디오 출력 PCM 모드 적용",
+    "sla_ms": 3500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "PCM"
+    ]
+  },
+  {
+    "id": "settings_audio_dolby",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "오디오 출력 Dolby 모드 적용",
+    "sla_ms": 3500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "Dolby"
+    ]
+  },
+  {
+    "id": "settings_audio_auto",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "오디오 출력 자동 모드 적용",
+    "sla_ms": 3500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "자동"
+    ]
+  },
+  {
+    "id": "settings_audio_arc",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "오디오 출력 ARC 모드 적용",
+    "sla_ms": 3500,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "media-stack"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "ARC"
+    ]
+  },
+  {
+    "id": "settings_network_wifi",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "Wi-Fi 네트워크 설정/상태 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "networking",
+      "settings-ui"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "Wi-Fi"
+    ]
+  },
+  {
+    "id": "settings_network_ethernet",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "유선 네트워크 설정/상태 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "networking",
+      "settings-ui"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "유선"
+    ]
+  },
+  {
+    "id": "settings_network_proxy",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "프록시 네트워크 설정/상태 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "networking",
+      "settings-ui"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "프록시"
+    ]
+  },
+  {
+    "id": "settings_network_speedtest",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "속도측정 네트워크 설정/상태 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "networking",
+      "settings-ui"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "속도측정"
+    ]
+  },
+  {
+    "id": "settings_factory_reset",
+    "category": "Settings",
+    "priority": "P1",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "DOWN"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "공장 초기화 경고 화면",
+    "sla_ms": 4000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "초기화"
+    ]
+  },
+  {
+    "id": "settings_sw_update_check",
+    "category": "Settings",
+    "priority": "P1",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "소프트웨어 업데이트 확인 화면",
+    "sla_ms": 4000,
+    "risk_weight": 4,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "업데이트"
+    ]
+  },
+  {
+    "id": "settings_storage_info",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "DOWN"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "저장공간 사용량 표시",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "저장공간"
+    ]
+  },
+  {
+    "id": "settings_screensaver",
+    "category": "Settings",
+    "priority": "P3",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "화면보호기 설정",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "화면보호기"
+    ]
+  },
+  {
+    "id": "settings_sleep_timer",
+    "category": "Settings",
+    "priority": "P3",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "취침 예약(슬립 타이머) 설정",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "취침"
+    ]
+  },
+  {
+    "id": "settings_hdmi_cec",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "HDMI-CEC 연동 설정",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "HDMI"
+    ]
+  },
+  {
+    "id": "settings_accessibility",
+    "category": "Settings",
+    "priority": "P3",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "DOWN"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "접근성(자막/음성안내) 설정",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "접근성"
+    ]
+  },
+  {
+    "id": "settings_datetime",
+    "category": "Settings",
+    "priority": "P3",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "날짜/시간 설정",
+    "sla_ms": 4000,
+    "risk_weight": 1,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "시간"
+    ]
+  },
+  {
+    "id": "settings_subtitle",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "자막 언어/크기 설정",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "자막"
+    ]
+  },
+  {
+    "id": "settings_bluetooth_pair",
+    "category": "Settings",
+    "priority": "P2",
+    "preconditions": [
+      "settings_open"
+    ],
+    "steps": [
+      {
+        "action": "ir",
+        "key": "OK"
+      },
+      {
+        "action": "wait",
+        "sec": 1.0
+      },
+      {
+        "action": "capture",
+        "duration": 2
+      }
+    ],
+    "expected": "블루투스 기기 페어링 설정 진입",
+    "sla_ms": 4000,
+    "risk_weight": 2,
+    "firmware_min": null,
+    "firmware_max": null,
+    "tags": [
+      "category:settings",
+      "mcp:capture",
+      "mcp:ir"
+    ],
+    "flake_history": {
+      "runs": 0,
+      "passes": 0,
+      "last_failures": []
+    },
+    "owner": null,
+    "jira_epic": null,
+    "baseline_vector_id": null,
+    "change_signals": [
+      "settings-ui",
+      "system-config"
+    ],
+    "avg_runtime_sec": null,
+    "expected_keywords": [
+      "블루투스"
+    ]
   }
 ]

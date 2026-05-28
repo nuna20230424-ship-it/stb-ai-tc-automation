@@ -1,0 +1,1701 @@
+{
+  "_comment": "파라미터 확장 스펙. 행동 family × 데이터 axis → 구체 시나리오. id는 기존 36개와 충돌 안 되게 신규 prefix 사용. expected_keywords는 detection 룰 tier 입력.",
+  "families": [
+    {
+      "id_template": "epg_zap_{slug}",
+      "category": "EPG",
+      "priority": "{priority}",
+      "preconditions": [
+        "live_tv"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{name} 틀어줘"
+        },
+        {
+          "action": "wait",
+          "sec": 2
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{name} 채널로 전환되어 정상 영상 표시",
+      "expected_keywords_template": [
+        "{name}"
+      ],
+      "sla_ms": 5000,
+      "change_signals": [
+        "channel-list",
+        "tuner",
+        "voice-asr"
+      ],
+      "axis": [
+        {
+          "slug": "kbs1",
+          "name": "KBS1",
+          "priority": "P1"
+        },
+        {
+          "slug": "kbs2",
+          "name": "KBS2",
+          "priority": "P1"
+        },
+        {
+          "slug": "mbc",
+          "name": "MBC",
+          "priority": "P1"
+        },
+        {
+          "slug": "sbs",
+          "name": "SBS",
+          "priority": "P1"
+        },
+        {
+          "slug": "ebs1",
+          "name": "EBS1",
+          "priority": "P1"
+        },
+        {
+          "slug": "ebs2",
+          "name": "EBS2",
+          "priority": "P2"
+        },
+        {
+          "slug": "jtbc",
+          "name": "JTBC",
+          "priority": "P1"
+        },
+        {
+          "slug": "tvn",
+          "name": "tvN",
+          "priority": "P1"
+        },
+        {
+          "slug": "ocn",
+          "name": "OCN",
+          "priority": "P2"
+        },
+        {
+          "slug": "ytn",
+          "name": "YTN",
+          "priority": "P2"
+        },
+        {
+          "slug": "channela",
+          "name": "채널A",
+          "priority": "P2"
+        },
+        {
+          "slug": "mbn",
+          "name": "MBN",
+          "priority": "P2"
+        },
+        {
+          "slug": "tvchosun",
+          "name": "TV조선",
+          "priority": "P2"
+        },
+        {
+          "slug": "sbsplus",
+          "name": "SBS플러스",
+          "priority": "P2"
+        },
+        {
+          "slug": "kbsdrama",
+          "name": "KBS드라마",
+          "priority": "P2"
+        },
+        {
+          "slug": "mnet",
+          "name": "Mnet",
+          "priority": "P2"
+        },
+        {
+          "slug": "otvn",
+          "name": "OtvN",
+          "priority": "P2"
+        },
+        {
+          "slug": "skylife",
+          "name": "스카이라이프",
+          "priority": "P2"
+        },
+        {
+          "slug": "yonhapnews",
+          "name": "연합뉴스TV",
+          "priority": "P2"
+        },
+        {
+          "slug": "arirang",
+          "name": "아리랑TV",
+          "priority": "P2"
+        },
+        {
+          "slug": "disney_ch",
+          "name": "디즈니채널",
+          "priority": "P2"
+        },
+        {
+          "slug": "tooniverse",
+          "name": "투니버스",
+          "priority": "P2"
+        },
+        {
+          "slug": "animax",
+          "name": "애니맥스",
+          "priority": "P2"
+        },
+        {
+          "slug": "golf",
+          "name": "SBS골프",
+          "priority": "P2"
+        },
+        {
+          "slug": "kbsn_sports",
+          "name": "KBSN스포츠",
+          "priority": "P2"
+        },
+        {
+          "slug": "history",
+          "name": "히스토리채널",
+          "priority": "P2"
+        },
+        {
+          "slug": "nat_geo",
+          "name": "내셔널지오그래픽",
+          "priority": "P2"
+        },
+        {
+          "slug": "homeshop",
+          "name": "홈쇼핑",
+          "priority": "P2"
+        },
+        {
+          "slug": "kbs_joy",
+          "name": "KBS조이",
+          "priority": "P2"
+        },
+        {
+          "slug": "mbc_every1",
+          "name": "MBC에브리원",
+          "priority": "P2"
+        },
+        {
+          "slug": "sbs_fune",
+          "name": "SBS funE",
+          "priority": "P2"
+        },
+        {
+          "slug": "cnn",
+          "name": "CNN",
+          "priority": "P2"
+        },
+        {
+          "slug": "bbc_world",
+          "name": "BBC월드",
+          "priority": "P2"
+        },
+        {
+          "slug": "espn",
+          "name": "ESPN",
+          "priority": "P2"
+        },
+        {
+          "slug": "cartoon_network",
+          "name": "카툰네트워크",
+          "priority": "P2"
+        }
+      ]
+    },
+    {
+      "id_template": "epg_genre_{genre}",
+      "category": "EPG",
+      "priority": "P2",
+      "preconditions": [
+        "epg_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "YELLOW"
+        },
+        {
+          "action": "voice",
+          "utterance": "{label}"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} 장르 편성표 필터 결과 표시",
+      "expected_keywords_template": [
+        "{label}",
+        "편성표"
+      ],
+      "sla_ms": 2500,
+      "change_signals": [
+        "epg-engine"
+      ],
+      "axis": [
+        {
+          "genre": "movie",
+          "label": "영화"
+        },
+        {
+          "genre": "drama",
+          "label": "드라마"
+        },
+        {
+          "genre": "sports",
+          "label": "스포츠"
+        },
+        {
+          "genre": "news",
+          "label": "뉴스"
+        },
+        {
+          "genre": "kids",
+          "label": "키즈"
+        },
+        {
+          "genre": "variety",
+          "label": "예능"
+        }
+      ]
+    },
+    {
+      "id_template": "epg_remind_{slug}",
+      "category": "EPG",
+      "priority": "P2",
+      "preconditions": [
+        "epg_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "RIGHT",
+          "repeat": 3
+        },
+        {
+          "action": "ir",
+          "key": "OK"
+        },
+        {
+          "action": "ir",
+          "key": "GREEN"
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{name} 프로그램 시청 예약 알림 설정 확인",
+      "expected_keywords_template": [
+        "{name}",
+        "예약"
+      ],
+      "sla_ms": 3000,
+      "change_signals": [
+        "epg-engine",
+        "scheduler"
+      ],
+      "axis": [
+        {
+          "slug": "kbs1",
+          "name": "KBS1"
+        },
+        {
+          "slug": "mbc",
+          "name": "MBC"
+        },
+        {
+          "slug": "sbs",
+          "name": "SBS"
+        },
+        {
+          "slug": "tvn",
+          "name": "tvN"
+        },
+        {
+          "slug": "jtbc",
+          "name": "JTBC"
+        }
+      ]
+    },
+    {
+      "id_template": "ott_launch_{app}",
+      "category": "OTT",
+      "priority": "{priority}",
+      "preconditions": [
+        "home_screen"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "HOME"
+        },
+        {
+          "action": "voice",
+          "utterance": "{name} 실행해줘"
+        },
+        {
+          "action": "wait",
+          "sec": 3
+        },
+        {
+          "action": "capture",
+          "duration": 3
+        }
+      ],
+      "expected_template": "{name} 앱 홈 화면 표시",
+      "expected_keywords_template": [
+        "{name}"
+      ],
+      "sla_ms": 6000,
+      "change_signals": [
+        "ott-launcher",
+        "app-runtime",
+        "voice-asr"
+      ],
+      "axis": [
+        {
+          "app": "wavve",
+          "name": "웨이브",
+          "priority": "P1"
+        },
+        {
+          "app": "disney_plus",
+          "name": "디즈니플러스",
+          "priority": "P1"
+        },
+        {
+          "app": "coupang_play",
+          "name": "쿠팡플레이",
+          "priority": "P1"
+        },
+        {
+          "app": "youtube",
+          "name": "유튜브",
+          "priority": "P1"
+        },
+        {
+          "app": "watcha",
+          "name": "왓챠",
+          "priority": "P2"
+        },
+        {
+          "app": "prime_video",
+          "name": "프라임비디오",
+          "priority": "P2"
+        },
+        {
+          "app": "apple_tv",
+          "name": "애플TV",
+          "priority": "P2"
+        },
+        {
+          "app": "laftel",
+          "name": "라프텔",
+          "priority": "P2"
+        }
+      ]
+    },
+    {
+      "id_template": "ott_search_{app}",
+      "category": "OTT",
+      "priority": "P2",
+      "preconditions": [
+        "home_screen"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{name} 실행해줘"
+        },
+        {
+          "action": "wait",
+          "sec": 3
+        },
+        {
+          "action": "ir",
+          "key": "SEARCH"
+        },
+        {
+          "action": "voice",
+          "utterance": "인기 콘텐츠 찾아줘"
+        },
+        {
+          "action": "capture",
+          "duration": 3
+        }
+      ],
+      "expected_template": "{name} 앱 내 검색 결과 표시",
+      "expected_keywords_template": [
+        "{name}",
+        "검색"
+      ],
+      "sla_ms": 5000,
+      "change_signals": [
+        "ott-launcher",
+        "search-engine"
+      ],
+      "axis": [
+        {
+          "app": "wavve",
+          "name": "웨이브"
+        },
+        {
+          "app": "disney_plus",
+          "name": "디즈니플러스"
+        },
+        {
+          "app": "coupang_play",
+          "name": "쿠팡플레이"
+        },
+        {
+          "app": "youtube",
+          "name": "유튜브"
+        },
+        {
+          "app": "watcha",
+          "name": "왓챠"
+        },
+        {
+          "app": "prime_video",
+          "name": "프라임비디오"
+        }
+      ]
+    },
+    {
+      "id_template": "ott_resume_{app}",
+      "category": "OTT",
+      "priority": "P2",
+      "preconditions": [
+        "home_screen"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{name} 실행해줘"
+        },
+        {
+          "action": "wait",
+          "sec": 3
+        },
+        {
+          "action": "ir",
+          "key": "OK"
+        },
+        {
+          "action": "wait",
+          "sec": 2
+        },
+        {
+          "action": "capture",
+          "duration": 3
+        }
+      ],
+      "expected_template": "{name} 이어보기(continue watching) 재생",
+      "expected_keywords_template": [
+        "{name}"
+      ],
+      "sla_ms": 7000,
+      "change_signals": [
+        "ott-launcher",
+        "app-runtime",
+        "video-pipeline"
+      ],
+      "axis": [
+        {
+          "app": "netflix",
+          "name": "넷플릭스"
+        },
+        {
+          "app": "wavve",
+          "name": "웨이브"
+        },
+        {
+          "app": "disney_plus",
+          "name": "디즈니플러스"
+        },
+        {
+          "app": "coupang_play",
+          "name": "쿠팡플레이"
+        },
+        {
+          "app": "tving",
+          "name": "티빙"
+        },
+        {
+          "app": "watcha",
+          "name": "왓챠"
+        }
+      ]
+    },
+    {
+      "id_template": "ott_signout_{app}",
+      "category": "OTT",
+      "priority": "P2",
+      "preconditions": [
+        "home_screen"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{name} 실행해줘"
+        },
+        {
+          "action": "wait",
+          "sec": 3
+        },
+        {
+          "action": "ir",
+          "key": "MENU"
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{name} 앱 계정/로그아웃 메뉴 표시",
+      "expected_keywords_template": [
+        "{name}"
+      ],
+      "sla_ms": 5000,
+      "change_signals": [
+        "ott-launcher",
+        "app-runtime"
+      ],
+      "axis": [
+        {
+          "app": "netflix",
+          "name": "넷플릭스"
+        },
+        {
+          "app": "wavve",
+          "name": "웨이브"
+        },
+        {
+          "app": "disney_plus",
+          "name": "디즈니플러스"
+        },
+        {
+          "app": "youtube",
+          "name": "유튜브"
+        },
+        {
+          "app": "tving",
+          "name": "티빙"
+        }
+      ]
+    },
+    {
+      "id_template": "ott_profile_{app}",
+      "category": "OTT",
+      "priority": "P2",
+      "preconditions": [
+        "home_screen"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{name} 실행해줘"
+        },
+        {
+          "action": "wait",
+          "sec": 3
+        },
+        {
+          "action": "ir",
+          "key": "UP"
+        },
+        {
+          "action": "ir",
+          "key": "OK"
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{name} 프로필 전환 화면 표시",
+      "expected_keywords_template": [
+        "{name}",
+        "프로필"
+      ],
+      "sla_ms": 5000,
+      "change_signals": [
+        "ott-launcher",
+        "app-runtime"
+      ],
+      "axis": [
+        {
+          "app": "netflix",
+          "name": "넷플릭스"
+        },
+        {
+          "app": "disney_plus",
+          "name": "디즈니플러스"
+        },
+        {
+          "app": "wavve",
+          "name": "웨이브"
+        },
+        {
+          "app": "watcha",
+          "name": "왓챠"
+        },
+        {
+          "app": "tving",
+          "name": "티빙"
+        }
+      ]
+    },
+    {
+      "id_template": "drm_widevine_{app}",
+      "category": "DRM",
+      "priority": "P1",
+      "preconditions": [
+        "netflix_home"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{name} 4K 콘텐츠 재생"
+        },
+        {
+          "action": "wait",
+          "sec": 8
+        },
+        {
+          "action": "capture",
+          "duration": 3
+        }
+      ],
+      "expected_template": "{name} Widevine L1 보안 경로로 4K 정상 재생",
+      "expected_keywords_template": [
+        "{name}"
+      ],
+      "sla_ms": 9000,
+      "change_signals": [
+        "drm-cdm",
+        "hdcp",
+        "video-pipeline"
+      ],
+      "axis": [
+        {
+          "app": "netflix",
+          "name": "넷플릭스"
+        },
+        {
+          "app": "disney_plus",
+          "name": "디즈니플러스"
+        },
+        {
+          "app": "wavve",
+          "name": "웨이브"
+        },
+        {
+          "app": "coupang_play",
+          "name": "쿠팡플레이"
+        },
+        {
+          "app": "tving",
+          "name": "티빙"
+        }
+      ]
+    },
+    {
+      "id_template": "drm_playready_{slug}",
+      "category": "DRM",
+      "priority": "P1",
+      "preconditions": [
+        "live_tv"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{name} 틀어줘"
+        },
+        {
+          "action": "wait",
+          "sec": 3
+        },
+        {
+          "action": "capture",
+          "duration": 3
+        }
+      ],
+      "expected_template": "{name} IPTV 채널 PlayReady 인증 후 정상 재생",
+      "expected_keywords_template": [
+        "{name}"
+      ],
+      "sla_ms": 5000,
+      "change_signals": [
+        "drm-cdm",
+        "tuner"
+      ],
+      "axis": [
+        {
+          "slug": "kbs1",
+          "name": "KBS1"
+        },
+        {
+          "slug": "mbc",
+          "name": "MBC"
+        },
+        {
+          "slug": "premium_movie",
+          "name": "프리미엄영화채널"
+        },
+        {
+          "slug": "sports_live",
+          "name": "스포츠라이브"
+        }
+      ]
+    },
+    {
+      "id_template": "drm_hdcp_{res}",
+      "category": "DRM",
+      "priority": "P2",
+      "preconditions": [
+        "drm_content_playing",
+        "hdcp_unsupported_display"
+      ],
+      "steps_template": [
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} 출력에서 HDCP 미지원 시 검은 화면/에러 표시",
+      "expected_keywords_template": [
+        "HDCP"
+      ],
+      "sla_ms": 3000,
+      "change_signals": [
+        "hdcp",
+        "drm-cdm"
+      ],
+      "axis": [
+        {
+          "res": "2160p",
+          "label": "4K"
+        },
+        {
+          "res": "1080p",
+          "label": "FHD"
+        },
+        {
+          "res": "720p",
+          "label": "HD"
+        }
+      ]
+    },
+    {
+      "id_template": "trickplay_ff_{speed}_{content}",
+      "category": "TrickPlay",
+      "priority": "P2",
+      "preconditions": [
+        "{precond}"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "FF",
+          "repeat": "{taps}"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} {content_label} {speed} 빨리감기 OSD 표시",
+      "expected_keywords_template": [
+        "{speed}"
+      ],
+      "sla_ms": 1000,
+      "change_signals": [
+        "video-pipeline",
+        "media-stack"
+      ],
+      "axis": [
+        {
+          "speed": "8x",
+          "taps": 3,
+          "content": "vod",
+          "content_label": "VOD",
+          "label": "VOD",
+          "precond": "vod_playing"
+        },
+        {
+          "speed": "16x",
+          "taps": 4,
+          "content": "vod",
+          "content_label": "VOD",
+          "label": "VOD",
+          "precond": "vod_playing"
+        },
+        {
+          "speed": "8x",
+          "taps": 3,
+          "content": "live",
+          "content_label": "Live",
+          "label": "Live",
+          "precond": "playback_active"
+        },
+        {
+          "speed": "16x",
+          "taps": 4,
+          "content": "live",
+          "content_label": "Live",
+          "label": "Live",
+          "precond": "playback_active"
+        }
+      ]
+    },
+    {
+      "id_template": "trickplay_rew_{speed}_{content}",
+      "category": "TrickPlay",
+      "priority": "P2",
+      "preconditions": [
+        "{precond}"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "REW",
+          "repeat": "{taps}"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} {speed} 되감기 OSD 표시",
+      "expected_keywords_template": [
+        "{speed}"
+      ],
+      "sla_ms": 1000,
+      "change_signals": [
+        "video-pipeline",
+        "media-stack"
+      ],
+      "axis": [
+        {
+          "speed": "2x",
+          "taps": 1,
+          "content": "vod",
+          "label": "VOD",
+          "precond": "vod_playing"
+        },
+        {
+          "speed": "4x",
+          "taps": 2,
+          "content": "vod",
+          "label": "VOD",
+          "precond": "vod_playing"
+        },
+        {
+          "speed": "8x",
+          "taps": 3,
+          "content": "vod",
+          "label": "VOD",
+          "precond": "vod_playing"
+        },
+        {
+          "speed": "16x",
+          "taps": 4,
+          "content": "vod",
+          "label": "VOD",
+          "precond": "vod_playing"
+        },
+        {
+          "speed": "2x",
+          "taps": 1,
+          "content": "live",
+          "label": "Live",
+          "precond": "playback_active"
+        },
+        {
+          "speed": "4x",
+          "taps": 2,
+          "content": "live",
+          "label": "Live",
+          "precond": "playback_active"
+        },
+        {
+          "speed": "8x",
+          "taps": 3,
+          "content": "live",
+          "label": "Live",
+          "precond": "playback_active"
+        },
+        {
+          "speed": "16x",
+          "taps": 4,
+          "content": "live",
+          "label": "Live",
+          "precond": "playback_active"
+        }
+      ]
+    },
+    {
+      "id_template": "trickplay_skip_{dir}_{sec}",
+      "category": "TrickPlay",
+      "priority": "P2",
+      "preconditions": [
+        "vod_playing"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "{key}"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} {sec}초 점프 후 재생 위치 갱신",
+      "expected_keywords_template": [
+        "{sec}초"
+      ],
+      "sla_ms": 2000,
+      "change_signals": [
+        "video-pipeline"
+      ],
+      "axis": [
+        {
+          "dir": "fwd",
+          "sec": 10,
+          "key": "RIGHT",
+          "label": "앞으로"
+        },
+        {
+          "dir": "fwd",
+          "sec": 30,
+          "key": "RIGHT",
+          "label": "앞으로"
+        },
+        {
+          "dir": "back",
+          "sec": 10,
+          "key": "LEFT",
+          "label": "뒤로"
+        },
+        {
+          "dir": "back",
+          "sec": 30,
+          "key": "LEFT",
+          "label": "뒤로"
+        }
+      ]
+    },
+    {
+      "id_template": "trickplay_slow_{speed}",
+      "category": "TrickPlay",
+      "priority": "P3",
+      "preconditions": [
+        "vod_playing"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "PLAY"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} 느린 재생 OSD 표시",
+      "expected_keywords_template": [
+        "{label}"
+      ],
+      "sla_ms": 1500,
+      "change_signals": [
+        "video-pipeline"
+      ],
+      "axis": [
+        {
+          "speed": "half",
+          "label": "1/2배속"
+        },
+        {
+          "speed": "quarter",
+          "label": "1/4배속"
+        }
+      ]
+    },
+    {
+      "id_template": "search_{qtype}",
+      "category": "Search",
+      "priority": "{priority}",
+      "preconditions": [
+        "search_open"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{query}"
+        },
+        {
+          "action": "wait",
+          "sec": 2
+        },
+        {
+          "action": "capture",
+          "duration": 3
+        }
+      ],
+      "expected_template": "{desc}",
+      "expected_keywords_template": [
+        "{kw}"
+      ],
+      "sla_ms": 4000,
+      "change_signals": [
+        "search-engine",
+        "voice-asr"
+      ],
+      "axis": [
+        {
+          "qtype": "director",
+          "query": "봉준호 감독 작품 찾아줘",
+          "desc": "봉준호 감독 작품 검색 결과",
+          "kw": "봉준호",
+          "priority": "P2"
+        },
+        {
+          "qtype": "title_partial",
+          "query": "기생",
+          "desc": "부분 제목 자동완성 검색 결과",
+          "kw": "기생",
+          "priority": "P2"
+        },
+        {
+          "qtype": "genre_kids",
+          "query": "어린이 만화 찾아줘",
+          "desc": "키즈 만화 검색 결과",
+          "kw": "만화",
+          "priority": "P2"
+        },
+        {
+          "qtype": "genre_movie",
+          "query": "액션 영화 찾아줘",
+          "desc": "액션 영화 검색 결과",
+          "kw": "액션",
+          "priority": "P2"
+        },
+        {
+          "qtype": "autocomplete",
+          "query": "스트",
+          "desc": "검색어 자동완성 후보 표시",
+          "kw": "스트",
+          "priority": "P2"
+        },
+        {
+          "qtype": "multilang_en",
+          "query": "Avengers 찾아줘",
+          "desc": "영문 제목 검색 결과",
+          "kw": "Avengers",
+          "priority": "P2"
+        },
+        {
+          "qtype": "no_result",
+          "query": "존재하지않는콘텐츠xyz 찾아줘",
+          "desc": "검색 결과 없음 안내 표시",
+          "kw": "결과",
+          "priority": "P2"
+        },
+        {
+          "qtype": "trending",
+          "query": "요즘 인기 콘텐츠 보여줘",
+          "desc": "인기/트렌딩 콘텐츠 표시",
+          "kw": "인기",
+          "priority": "P2"
+        },
+        {
+          "qtype": "recent_clear",
+          "query": "최근 검색어 지워줘",
+          "desc": "최근 검색어 삭제 확인",
+          "kw": "검색어",
+          "priority": "P3"
+        },
+        {
+          "qtype": "voice_correction",
+          "query": "어벤져스",
+          "desc": "음성 오인식 보정 후 검색 결과",
+          "kw": "어벤져스",
+          "priority": "P3"
+        }
+      ]
+    },
+    {
+      "id_template": "recording_{variant}",
+      "category": "Recording",
+      "priority": "{priority}",
+      "preconditions": [
+        "recording_list_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "{key}"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{desc}",
+      "expected_keywords_template": [
+        "{kw}"
+      ],
+      "sla_ms": 3000,
+      "change_signals": [
+        "pvr-storage",
+        "scheduler"
+      ],
+      "axis": [
+        {
+          "variant": "conflict_resolve",
+          "key": "OK",
+          "desc": "동시 녹화 충돌 해결 다이얼로그",
+          "kw": "충돌",
+          "priority": "P1"
+        },
+        {
+          "variant": "storage_full",
+          "key": "OK",
+          "desc": "저장공간 부족 경고 표시",
+          "kw": "저장공간",
+          "priority": "P1"
+        },
+        {
+          "variant": "series_cancel",
+          "key": "RED",
+          "desc": "시리즈 예약 취소 확인",
+          "kw": "취소",
+          "priority": "P2"
+        },
+        {
+          "variant": "padding_time",
+          "key": "MENU",
+          "desc": "녹화 전후 여유시간 설정",
+          "kw": "여유시간",
+          "priority": "P2"
+        },
+        {
+          "variant": "simultaneous_dual",
+          "key": "OK",
+          "desc": "동시 2채널 녹화 상태 표시",
+          "kw": "녹화",
+          "priority": "P2"
+        },
+        {
+          "variant": "ffwd_recorded",
+          "key": "FF",
+          "desc": "녹화물 빨리감기 정상",
+          "kw": "빨리감기",
+          "priority": "P2"
+        },
+        {
+          "variant": "delete_all",
+          "key": "BLUE",
+          "desc": "녹화물 전체 삭제 확인",
+          "kw": "삭제",
+          "priority": "P2"
+        },
+        {
+          "variant": "protected_lock",
+          "key": "GREEN",
+          "desc": "녹화물 보호(잠금) 설정",
+          "kw": "보호",
+          "priority": "P2"
+        },
+        {
+          "variant": "sort_by_date",
+          "key": "YELLOW",
+          "desc": "녹화 목록 날짜순 정렬",
+          "kw": "정렬",
+          "priority": "P3"
+        },
+        {
+          "variant": "resume_partial",
+          "key": "OK",
+          "desc": "녹화물 이어보기 재생",
+          "kw": "이어보기",
+          "priority": "P2"
+        },
+        {
+          "variant": "keep_until",
+          "key": "MENU",
+          "desc": "녹화물 보관 기한 설정",
+          "kw": "보관",
+          "priority": "P3"
+        },
+        {
+          "variant": "group_by_series",
+          "key": "YELLOW",
+          "desc": "시리즈별 그룹 보기",
+          "kw": "시리즈",
+          "priority": "P3"
+        }
+      ]
+    },
+    {
+      "id_template": "parental_rating_{level}",
+      "category": "Parental",
+      "priority": "P1",
+      "preconditions": [
+        "home_screen"
+      ],
+      "steps_template": [
+        {
+          "action": "voice",
+          "utterance": "{label} 등급 콘텐츠 재생"
+        },
+        {
+          "action": "wait",
+          "sec": 2
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} 등급 콘텐츠 접근 시 PIN 입력 요구",
+      "expected_keywords_template": [
+        "PIN"
+      ],
+      "sla_ms": 4000,
+      "change_signals": [
+        "parental-control"
+      ],
+      "axis": [
+        {
+          "level": "7",
+          "label": "7세"
+        },
+        {
+          "level": "12",
+          "label": "12세"
+        },
+        {
+          "level": "15",
+          "label": "15세"
+        },
+        {
+          "level": "19",
+          "label": "19세"
+        }
+      ]
+    },
+    {
+      "id_template": "parental_{action}",
+      "category": "Parental",
+      "priority": "{priority}",
+      "preconditions": [
+        "settings_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "{key}"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{desc}",
+      "expected_keywords_template": [
+        "{kw}"
+      ],
+      "sla_ms": 4000,
+      "change_signals": [
+        "parental-control",
+        "system-config"
+      ],
+      "axis": [
+        {
+          "action": "pin_change",
+          "key": "OK",
+          "desc": "PIN 변경 화면",
+          "kw": "PIN",
+          "priority": "P1"
+        },
+        {
+          "action": "pin_reset",
+          "key": "RED",
+          "desc": "PIN 초기화 (본인인증) 화면",
+          "kw": "초기화",
+          "priority": "P2"
+        },
+        {
+          "action": "block_app",
+          "key": "OK",
+          "desc": "특정 앱 차단 설정",
+          "kw": "차단",
+          "priority": "P2"
+        },
+        {
+          "action": "unblock_app",
+          "key": "OK",
+          "desc": "앱 차단 해제",
+          "kw": "해제",
+          "priority": "P2"
+        },
+        {
+          "action": "purchase_pin",
+          "key": "OK",
+          "desc": "구매 PIN 설정 화면",
+          "kw": "구매",
+          "priority": "P2"
+        },
+        {
+          "action": "time_limit",
+          "key": "DOWN",
+          "desc": "시청 시간 제한 설정",
+          "kw": "시간",
+          "priority": "P3"
+        },
+        {
+          "action": "viewing_history",
+          "key": "DOWN",
+          "desc": "자녀 시청 기록 표시",
+          "kw": "기록",
+          "priority": "P3"
+        }
+      ]
+    },
+    {
+      "id_template": "settings_resolution_{res}",
+      "category": "Settings",
+      "priority": "P2",
+      "preconditions": [
+        "settings_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "OK"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "출력 해상도 {label}로 변경 적용",
+      "expected_keywords_template": [
+        "{label}"
+      ],
+      "sla_ms": 5000,
+      "change_signals": [
+        "settings-ui",
+        "video-pipeline"
+      ],
+      "axis": [
+        {
+          "res": "720p",
+          "label": "720p"
+        },
+        {
+          "res": "1080p",
+          "label": "1080p"
+        },
+        {
+          "res": "auto",
+          "label": "자동"
+        }
+      ]
+    },
+    {
+      "id_template": "settings_language_{lang}",
+      "category": "Settings",
+      "priority": "P2",
+      "preconditions": [
+        "settings_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "OK"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "시스템 언어 {label}로 변경 적용",
+      "expected_keywords_template": [
+        "{label}"
+      ],
+      "sla_ms": 4000,
+      "change_signals": [
+        "settings-ui",
+        "system-config"
+      ],
+      "axis": [
+        {
+          "lang": "ko",
+          "label": "한국어"
+        },
+        {
+          "lang": "en",
+          "label": "English"
+        },
+        {
+          "lang": "ja",
+          "label": "日本語"
+        },
+        {
+          "lang": "zh",
+          "label": "中文"
+        }
+      ]
+    },
+    {
+      "id_template": "settings_audio_{mode}",
+      "category": "Settings",
+      "priority": "P2",
+      "preconditions": [
+        "settings_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "OK"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "오디오 출력 {label} 모드 적용",
+      "expected_keywords_template": [
+        "{label}"
+      ],
+      "sla_ms": 3500,
+      "change_signals": [
+        "settings-ui",
+        "media-stack"
+      ],
+      "axis": [
+        {
+          "mode": "pcm",
+          "label": "PCM"
+        },
+        {
+          "mode": "dolby",
+          "label": "Dolby"
+        },
+        {
+          "mode": "auto",
+          "label": "자동"
+        },
+        {
+          "mode": "arc",
+          "label": "ARC"
+        }
+      ]
+    },
+    {
+      "id_template": "settings_network_{type}",
+      "category": "Settings",
+      "priority": "P2",
+      "preconditions": [
+        "settings_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "OK"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{label} 네트워크 설정/상태 표시",
+      "expected_keywords_template": [
+        "{label}"
+      ],
+      "sla_ms": 4000,
+      "change_signals": [
+        "networking",
+        "settings-ui"
+      ],
+      "axis": [
+        {
+          "type": "wifi",
+          "label": "Wi-Fi"
+        },
+        {
+          "type": "ethernet",
+          "label": "유선"
+        },
+        {
+          "type": "proxy",
+          "label": "프록시"
+        },
+        {
+          "type": "speedtest",
+          "label": "속도측정"
+        }
+      ]
+    },
+    {
+      "id_template": "settings_{item}",
+      "category": "Settings",
+      "priority": "{priority}",
+      "preconditions": [
+        "settings_open"
+      ],
+      "steps_template": [
+        {
+          "action": "ir",
+          "key": "{key}"
+        },
+        {
+          "action": "wait",
+          "sec": 1
+        },
+        {
+          "action": "capture",
+          "duration": 2
+        }
+      ],
+      "expected_template": "{desc}",
+      "expected_keywords_template": [
+        "{kw}"
+      ],
+      "sla_ms": 4000,
+      "change_signals": [
+        "settings-ui",
+        "system-config"
+      ],
+      "axis": [
+        {
+          "item": "factory_reset",
+          "key": "DOWN",
+          "desc": "공장 초기화 경고 화면",
+          "kw": "초기화",
+          "priority": "P1"
+        },
+        {
+          "item": "sw_update_check",
+          "key": "OK",
+          "desc": "소프트웨어 업데이트 확인 화면",
+          "kw": "업데이트",
+          "priority": "P1"
+        },
+        {
+          "item": "storage_info",
+          "key": "DOWN",
+          "desc": "저장공간 사용량 표시",
+          "kw": "저장공간",
+          "priority": "P2"
+        },
+        {
+          "item": "screensaver",
+          "key": "OK",
+          "desc": "화면보호기 설정",
+          "kw": "화면보호기",
+          "priority": "P3"
+        },
+        {
+          "item": "sleep_timer",
+          "key": "OK",
+          "desc": "취침 예약(슬립 타이머) 설정",
+          "kw": "취침",
+          "priority": "P3"
+        },
+        {
+          "item": "hdmi_cec",
+          "key": "OK",
+          "desc": "HDMI-CEC 연동 설정",
+          "kw": "HDMI",
+          "priority": "P2"
+        },
+        {
+          "item": "accessibility",
+          "key": "DOWN",
+          "desc": "접근성(자막/음성안내) 설정",
+          "kw": "접근성",
+          "priority": "P3"
+        },
+        {
+          "item": "datetime",
+          "key": "OK",
+          "desc": "날짜/시간 설정",
+          "kw": "시간",
+          "priority": "P3"
+        },
+        {
+          "item": "subtitle",
+          "key": "OK",
+          "desc": "자막 언어/크기 설정",
+          "kw": "자막",
+          "priority": "P2"
+        },
+        {
+          "item": "bluetooth_pair",
+          "key": "OK",
+          "desc": "블루투스 기기 페어링 설정 진입",
+          "kw": "블루투스",
+          "priority": "P2"
+        }
+      ]
+    }
+  ]
+}
