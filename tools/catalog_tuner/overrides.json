@@ -1,0 +1,20 @@
+{
+  "_comment": "1차 펌웨어 튜닝 — QA SME 검토 결과. key_remap은 전역 키 치환, scenario_patches는 시나리오별 steps/필드 교정. 실 펌웨어 키맵 확정 시 SME가 갱신.",
+  "key_remap": {
+    "0": "CH_0",
+    "1": "CH_1",
+    "SETTINGS": "MENU"
+  },
+  "scenario_patches": {
+    "drm_widevine_l1": {
+      "preconditions": ["netflix_home"],
+      "steps": [
+        {"action": "voice", "utterance": "넷플릭스 4K HDR 콘텐츠 재생"},
+        {"action": "wait", "sec": 8},
+        {"action": "capture", "duration": 3}
+      ],
+      "expected": "4K HDR 콘텐츠가 Widevine L1 보안 경로로 정상 재생",
+      "expected_keywords": ["4K", "HDR"]
+    }
+  }
+}

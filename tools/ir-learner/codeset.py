@@ -16,7 +16,7 @@ STANDARD_KEYS = [
     "UP", "DOWN", "LEFT", "RIGHT",
     "CH_1", "CH_2", "CH_3", "CH_4", "CH_5",
     "CH_6", "CH_7", "CH_8", "CH_9", "CH_0",
-    "EPG", "INFO", "EXIT",
+    "EPG", "INFO", "EXIT", "SEARCH",
     "PLAY", "PAUSE", "STOP", "FF", "REW",
     "RED", "GREEN", "YELLOW", "BLUE",
     "BT_SETTINGS", "DEVICE_INFO",  # 시나리오 의존

@@ -2,6 +2,26 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-28 (업데이트 41) — 시나리오 steps/키 펌웨어 튜닝 (catalog_tuner)
+
+expander 생성 200개의 키/네비 일관성을 사내 펌웨어 기준으로 정규화. lint(검출) →
+SME overrides(결정론 적용) 루프. 도메인 지식은 SME가 overrides.json으로 주입.
+
+### 🧰 `tools/catalog_tuner/`
+- vocab.py: 표준 키(codeset.py)/상태(navgraph)/precondition 단일 소스 로딩
+- lint.py: unknown_key / freetext_navigate / unknown_precondition / empty_voice / no_capture + difflib 근사 제안 (순수)
+- overrides.py: key_remap(전역 키 치환) + scenario_patches(시나리오별 steps 교정) (순수, 원본 불변)
+- cli.py: lint(--strict CI 게이트) / export-review(SME CSV 워크북) / apply(백업+재검증)
+
+### 🔧 1차 튜닝 결과
+- 키맵 정규화: `SEARCH`를 STANDARD_KEYS + android keyevents에 추가 (RDK엔 기존재)
+- overrides 적용: `1/0` → `CH_1/CH_0`, `SETTINGS` → `MENU`, `drm_widevine_l1` 자유텍스트 navigate → 음성 steps
+- **lint 6 → 0, 200/200 schema 통과**
+
+### ✅ 테스트
+- test_catalog_tuner.py 13 pass (lint 각 종류 / overrides / test_real_catalog_lint_clean 회귀 안전망) → 전체 **212 passed**
+- docs/38-catalog-tuning.md, tools/catalog_tuner/README, README 인덱스
+
 ## 2026-05-28 (업데이트 40) — 카탈로그 36 → 200 확장 (catalog_expander)
 
 docs/23 §3-2 "데이터 다양성은 파라미터" — LLM/API 키 없이 결정론적 파라미터 확장으로

@@ -57,4 +57,7 @@ ANDROID_TV_KEYEVENTS: dict[str, int] = {
 
     # 음성
     "VOICE": 231,           # KEYCODE_VOICE_ASSIST
+
+    # 검색
+    "SEARCH": 84,           # KEYCODE_SEARCH
 }
