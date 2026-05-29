@@ -72,8 +72,42 @@ else:
 # 로딩
 # ──────────────────────────────────────────────────────────────
 
-def load_rows(path: Path) -> list[dict]:
-    """csv/xlsx → list of dict (컬럼명 → 값)."""
+def list_sheets(path: Path) -> list[str]:
+    """엑셀 파일의 시트 이름 목록 반환 (csv는 빈 리스트)."""
+    if path.suffix.lower() not in (".xlsx", ".xls"):
+        return []
+    try:
+        import pandas as pd
+    except ImportError as e:
+        raise RuntimeError("pandas 미설치. `pip install pandas openpyxl` 후 재실행하세요.") from e
+    return pd.ExcelFile(path).sheet_names
+
+
+def _resolve_sheet(path: Path, requested: str | None) -> str | None:
+    """요청 시트명을 대소문자/공백 무시로 실제 시트명에 매칭."""
+    sheets = list_sheets(path)
+    if not requested or not sheets:
+        return None
+    norm = lambda s: s.strip().replace(" ", "").lower()
+    target = norm(requested)
+    for s in sheets:
+        if norm(s) == target:
+            return s
+    # 부분 매칭 시도 — "채널" 요청에 "[채널 시트]"가 있어도 매칭
+    for s in sheets:
+        if target in norm(s):
+            return s
+    raise ValueError(
+        f"엑셀 파일에 시트 '{requested}' 없음. 사용 가능 시트: {sheets}"
+    )
+
+
+def load_rows(path: Path, sheet: str | None = None) -> list[dict]:
+    """csv/xlsx → list of dict (컬럼명 → 값).
+
+    Args:
+        sheet: 엑셀일 때 특정 시트만 로드 (대소문자/공백 무시 매칭). None이면 첫 시트.
+    """
     try:
         import pandas as pd
     except ImportError as e:
@@ -83,7 +117,8 @@ def load_rows(path: Path) -> list[dict]:
 
     suffix = path.suffix.lower()
     if suffix in (".xlsx", ".xls"):
-        df = pd.read_excel(path, dtype=str, keep_default_na=False)
+        resolved = _resolve_sheet(path, sheet) if sheet else 0
+        df = pd.read_excel(path, sheet_name=resolved, dtype=str, keep_default_na=False)
     elif suffix == ".csv":
         df = pd.read_csv(path, dtype=str, keep_default_na=False)
     else:
@@ -192,7 +227,11 @@ def main():
         description="Excel/CSV TC 시트 → v2 카탈로그 JSON",
     )
     p.add_argument("--input", required=True, type=Path, help="입력 .csv 또는 .xlsx")
-    p.add_argument("--output", required=True, type=Path, help="출력 .json (검증 통과만)")
+    p.add_argument("--output", type=Path, help="출력 .json (검증 통과만). --list-sheets 시에는 불필요.")
+    p.add_argument("--sheet", default="채널",
+                   help="엑셀 시트 이름 (기본 '채널', 대소문자/공백 무시). csv에는 무시됨.")
+    p.add_argument("--list-sheets", action="store_true",
+                   help="엑셀 시트 목록만 출력하고 종료 (어떤 시트가 있는지 확인용)")
     p.add_argument("--batch-size", type=int, default=8, help="LLM 호출당 행 수")
     p.add_argument("--dry-run", action="store_true",
                    help="LLM 호출 없이 direct map만 — steps/preconditions는 빈 배열")
@@ -211,6 +250,21 @@ def main():
 
     args = p.parse_args()
 
+    # --list-sheets: 시트만 출력 후 종료 (업로드 후 시트 확인용)
+    if args.list_sheets:
+        sheets = list_sheets(args.input)
+        if not sheets:
+            print(f"⚠️  {args.input} — 엑셀이 아니거나 시트 없음", file=sys.stderr)
+            return 1
+        print(f"📑 {args.input} 시트 목록 ({len(sheets)}개):")
+        for s in sheets:
+            print(f"  - {s}")
+        return 0
+
+    if not args.output:
+        print("❌ --output 필수 (--list-sheets 사용 시에만 생략 가능)", file=sys.stderr)
+        return 2
+
     cmap = ColumnMap(
         id=args.column_id,
         category=args.column_category,
@@ -222,8 +276,9 @@ def main():
         owner=args.column_owner,
     )
 
-    rows = load_rows(args.input)
-    print(f"📥 {len(rows)} rows loaded")
+    rows = load_rows(args.input, sheet=args.sheet)
+    sheet_label = f" (시트 '{args.sheet}')" if args.input.suffix.lower() in (".xlsx", ".xls") else ""
+    print(f"📥 {len(rows)} rows loaded{sheet_label}")
 
     # Direct map
     partial = [direct_map_row(r, cmap) for r in rows]

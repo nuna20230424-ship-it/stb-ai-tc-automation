@@ -83,6 +83,12 @@ jobs:
               <p>Magewell · BroadLink · TP-Link · OWC — 2026-05-29 검증된 URL/가격. 최소 ₩54만 / 최적 ₩182만.</p>
             </a>
 
+            <a class="card" href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation/blob/main/docs/excel-upload-guide.md">
+              <h2>📥 사내 TC 엑셀 업로드 가이드</h2>
+              <p>다중 시트 엑셀에서 <code>--sheet 채널</code>로 특정 시트만 카탈로그로 변환.
+                 업로드 3가지 경로 + 컬럼 매핑 + 한국어 컬럼명 override.</p>
+            </a>
+
             <a class="card" href="STB-AI-자동화-요약.html">
               <h2>📄 요약 HTML</h2>
               <p>기획 · 전체개요 · 구조 · 진행방식 · 사용가이드 — 한 페이지 인쇄 친화 보고서</p>
