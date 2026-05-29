@@ -2,6 +2,47 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-29 (업데이트 46) — 영상 단독 오류 분석 (시나리오 무관 free-form)
+
+기존 TC 자동화는 `시나리오 expected ↔ 캡처` 비교 구조라 사전 정의 필수. 운영 영상
+(KT/SKB 입찰 데모 / 고객 제보 / 야간 운영 녹화)을 시나리오 없이 즉시 분석할 수 있는
+free-form 파이프라인 신규 추가.
+
+### 📁 신규: `tools/video_analyzer/`
+- `frames.py` — OpenCV 순차 읽기로 영상 → N초 간격 프레임 샘플링 (시킹 비결정성 회피)
+- `detectors.py` — 결정론 4종:
+  - **black_frame** (평균 휘도 ≤ 5, 1초+) → severity high
+  - **freeze** (픽셀 변화율 ≤ 10%, 3초+) — JPEG/H.264 양자화 노이즈 허용
+  - **no_signal** (단일 색상, 표준편차 ≤ 1.5, 2초+) — 파란화면/화이트아웃
+  - **scene_jump** (히스토그램 χ² ≥ 5) — 에러 다이얼로그 / 비예측 화면
+- `vision.py` — 의심 프레임을 `embedding-mcp /vision/describe`로 묘사 → "오류/로딩/no signal"
+  키워드 매칭 시 severity 상향 (옵션, 비용 통제: max-calls 기본 8)
+- `cli.py` — `python -m tools.video_analyzer analyze --video X.mp4 --output report.json`
+  · 썸네일 자동 추출 (`--thumbnails out/dir`)
+  · verdict 자동 산정 (pass / info / warn / fail)
+
+### 📁 신규: `infrastructure/notebook-gateway/services/incident-mcp/`
+- FastAPI 서비스 — multipart 영상 업로드 → 백그라운드 분석 (threading) → 리포트 조회
+- 엔드포인트: `POST /analyze`, `GET /analyses`, `GET /analyses/{id}`,
+  `GET /analyses/{id}/report.json`, `GET /analyses/{id}/thumbnails/{name}`, `DELETE /analyses/{id}`
+- Docker Compose + Caddy reverse_proxy(`/incident/*`) 통합 (포트 8007)
+
+### 🎬 docs/console.html — "영상 분석" 메뉴 (6번째 탭)
+- 영상 업로드 카드 (mp4/avi/mov/mkv/webm, 라벨, 0.5~2초 샘플링 간격)
+- 검출 카테고리 임계값 표 (운영자가 한눈에 이해)
+- "최근 분석" 리스트 — incident-mcp `/analyses` fetch (오프라인 시 mock 폴백)
+- 각 분석 행에 verdict 배지 + 카테고리 카운트 + 리포트 JSON 다운로드 링크
+- `localStorage.INCIDENT_MCP_URL`로 운영자 노트북 주소 오버라이드 가능
+
+### ✅ 테스트 244/244 통과 (13 신규 — 합성 영상 fixture로 4종 검출기 + CLI 종단)
+
+### 사용자 피드백 반영
+> "tc 자동화 테스트외에 실제 영상에 대한 오류분석에 대한 테스트 메뉴도 구현되어 있어?
+> 실제 동작되는 영상을 분석해서 오류인지를 판단하는 기능"
+
+기존엔 없었음 → 이번 업데이트로 free-form 영상 분석 기능 추가. KT/SKB 입찰에서 영상만 받아도
+즉시 demo 가능. JIRA 자동 등록까지 후속 확장 가능.
+
 ## 2026-05-29 (업데이트 45) — 운영 콘솔 실 데이터 연동 + N/T 자동 분류 + 영상 녹화
 
 console.html을 mock에서 실 데이터(InfluxDB `catalog_runs`) 자동 갱신으로 전환. N/T·N/A 사유를

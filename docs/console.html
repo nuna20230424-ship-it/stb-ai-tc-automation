@@ -173,6 +173,7 @@
   <div class="tab" data-view="cases"><span class="icon">📋</span>TC 목록</div>
   <div class="tab" data-view="run"><span class="icon">▶️</span>실행</div>
   <div class="tab" data-view="detail"><span class="icon">🔍</span>결과 상세</div>
+  <div class="tab" data-view="video"><span class="icon">🎬</span>영상 분석</div>
   <div class="tab" data-view="settings"><span class="icon">⚙️</span>설정·도구</div>
 </nav>
 
@@ -282,7 +283,71 @@ pytest -m catalog -k "$(cat k.txt)"</pre>
   </div>
 </section>
 
-<!-- ═══════════════════ 5. 설정·도구 ═══════════════════ -->
+<!-- ═══════════════════ 5. 영상 분석 (시나리오 무관) ═══════════════════ -->
+<section class="view" data-view="video">
+  <div class="card">
+    <h3>🎬 영상 단독 오류 분석</h3>
+    <p style="color:var(--sub); font-size:14px; line-height:1.7">
+      <strong>시나리오 없이</strong> 임의 영상을 업로드해서 STB 운영 중 발생한 오류를 자동 탐지합니다.
+      고객사 입찰 데모 영상 · 사용자 제보 영상 · 야간 운영 녹화에서 <strong>블랙 아웃 / 화면 정지 /
+      신호 없음 / 장면 급변</strong>을 자동 검출 → 타임라인 + 썸네일 리포트.
+    </p>
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:18px; margin-top:14px">
+      <div style="background:rgba(167,139,250,.08); border:1px solid var(--pending); border-radius:8px; padding:18px">
+        <h4 style="margin:0 0 10px">1) 영상 업로드</h4>
+        <input type="file" id="videoUploadInput" accept="video/mp4,video/avi,video/mov,video/mkv,video/webm"
+               style="width:100%; padding:8px; background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px; font-family:var(--mono); font-size:12px">
+        <div style="display:flex; gap:10px; margin-top:10px">
+          <input type="text" id="videoUploadLabel" placeholder="라벨 (예: KT-입찰-데모-2026Q2)" style="flex:1; padding:8px; background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px">
+          <select id="videoUploadInterval" style="padding:8px; background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px">
+            <option value="0.5">0.5초 간격 (정밀)</option>
+            <option value="1.0" selected>1초 간격 (기본)</option>
+            <option value="2.0">2초 간격 (빠른 스캔)</option>
+          </select>
+        </div>
+        <button class="big-btn" onclick="uploadVideoForAnalysis()" style="margin-top:10px; width:100%">▶ 업로드 + 분석 시작</button>
+        <div id="videoUploadStatus" style="margin-top:10px; font-size:12px; color:var(--sub); font-family:var(--mono); min-height:18px"></div>
+      </div>
+      <div style="background:rgba(34,197,94,.05); border:1px solid var(--border); border-radius:8px; padding:18px">
+        <h4 style="margin:0 0 10px; color:var(--pass)">검출 카테고리</h4>
+        <table class="kv-table" style="font-size:12px">
+          <tr><td><strong>블랙 아웃</strong></td><td>평균 휘도 ≤ 5</td></tr>
+          <tr><td><strong>화면 정지</strong></td><td>픽셀 변화 ≤ 10%</td></tr>
+          <tr><td><strong>신호 없음</strong></td><td>표준편차 ≤ 1.5</td></tr>
+          <tr><td><strong>장면 급변</strong></td><td>히스토그램 χ² ≥ 5</td></tr>
+        </table>
+        <p style="font-size:11px; color:var(--sub); margin-top:10px; line-height:1.5">
+          의심 프레임은 vision LLM이 자동 묘사 (옵션) → "오류 / 로딩 / 신호 없음" 키워드 매칭 시 severity 상향.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>📋 최근 분석 (incident-mcp)</h3>
+    <p style="color:var(--sub); font-size:12px">incident-mcp 가동 시 자동 로드. 데모 mock 데이터는 아래.</p>
+    <div id="videoAnalysisList">
+      <!-- runtime fetch — incident-mcp /analyses 응답 -->
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>🔗 incident-mcp 엔드포인트 (운영자 참조)</h3>
+    <table class="kv-table" style="font-size:12px">
+      <tr><td><code>POST /analyze</code></td><td>multipart 영상 업로드 → analysis_id 반환 (백그라운드 분석 시작)</td></tr>
+      <tr><td><code>GET /analyses</code></td><td>최근 분석 목록 (verdict + 카테고리 카운트)</td></tr>
+      <tr><td><code>GET /analyses/{id}</code></td><td>상세 — incidents[] + 타임라인 + 썸네일 링크</td></tr>
+      <tr><td><code>GET /analyses/{id}/report.json</code></td><td>원본 리포트 다운로드</td></tr>
+      <tr><td><code>DELETE /analyses/{id}</code></td><td>분석 삭제 (스토리지 정리)</td></tr>
+    </table>
+    <p style="color:var(--sub); font-size:12px; margin-top:8px">
+      Gateway 경로: <code>http://&lt;노트북&gt;:8080/incident/...</code> (Caddy reverse_proxy) ·
+      직접 호출: <code>http://&lt;노트북&gt;:8007</code>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 6. 설정·도구 ═══════════════════ -->
 <section class="view" data-view="settings">
   <div class="card">
     <h3>🛠 운영 도구 6종 (Phase 3~5)</h3>
@@ -715,6 +780,112 @@ function dl(id, ext) {
 }
 
 // ══════════════════════════════════════════════════════════════
+// 영상 분석 (incident-mcp 연동)
+//   - 같은 LAN(노트북)에서 console.html을 열면 incident-mcp 직접 호출 가능.
+//   - GitHub Pages 데모에선 CORS/오프라인이라 mock 리스트만 표시.
+// ══════════════════════════════════════════════════════════════
+
+// 운영자가 노트북에서 console.html을 열 때 환경값으로 덮어쓰기 (예: localStorage.INCIDENT_MCP_URL).
+const INCIDENT_MCP_URL = (typeof localStorage !== 'undefined' && localStorage.getItem('INCIDENT_MCP_URL'))
+  || 'http://localhost:8007';
+
+const MOCK_VIDEO_ANALYSES = [
+  {
+    id: 'vid-20260529-220114-a3f2c1', label: 'KT-입찰-데모-1회차',
+    status: 'done', started_at: '2026-05-29T22:01:14',
+    summary: {verdict: 'fail', incidents_total: 3,
+              by_category: {black_frame: 1, freeze: 1, scene_jump: 1},
+              by_severity: {high: 1, medium: 1, low: 1},
+              anomaly_ratio: 0.087},
+  },
+  {
+    id: 'vid-20260529-180230-b7e8d4', label: '운영팀-제보-IPTV채널전환-지연',
+    status: 'done', started_at: '2026-05-29T18:02:30',
+    summary: {verdict: 'warn', incidents_total: 2,
+              by_category: {freeze: 2},
+              by_severity: {high: 0, medium: 2, low: 0},
+              anomaly_ratio: 0.034},
+  },
+  {
+    id: 'vid-20260528-235910-c1a4f9', label: '야간회귀-Netflix-홈로딩',
+    status: 'done', started_at: '2026-05-28T23:59:10',
+    summary: {verdict: 'pass', incidents_total: 0,
+              by_category: {}, by_severity: {high: 0, medium: 0, low: 0},
+              anomaly_ratio: 0.0},
+  },
+];
+
+function _verdictBadgeClass(v) {
+  return {fail:'fail', warn:'nt', info:'pending', pass:'pass'}[v] || 'pending';
+}
+function _verdictLabel(v) {
+  return {fail:'FAIL · 이상 감지', warn:'WARN · 의심', info:'INFO · 참고', pass:'PASS · 이상 없음'}[v] || v;
+}
+
+function renderVideoAnalyses(items) {
+  const el = document.getElementById('videoAnalysisList');
+  if (!el) return;
+  if (!items || items.length === 0) {
+    el.innerHTML = '<p style="color:var(--sub); font-size:13px; padding:14px">분석 이력이 없습니다.</p>';
+    return;
+  }
+  el.innerHTML = items.map(a => {
+    const s = a.summary || {by_category:{}, by_severity:{}, incidents_total:0, anomaly_ratio:0, verdict:'info'};
+    const cats = Object.entries(s.by_category || {}).map(([k,v]) => `${k}:${v}`).join(' · ') || '없음';
+    return `
+    <div class="row" style="display:grid; grid-template-columns: auto 1fr auto auto; gap:14px; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border)">
+      <span class="status-badge ${_verdictBadgeClass(s.verdict)}">${_verdictLabel(s.verdict)}</span>
+      <div>
+        <div class="id" style="font-weight:600">${a.label || a.id}</div>
+        <div style="font-size:12px; color:var(--sub); margin-top:3px">${a.id} · 시작 ${a.started_at || '-'}</div>
+        <div style="font-size:12px; color:var(--sub); margin-top:3px">이상 ${s.incidents_total}건 (${cats}) · 이상 비율 ${(s.anomaly_ratio*100).toFixed(1)}%</div>
+      </div>
+      <span style="font-size:11px; color:var(--sub)">H:${s.by_severity.high||0} M:${s.by_severity.medium||0} L:${s.by_severity.low||0}</span>
+      <a href="${INCIDENT_MCP_URL}/analyses/${a.id}/report.json" target="_blank" style="font-size:12px; color:var(--accent)">📄 리포트</a>
+    </div>`;
+  }).join('');
+}
+
+async function loadVideoAnalyses() {
+  try {
+    const res = await fetch(`${INCIDENT_MCP_URL}/analyses?limit=20`, {cache:'no-store'});
+    if (!res.ok) throw new Error('http '+res.status);
+    const data = await res.json();
+    renderVideoAnalyses(data.analyses || []);
+  } catch (e) {
+    // 게이트웨이 미가동(예: GitHub Pages 데모) → mock 표시
+    renderVideoAnalyses(MOCK_VIDEO_ANALYSES);
+  }
+}
+
+async function uploadVideoForAnalysis() {
+  const fileInput = document.getElementById('videoUploadInput');
+  const labelInput = document.getElementById('videoUploadLabel');
+  const intervalSel = document.getElementById('videoUploadInterval');
+  const status = document.getElementById('videoUploadStatus');
+  const file = fileInput.files[0];
+  if (!file) {
+    status.textContent = '⚠ 영상 파일을 선택하세요';
+    return;
+  }
+  status.textContent = `업로드 중... (${(file.size/1024/1024).toFixed(1)} MB)`;
+  const fd = new FormData();
+  fd.append('file', file);
+  if (labelInput.value) fd.append('label', labelInput.value);
+  fd.append('interval', intervalSel.value);
+  try {
+    const res = await fetch(`${INCIDENT_MCP_URL}/analyze`, {method:'POST', body: fd});
+    if (!res.ok) throw new Error('http '+res.status);
+    const data = await res.json();
+    status.innerHTML = `✓ 분석 시작 — <code>${data.analysis_id}</code> (백그라운드, 완료 시 목록 갱신)`;
+    setTimeout(loadVideoAnalyses, 2000);
+  } catch (e) {
+    status.innerHTML = `✕ 업로드 실패 — ${e.message}. incident-mcp 가동 확인 (<code>${INCIDENT_MCP_URL}/health</code>).<br>
+                       GitHub Pages 데모에선 사내 LAN의 incident-mcp가 필요합니다.`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 // 탭 전환
 // ══════════════════════════════════════════════════════════════
 document.querySelectorAll('nav .tab').forEach(t=>{
@@ -771,6 +942,7 @@ async function loadConsoleData() {
 renderAll();
 updateFooter();
 loadConsoleData();
+loadVideoAnalyses();
 </script>
 </body>
 </html>

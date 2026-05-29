@@ -18,6 +18,9 @@
     handle /bluetooth/* {
         reverse_proxy bluetooth-mcp:8000
     }
+    handle /incident/* {
+        reverse_proxy incident-mcp:8000
+    }
     handle /health {
         respond "stb-gateway ok" 200
     }

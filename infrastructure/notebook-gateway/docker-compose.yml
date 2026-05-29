@@ -182,7 +182,30 @@ services:
       retries: 3
 
   # ────────────────────────────────────────────────────────────
-  # 7) Gateway Proxy — 모든 MCP 서비스를 단일 엔드포인트로 노출
+  # 7) Incident MCP — 임의 영상 free-form 오류 분석 (시나리오 무관)
+  # ────────────────────────────────────────────────────────────
+  incident-mcp:
+    build:
+      # tools/video_analyzer를 같이 복사해야 하므로 repo 루트가 context.
+      context: ../..
+      dockerfile: infrastructure/notebook-gateway/services/incident-mcp/Dockerfile
+    container_name: stb-incident-mcp
+    <<: [*restart, *logging]
+    ports:
+      - "${INCIDENT_MCP_PORT:-8007}:8000"
+    environment:
+      - INCIDENT_DATA_DIR=/data/analyses
+      - EMBEDDING_MCP_URL=${EMBEDDING_MCP_URL:-}
+    volumes:
+      - ./data/analyses:/data/analyses
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ────────────────────────────────────────────────────────────
+  # 8) Gateway Proxy — 모든 MCP 서비스를 단일 엔드포인트로 노출
   # ────────────────────────────────────────────────────────────
   gateway-proxy:
     image: caddy:2-alpine
@@ -199,6 +222,7 @@ services:
       - power-mcp
       - voice-mcp
       - bluetooth-mcp
+      - incident-mcp
 
 networks:
   default:
