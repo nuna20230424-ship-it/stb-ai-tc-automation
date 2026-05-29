@@ -67,6 +67,8 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [12-executive-briefing-slides.md](docs/12-executive-briefing-slides.md) — 🎯 **경영진 슬라이드 데크** (Marp, PDF/HTML/PPTX 변환 가능)
 - [13-kickoff-day1-slides.md](docs/13-kickoff-day1-slides.md) — 🚀 **Day 1 킥오프 미팅 슬라이드 (실무진용, 18장)**
 - [README-export.md](docs/README-export.md) — 문서 PDF/HTML/PPTX 변환 가이드
+- [automation-prerequisites.md](docs/automation-prerequisites.md) — 🎯 **TC 자동화 필수 요소 체크리스트** (엑셀 업로드 전 확인)
+- [excel-upload-guide.md](docs/excel-upload-guide.md) — 📥 사내 TC 엑셀 업로드 절차
 - [CHANGELOG.md](docs/CHANGELOG.md) — 일자별 업데이트 이력
 
 ### 🐳 인프라 코드 (`infrastructure/`)
