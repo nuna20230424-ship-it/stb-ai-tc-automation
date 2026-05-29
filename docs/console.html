@@ -797,6 +797,7 @@ const MOCK_VIDEO_ANALYSES = [
               by_category: {black_frame: 1, freeze: 1, scene_jump: 1},
               by_severity: {high: 1, medium: 1, low: 1},
               anomaly_ratio: 0.087},
+    jira: {jira_key: 'STBQA-1247', jira_url: 'https://jira.example/STBQA-1247'},
   },
   {
     id: 'vid-20260529-180230-b7e8d4', label: '운영팀-제보-IPTV채널전환-지연',
@@ -805,6 +806,7 @@ const MOCK_VIDEO_ANALYSES = [
               by_category: {freeze: 2},
               by_severity: {high: 0, medium: 2, low: 0},
               anomaly_ratio: 0.034},
+    jira: {jira_key: 'STBQA-1246', jira_url: 'https://jira.example/STBQA-1246'},
   },
   {
     id: 'vid-20260528-235910-c1a4f9', label: '야간회귀-Netflix-홈로딩',
@@ -822,6 +824,11 @@ function _verdictLabel(v) {
   return {fail:'FAIL · 이상 감지', warn:'WARN · 의심', info:'INFO · 참고', pass:'PASS · 이상 없음'}[v] || v;
 }
 
+function _sevDot(sev) {
+  const c = {high:'var(--fail)', medium:'var(--nt)', low:'var(--pending)'}[sev] || 'var(--sub)';
+  return `<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${c}; margin-right:6px"></span>`;
+}
+
 function renderVideoAnalyses(items) {
   const el = document.getElementById('videoAnalysisList');
   if (!el) return;
@@ -832,18 +839,134 @@ function renderVideoAnalyses(items) {
   el.innerHTML = items.map(a => {
     const s = a.summary || {by_category:{}, by_severity:{}, incidents_total:0, anomaly_ratio:0, verdict:'info'};
     const cats = Object.entries(s.by_category || {}).map(([k,v]) => `${k}:${v}`).join(' · ') || '없음';
+    const jira = a.jira && a.jira.jira_key ? `<a href="${a.jira.jira_url}" target="_blank" style="font-size:12px; color:var(--accent); margin-right:10px">🐞 ${a.jira.jira_key}</a>` : '';
     return `
-    <div class="row" style="display:grid; grid-template-columns: auto 1fr auto auto; gap:14px; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border)">
-      <span class="status-badge ${_verdictBadgeClass(s.verdict)}">${_verdictLabel(s.verdict)}</span>
-      <div>
-        <div class="id" style="font-weight:600">${a.label || a.id}</div>
-        <div style="font-size:12px; color:var(--sub); margin-top:3px">${a.id} · 시작 ${a.started_at || '-'}</div>
-        <div style="font-size:12px; color:var(--sub); margin-top:3px">이상 ${s.incidents_total}건 (${cats}) · 이상 비율 ${(s.anomaly_ratio*100).toFixed(1)}%</div>
+    <div class="vid-row" id="vid-row-${a.id}" style="border-bottom:1px solid var(--border)">
+      <div style="display:grid; grid-template-columns: auto 1fr auto auto auto; gap:14px; align-items:center; padding:12px 14px; cursor:pointer"
+           onclick="toggleVideoDetail('${a.id}')">
+        <span class="status-badge ${_verdictBadgeClass(s.verdict)}">${_verdictLabel(s.verdict)}</span>
+        <div>
+          <div class="id" style="font-weight:600">${a.label || a.id}</div>
+          <div style="font-size:12px; color:var(--sub); margin-top:3px">${a.id} · 시작 ${a.started_at || '-'}</div>
+          <div style="font-size:12px; color:var(--sub); margin-top:3px">이상 ${s.incidents_total}건 (${cats}) · 이상 비율 ${(s.anomaly_ratio*100).toFixed(1)}%</div>
+        </div>
+        <span style="font-size:11px; color:var(--sub)">H:${s.by_severity.high||0} M:${s.by_severity.medium||0} L:${s.by_severity.low||0}</span>
+        <span style="font-size:12px; color:var(--accent)">${jira}<a href="${INCIDENT_MCP_URL}/analyses/${a.id}/report.json" target="_blank" onclick="event.stopPropagation()">📄 리포트</a></span>
+        <span class="vid-chevron" id="chev-${a.id}" style="font-size:14px; color:var(--sub); width:16px">▸</span>
       </div>
-      <span style="font-size:11px; color:var(--sub)">H:${s.by_severity.high||0} M:${s.by_severity.medium||0} L:${s.by_severity.low||0}</span>
-      <a href="${INCIDENT_MCP_URL}/analyses/${a.id}/report.json" target="_blank" style="font-size:12px; color:var(--accent)">📄 리포트</a>
+      <div class="vid-detail" id="vid-detail-${a.id}" style="display:none; padding:14px 20px 20px; background:rgba(0,0,0,.15)"></div>
     </div>`;
   }).join('');
+}
+
+async function toggleVideoDetail(aid) {
+  const detail = document.getElementById(`vid-detail-${aid}`);
+  const chev = document.getElementById(`chev-${aid}`);
+  if (!detail) return;
+  if (detail.style.display !== 'none') {
+    detail.style.display = 'none';
+    chev.textContent = '▸';
+    return;
+  }
+  detail.style.display = 'block';
+  chev.textContent = '▾';
+  detail.innerHTML = '<p style="color:var(--sub); font-size:13px">상세 로딩 중...</p>';
+
+  try {
+    const res = await fetch(`${INCIDENT_MCP_URL}/analyses/${aid}/report.json`, {cache:'no-store'});
+    if (!res.ok) throw new Error('http '+res.status);
+    const report = await res.json();
+    detail.innerHTML = renderVideoDetail(aid, report);
+  } catch (e) {
+    // mock fallback — 데모용
+    detail.innerHTML = renderVideoDetail(aid, _mockVideoReport(aid)) +
+      `<p style="color:var(--sub); font-size:11px; margin-top:10px">⚠ 실제 incident-mcp 미가동 — mock 데이터 표시 (${e.message})</p>`;
+  }
+}
+
+function _mockVideoReport(aid) {
+  return {
+    video: {duration_sec: 12.5, fps: 30, width: 1920, height: 1080, total_frames: 375,
+            path: `/data/analyses/${aid}/source.mp4`},
+    sampling: {interval_sec: 1.0, sampled_frames: 12},
+    analysis_elapsed_sec: 1.8,
+    summary: {verdict: 'fail', incidents_total: 3, anomaly_ratio: 0.087,
+              by_category: {black_frame: 1, freeze: 1, scene_jump: 1},
+              by_severity: {high: 1, medium: 1, low: 1}},
+    incidents: [
+      {category: 'black_frame', severity: 'high', start_sec: 2.5, end_sec: 4.5, duration_sec: 2.0,
+       description: '블랙 화면 2.0초 연속 (평균 휘도 1.2~3.4)',
+       metrics: {mean_y_min: 1.2, mean_y_max: 3.4},
+       thumbnail: 'black_frame_00000075.png'},
+      {category: 'freeze', severity: 'medium', start_sec: 7.0, end_sec: 10.0, duration_sec: 3.0,
+       description: '화면 정지 3.0초 (픽셀 변화율 4.21% 이하)',
+       metrics: {max_diff_ratio: 0.0421},
+       thumbnail: 'freeze_00000210.png'},
+      {category: 'scene_jump', severity: 'low', start_sec: 11.0, end_sec: 11.0, duration_sec: 0.0,
+       description: '장면 급변 — 히스토그램 거리 8.43 (vision LLM 후속 분석 권장)',
+       metrics: {chi2: 8.43, vision_description: '에러 다이얼로그 — "연결 실패 다시 시도하세요"', vision_error_match: ['오류', '다시 시도']},
+       thumbnail: 'scene_jump_00000330.png'},
+    ],
+  };
+}
+
+function renderVideoDetail(aid, report) {
+  const v = report.video || {};
+  const s = report.summary || {};
+  const incidents = report.incidents || [];
+  const meta = `
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:14px; font-size:12px">
+      <div><div style="color:var(--sub); font-size:10px; text-transform:uppercase">길이</div><div style="font-family:var(--mono)">${(v.duration_sec||0).toFixed(1)}초</div></div>
+      <div><div style="color:var(--sub); font-size:10px; text-transform:uppercase">해상도</div><div style="font-family:var(--mono)">${v.width||'?'}x${v.height||'?'}</div></div>
+      <div><div style="color:var(--sub); font-size:10px; text-transform:uppercase">fps</div><div style="font-family:var(--mono)">${(v.fps||0).toFixed(1)}</div></div>
+      <div><div style="color:var(--sub); font-size:10px; text-transform:uppercase">분석 시간</div><div style="font-family:var(--mono)">${(report.analysis_elapsed_sec||0).toFixed(1)}초</div></div>
+    </div>`;
+
+  // 타임라인 시각화 (가로 바 + incident 위치 마커)
+  const dur = v.duration_sec || 1;
+  const markers = incidents.map(i => {
+    const left = (i.start_sec / dur) * 100;
+    const width = Math.max(0.8, (i.duration_sec / dur) * 100);
+    const color = {black_frame:'#0f172a', freeze:'#22c55e', no_signal:'#ef4444', scene_jump:'#fbbf24'}[i.category] || '#a78bfa';
+    return `<div title="${i.start_sec}s~${i.end_sec}s ${i.category}" style="position:absolute; left:${left}%; width:${width}%; height:100%; background:${color}; opacity:.7"></div>`;
+  }).join('');
+  const timeline = `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px; color:var(--sub); margin-bottom:4px; display:flex; justify-content:space-between">
+        <span>타임라인 (0초 ~ ${dur.toFixed(1)}초)</span>
+        <span style="font-family:var(--mono)">전체 ${dur.toFixed(1)}초 중 이상 ${((s.anomaly_ratio||0)*100).toFixed(1)}%</span>
+      </div>
+      <div style="position:relative; height:18px; background:var(--bg); border:1px solid var(--border); border-radius:3px">${markers}</div>
+    </div>`;
+
+  // incident 카드 그리드 (썸네일 + 메타)
+  const cards = incidents.length ? incidents.map(i => {
+    const thumbUrl = i.thumbnail ? `${INCIDENT_MCP_URL}/analyses/${aid}/thumbnails/${i.thumbnail}` : null;
+    const visionLine = i.metrics && i.metrics.vision_description
+      ? `<div style="font-size:11px; color:var(--sub); margin-top:4px; padding-top:4px; border-top:1px dashed var(--border)">🔍 vision: ${i.metrics.vision_description}</div>` : '';
+    const errMatch = i.metrics && i.metrics.vision_error_match && i.metrics.vision_error_match.length
+      ? `<div style="font-size:11px; color:var(--fail); margin-top:3px">⚠ 매칭 키워드: ${i.metrics.vision_error_match.join(', ')}</div>` : '';
+    return `
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px; display:grid; grid-template-columns: 100px 1fr; gap:10px">
+        <div style="width:100px; height:75px; background:#000; border-radius:3px; overflow:hidden; display:flex; align-items:center; justify-content:center">
+          ${thumbUrl ? `<img src="${thumbUrl}" style="max-width:100%; max-height:100%" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"><span style="display:none; color:var(--sub); font-size:10px">썸네일 없음</span>` : `<span style="color:var(--sub); font-size:10px">no thumb</span>`}
+        </div>
+        <div>
+          <div style="font-size:13px; font-weight:600; margin-bottom:3px">${_sevDot(i.severity)}${i.category} <span style="color:var(--sub); font-weight:400">· ${i.severity}</span></div>
+          <div style="font-size:11px; color:var(--sub); font-family:var(--mono)">${i.start_sec}s ~ ${i.end_sec}s · ${i.duration_sec}초</div>
+          <div style="font-size:12px; margin-top:5px">${i.description}</div>
+          ${visionLine}
+          ${errMatch}
+        </div>
+      </div>`;
+  }).join('') : '<p style="color:var(--sub); font-size:13px; padding:10px">검출된 이상 없음 (PASS).</p>';
+
+  return meta + timeline +
+    `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">${cards}</div>` +
+    `<div style="margin-top:10px; font-size:11px; color:var(--sub); text-align:right">
+       <a href="${INCIDENT_MCP_URL}/analyses/${aid}/report.json" target="_blank" style="color:var(--accent)">📄 전체 리포트 JSON</a> ·
+       샘플 ${report.sampling ? report.sampling.sampled_frames : '?'}프레임 (${report.sampling ? report.sampling.interval_sec : '?'}초 간격)
+     </div>`;
 }
 
 async function loadVideoAnalyses() {

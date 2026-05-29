@@ -196,6 +196,7 @@ services:
     environment:
       - INCIDENT_DATA_DIR=/data/analyses
       - EMBEDDING_MCP_URL=${EMBEDDING_MCP_URL:-}
+      - REPORT_MCP_URL=${REPORT_MCP_URL:-}
     volumes:
       - ./data/analyses:/data/analyses
     healthcheck:

@@ -2,6 +2,40 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-29 (업데이트 48) — 영상 분석 자동 JIRA 등록 + 상세 보기 (end-to-end 완성)
+
+업데이트 46(영상 분석)에서 verdict=fail이어도 운영자가 수동으로 JIRA 등록해야 했던
+missing link 해소. 영상 던지면 → 분석 → fail이면 → JIRA 자동 생성 → 콘솔에서 타임라인 시각화.
+
+### 신규: incident-mcp → report-mcp 자동 연동
+- `infrastructure/notebook-gateway/services/incident-mcp/main.py`:
+  - 환경변수 `REPORT_MCP_URL` 추가 (옵션 — 미설정 시 자동 등록 off)
+  - `_auto_register_jira()` — 분석 완료 후 verdict=fail/warn이면 `report-mcp POST /incident` 호출
+  - verdict → severity 자동 매핑: fail=P1, warn=P2, info=P3
+  - JIRA description: 비디오 메타(해상도/길이/fps) + 카테고리/심각도 카운트 + **상위 5건 incident 타임라인** (severity high 우선 정렬)
+  - 등록 결과 `jira_key/jira_url`을 분석 status에 저장 → 콘솔에서 바로 클릭 가능
+  - graceful: report-mcp 실패해도 분석 status는 done 유지 + error 메시지 저장
+- `docker-compose.yml`: `REPORT_MCP_URL` 환경변수 wire-up
+- `tools/tests/test_incident_mcp_jira.py`: 5건 (severity 매핑 / payload 구조 / 상위 5건 컷오프 / high 우선 정렬 / mapping table)
+
+### 콘솔 영상 분석 — 상세 보기 펼침
+- `docs/console.html` "🎬 영상 분석" 메뉴:
+  - 분석 리스트 행 클릭 시 ▾ 펼침 — incident-mcp `/analyses/{id}/report.json` fetch
+  - **타임라인 시각화**: 가로 바 + 카테고리별 컬러 마커 (위치/길이 정확)
+  - **메타 4종**: 길이 / 해상도 / fps / 분석 시간
+  - **incident 카드 그리드**: 썸네일(100x75) + 카테고리 + severity 색점 + 시각 범위 + 묘사
+  - vision LLM 묘사가 있으면 별도 라인 + 매칭 키워드 빨강 강조
+  - JIRA 등록되어 있으면 행에 🐞 JIRA 키 링크 (이벤트 stopPropagation)
+  - incident-mcp 미가동 시 mock report로 graceful fallback (데모 페이지 정상 동작)
+
+### ✅ 테스트 258/258 통과 (신규 5)
+
+### 사용자 피드백 반영
+> "private으로 전환해도 git에 저장된 내용은 모두 확인가능한거지? ... TC 엑셀 업로드 외에 다음 스텝 진행해줘."
+
+영상 분석을 **end-to-end 자동화** — 운영팀은 영상만 던지면 됨. 입찰 데모에서 "영상 →
+타임라인 + 썸네일 + JIRA 자동 등록" 30초 시연 가능.
+
 ## 2026-05-29 (업데이트 47) — Excel 시트 필터링 + 업로드 가이드 (채널 시트 우선)
 
 `excel_importer`가 첫 시트만 로드하던 한계를 제거. 다중 시트 사내 엑셀에서 **특정 시트만**
