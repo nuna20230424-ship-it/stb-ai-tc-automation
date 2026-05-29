@@ -36,7 +36,7 @@ GitHub Pages: https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/demo.h
 - 목적   : 셋탑박스 QA 테스트케이스 100% 자동화 (작성/실행/유지보수)
 - 전략   : Claude Code + Gemini 멀티 에이전트 기반 결정론 도구 스택
 - 차별점 : 벤더 무코드 도구가 아닌 사내 IP — RDK 친화, 한국 도메인,
-           입찰 시 데모 가능 (KT/SKB)
+           시연·고객 협의 시 데모 가능
 - 기간   : 6개월 Fast-Track (원래 24개월 → 4배 가속)
 - 비용   : PoC 최소 ₩54만 / 최적 ₩182만 (사내 Mac mini 활용, 신규 서버 0원)
 
@@ -89,7 +89,7 @@ GitHub Pages: https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/demo.h
   Phase 2  Judge 3-tier 재설계 + 골든셋 라벨링 도구       ✅ 완료
   Phase 3  Smart Test Selection (tc_selector)             ✅ 완료
   Phase 4  자동 트리아지 (triage)                         ✅ 완료
-  Phase 5  State Graph + RDK 폴백 + 입찰 자료             ✅ 완료
+  Phase 5  State Graph + RDK 폴백 + 영상 분석             ✅ 완료
 
 
 [다음 단계 — 결재·발주 대기]
@@ -104,7 +104,7 @@ GitHub Pages: https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/demo.h
 
 [그 이후 — 운영 안착]
   Week 5~8   200 시나리오 야간 회귀 가동 + 트리아지 자동화
-  Week 9~12  KT/SKB 입찰 케이스 스터디 작성 + 영업 자료화
+  Week 9~12  사내 운영 가이드 정리 + 영상 분석 사례 누적
   Week 13+   다중 STB/펌웨어 매트릭스 확장, 운영 안정화
 
 
@@ -135,9 +135,6 @@ GitHub Pages: https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/demo.h
 
   • 장비 구매 옵션 (최적 vs 최소비용, 검증된 URL 포함)
     https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/procurement-options.html
-
-  • KT/SKB 입찰 케이스 스터디
-    https://github.com/nuna20230424-ship-it/stb-ai-tc-automation/blob/main/docs/36-kt-skb-case-study.md
 
   • 저장소 전체 (소스 + 도구 + 문서)
     https://github.com/nuna20230424-ship-it/stb-ai-tc-automation

@@ -63,7 +63,6 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [tools/rdk/](tools/rdk/) — 📡 RDK Thunder JSON-RPC 폴백 (IR-only 완화, ir-mcp IR_BACKEND=rdk) · [docs/35](docs/35-rdk-fallback.md)
 - [tools/catalog_expander/](tools/catalog_expander/) — 📈 카탈로그 파라미터 확장 (36→200, 코드만·키 불필요) · [docs/37](docs/37-catalog-expander.md)
 - [tools/catalog_tuner/](tools/catalog_tuner/) — 🔧 시나리오 키/steps 펌웨어 튜닝 (lint + SME overrides) · [docs/38](docs/38-catalog-tuning.md)
-- [docs/36-kt-skb-case-study.md](docs/36-kt-skb-case-study.md) — 🏆 KT/SKB 입찰용 케이스 스터디
 - [12-executive-briefing.md](docs/12-executive-briefing.md) — 📄 **경영진 1페이지 브리핑** (결재용)
 - [12-executive-briefing-slides.md](docs/12-executive-briefing-slides.md) — 🎯 **경영진 슬라이드 데크** (Marp, PDF/HTML/PPTX 변환 가능)
 - [13-kickoff-day1-slides.md](docs/13-kickoff-day1-slides.md) — 🚀 **Day 1 킥오프 미팅 슬라이드 (실무진용, 18장)**

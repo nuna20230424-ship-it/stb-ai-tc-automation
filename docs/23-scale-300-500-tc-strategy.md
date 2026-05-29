@@ -19,16 +19,16 @@
 | **Witbe** (STB QA 벤더) | 24/7 운용 (벤더 자료) | Smart Navigate AI + Agentic SDK(2026.02), KPI는 결정론 유지 | "AI 생성 + KPI 결정론 검증" 하이브리드 | ⭐⭐⭐ 우리 LLaVA + 룰 엔진과 동일 |
 | **S3 Group StormTest** | Sky/BT/Swisscom/NAGRA 글로벌 (회귀 600%↑ 벤더수치) | 풀-레퍼런스 비디오/오디오 분석 + ALM 통합 | TC ↔ 펌웨어 변경 1:1 추적 가능해야 함 | ⭐⭐⭐ JIRA 연동 강화 필요 |
 | **Netflix Test** | 1,000+ 렌더 테스트 × 10+ 기기 = **5~10만 골든 이미지** | RMSE 0.1% 임계 dual-mode, NTS 자체 인프라 | "픽셀 동일성" → "의미 동일성" 전환 | ⭐⭐⭐⭐ Qdrant 임베딩 유사도가 정확히 이 패턴 |
-| **Comcast/Sky RDK X1** | RDK 유일한 대규모 배포 | TDK + Boardfarm(LGI 공개) + Jenkins | Lightning UI = DOM 없음 → **이미지/이벤트 기반 강제** | ⭐⭐⭐⭐ 우리와 같은 제약. RDK 친화 = KT/SKB 어필 가능 |
+| **Comcast/Sky RDK X1** | RDK 유일한 대규모 배포 | TDK + Boardfarm(LGI 공개) + Jenkins | Lightning UI = DOM 없음 → **이미지/이벤트 기반 강제** | ⭐⭐⭐⭐ 우리와 같은 제약. RDK 친화 자산 |
 | **Tata Elxsi FalconEye/QoEtient** | pan-EU 텔코 (벤더 자료) | plain-English TC, 무코드 (셋업 85%↓ 벤더수치) | "무코드 + 다기기 + AI" 트리오 | ⭐⭐ Kaon 직접 경쟁사. 마케팅 수치는 신뢰 X |
 | **stb-tester** (OSS+상용) | 다수 운용사 | OpenCV/OCR + pytest 네이티브(v33+) | PageObject = image-match/OCR/IR 추상화 | ⭐⭐⭐⭐⭐ **우리 스택과 거의 동일 철학** — 직접 참고 |
 | **Samsung Tizen / LG webOS** | — | Appium/Suitest/HeadSpin 등 외부 도구 | **API 우선 + 이미지 폴백** 이원화 | ⭐⭐ IR-only는 확장 시 약점 — API 폴백 검토 |
 
 ### 한국/아시아 시그널
-- **공개된 KT/SKB/LG U+ STB QA 자동화 케이스는 거의 없음.** Netmanias 자료에서 KT 4K UHD 시험 "케이온미디어 STB, 214채 중 60채 20초마다 전환" 절차 언급 — **현장 표준 시험 = 채널 자핑 + 시간 기반 검증**임을 시사.
-- **Kaon은 RDK Video Accelerator 프로그램 참여** → 고객(KT/SKB)이 RDK 친화. **PoC 결과물의 외부 어필 포인트**.
+- **공개된 국내 STB QA 자동화 케이스는 거의 없음.** 업계 자료에서 4K UHD 시험 "214채 중 60채 20초마다 전환" 절차 언급 — **현장 표준 시험 = 채널 자핑 + 시간 기반 검증**임을 시사.
+- **Kaon은 RDK Video Accelerator 프로그램 참여** → RDK 친화 자산은 사내 IP로 누적 가치.
 - 한국 OTT(티빙/웨이브/쿠팡플레이) QA는 모바일 중심, STB-side는 ODM 위임 구조 → **Kaon이 자동화 자산을 가지면 협상력 상승**.
-- 결론: **공개 사례 부족 = 케이온이 사례를 만들 여백이 크다**. 입찰 차별화 가능.
+- 결론: **공개 사례 부족 = 케이온이 사례를 만들 여백이 크다**.
 
 ---
 
@@ -157,7 +157,7 @@ STB 적용:
 **목표: 운영 — 신규 펌웨어/모델 자동 적응**
 1. `navigate` 액션을 state graph BFS로 진화 (Sprint 4)
 2. RDK API 폴백 (IR-only 의존 완화)
-3. KT/SKB 입찰용 케이스 스터디 자료화
+3. 사내 운영 가이드 + 영상 분석 사례 누적
 
 ---
 
@@ -176,7 +176,7 @@ STB 적용:
 ## 7. 정보 한계 (정직 기재)
 
 - Witbe·Tata Elxsi·S3 StormTest의 **실제 일일 TC 수치는 공개 자료에서 확보 불가** (벤더 마케팅 수치). 비공식 채널 또는 케이스 스터디 PDF 별도 입수 필요.
-- 한국 IPTV 사업자(KT/SKB/LG U+) 내부 QA 시스템은 **공개 발표 거의 없음** → Kaon의 KT/SKB 직접 채널 통해 비공식 정보 입수가 더 정확.
+- 국내 IPTV 사업자 내부 QA 시스템은 **공개 발표 거의 없음** → 비공식 채널을 통한 정보 입수가 더 정확.
 - LLaVA의 **STB UI 도메인 특화 정확도 벤치마크는 발견 못함** → Phase 2에서 자체 100장 골든셋으로 LLaVA·Qwen-VL·GPT-4V 비교 측정 필수.
 
 ---
@@ -193,4 +193,4 @@ STB 적용:
 → Phase 1~5 로드맵 + 제외 항목 정당화
 → 저장소에 누적 커밋
 
-**경쟁 ODM(Tata Elxsi 등) 대비 차별화**: 우리는 "벤더 무코드 도구"가 아니라 **"기획·설계·구현을 AI 에이전트와 협업해 사내 IP로 누적"**하는 모델. 입찰 시 데모 가능한 사내 자산.
+**경쟁 ODM(Tata Elxsi 등) 대비 차별화**: 우리는 "벤더 무코드 도구"가 아니라 **"기획·설계·구현을 AI 에이전트와 협업해 사내 IP로 누적"**하는 모델. 즉시 시연 가능한 사내 자산.

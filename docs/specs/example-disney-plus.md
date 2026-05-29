@@ -1,6 +1,6 @@
 # Disney+ 앱 통합 기능명세서 (PoC 예시)
 
-> 2026-05-25 작성. scenario-drafter 입력 예시. 실제 KT/SKB 배포 스펙이 아닌 데모용.
+> 2026-05-25 작성. scenario-drafter 입력 예시. 실제 배포 스펙이 아닌 데모용.
 
 ## 1. 개요
 

@@ -1,7 +1,7 @@
 """Incident MCP — 임의 영상 업로드 + 자동 오류 분석.
 
 기존 TC 자동화(시나리오 ↔ expected 비교)와는 독립적인 free-form 분석 서비스.
-운영자가 KT/SKB 입찰 영상 / 고객 제보 영상 등을 시나리오 없이 즉시 분석.
+운영자가 사내 시연 영상 / 사용자 제보 영상 등을 시나리오 없이 즉시 분석.
 
 엔드포인트:
   POST /analyze            — 영상 업로드 (multipart) → 분석 시작 → analysis_id 반환

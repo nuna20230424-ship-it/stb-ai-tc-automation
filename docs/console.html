@@ -289,7 +289,7 @@ pytest -m catalog -k "$(cat k.txt)"</pre>
     <h3>🎬 영상 단독 오류 분석</h3>
     <p style="color:var(--sub); font-size:14px; line-height:1.7">
       <strong>시나리오 없이</strong> 임의 영상을 업로드해서 STB 운영 중 발생한 오류를 자동 탐지합니다.
-      고객사 입찰 데모 영상 · 사용자 제보 영상 · 야간 운영 녹화에서 <strong>블랙 아웃 / 화면 정지 /
+      사내 시연 영상 · 사용자 제보 영상 · 야간 운영 녹화에서 <strong>블랙 아웃 / 화면 정지 /
       신호 없음 / 장면 급변</strong>을 자동 검출 → 타임라인 + 썸네일 리포트.
     </p>
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:18px; margin-top:14px">
@@ -298,7 +298,7 @@ pytest -m catalog -k "$(cat k.txt)"</pre>
         <input type="file" id="videoUploadInput" accept="video/mp4,video/avi,video/mov,video/mkv,video/webm"
                style="width:100%; padding:8px; background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px; font-family:var(--mono); font-size:12px">
         <div style="display:flex; gap:10px; margin-top:10px">
-          <input type="text" id="videoUploadLabel" placeholder="라벨 (예: KT-입찰-데모-2026Q2)" style="flex:1; padding:8px; background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px">
+          <input type="text" id="videoUploadLabel" placeholder="라벨 (예: 야간회귀-2026Q2 / 운영팀-제보)" style="flex:1; padding:8px; background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px">
           <select id="videoUploadInterval" style="padding:8px; background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px">
             <option value="0.5">0.5초 간격 (정밀)</option>
             <option value="1.0" selected>1초 간격 (기본)</option>
@@ -791,7 +791,7 @@ const INCIDENT_MCP_URL = (typeof localStorage !== 'undefined' && localStorage.ge
 
 const MOCK_VIDEO_ANALYSES = [
   {
-    id: 'vid-20260529-220114-a3f2c1', label: 'KT-입찰-데모-1회차',
+    id: 'vid-20260529-220114-a3f2c1', label: '야간회귀-OTT-홈로딩-실패',
     status: 'done', started_at: '2026-05-29T22:01:14',
     summary: {verdict: 'fail', incidents_total: 3,
               by_category: {black_frame: 1, freeze: 1, scene_jump: 1},
