@@ -2,6 +2,34 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-29 (업데이트 43) — 장비 구매 옵션 재정리 (최적 vs 최소비용)
+
+procurement-required.html을 두 가지 시나리오로 명확히 분리. 모든 제품·URL 재검증.
+
+### 📁 신규 파일
+- `docs/procurement-options.md` — 마크다운 (PR/문서 인용용)
+- `docs/procurement-options.html` — 스타일링된 HTML (GitHub Pages 공개용, 48개 외부 링크)
+
+### 🏆 최적 효과 (3 Tier)
+- **Tier 1 핵심** ($1,350 / ₩182만): Magewell ×2, BroadLink RM4 Mini, TP-Link TL-SG3210, HDMI 분배기 ×3, OWC TB4 Dock, Shelly Plug ×3, FTDI UART ×2, 랙 마운트, Dummy Plug
+- **Tier 2 Sprint 1** ($2,039 / ₩275만): UniFi U6-LR, 27" 모니터 ×2, 스튜디오 스피커, BT 음성리모컨 ×2, AirPods Pro, Sony WH-1000XM5, OPNsense Mini PC
+- **Tier 3 Sprint 2** ($115 / ₩16만): Pi4 + 서보 + PCA9685 (GPIO 푸셔)
+- 최대 합계 $3,504 ≈ ₩473만
+
+### 💰 최소비용 최대효과 ($401 / ₩54만)
+필수 4: Magewell ×1, BroadLink RM4 Mini, TP-Link TL-SG108E(Easy Smart, TL-SG3210의 1/5 가격), HDMI 분배기 ×1
+옵션 4 (+$50): Shelly Plug, CH340 UART(FTDI의 1/3), HDMI Dummy, 분배기 예비
+극단적 절약 (Android TV+Elgato): ~$145 / ₩20만 가능
+
+### 🔍 검증 (2026-05-29)
+- 신규 검증 제품: Elgato Cam Link 4K ($90), TP-Link TL-SG108E ($30), UniFi U6-LR ($179)
+- 제조사 공식 + 글로벌 리테일러 5개사(Amazon/B&H/Newegg/Walmart/Best Buy) 교차 확인
+- 환산 ₩1,350/USD 참고 + 부가세·관세·배송 별도 명시
+
+### 📊 의사결정 가이드
+"리더십 결재용 데모" → 최소비용($401), "200 시나리오 야간 회귀" → 최적(Tier 1 $1,350부터 단계적).
+단계적 발주 흐름 4단계 (Day 1~5 / W2~3 / W4~ / W7~)로 위험 분산.
+
 ## 2026-05-28 (업데이트 42) — 코드만으로 가능한 잔여 3건 마무리 (A+B+C)
 
 장비 없이 코드만으로 닫을 수 있는 모든 미완 항목 종결. 진정한 "코드 트랙 완료" 상태.

@@ -49,6 +49,7 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 - [17-ir-bt-signal-injection-guide.md](docs/17-ir-bt-signal-injection-guide.md) — 📡 IR / BT 신호 인입 가이드 (자동화 방법)
 - [18-low-cost-alternatives.md](docs/18-low-cost-alternatives.md) — 💸 IR/BT 저가 대안 3종 + 별도 장치 필요 여부 판단
 - [19-procurement-quotation.md](docs/19-procurement-quotation.md) — 📋 결재용 견적서 / 품의서 양식 (CSV 포함)
+- [procurement-options.md](docs/procurement-options.md) / [.html](docs/procurement-options.html) — 🛒 **장비 구매 옵션 (최적 $1,350~$3,504 vs 최소비용 $401)** · 검증된 제품·URL
 - [20-gpio-pusher-design.md](docs/20-gpio-pusher-design.md) — 🤖 GPIO 푸셔 설계 (Pi4 + 서보 + PCA9685)
 - [21-scenario-catalog.md](docs/21-scenario-catalog.md) — 📚 시나리오 카탈로그 (EPG/OTT/DRM/TrickPlay 16개)
 
