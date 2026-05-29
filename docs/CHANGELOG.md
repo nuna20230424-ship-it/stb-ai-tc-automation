@@ -2,6 +2,47 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-29 (업데이트 50) — Excel 시트 자동 분류 + 머지 미리보기 (사내 TC 워크플로)
+
+업데이트 47에서 `--sheet 채널` 추가했지만 시트 이름이 `채널`이 아니면 사용자가 직접
+시트 이름을 알아내야 했음. 시트 *내용*을 스캔해서 채널 TC 시트 자동 식별 + 카탈로그
+머지 미리보기까지 한 줄로 완성.
+
+### 신규 모듈
+- `tools/excel_importer/sheet_classifier.py`
+  - 9개 카테고리(channel/epg/ott/drm/trickplay/recording/parental/search/settings)
+    × 한국어+영문 키워드 사전
+  - `score_sheet()`: 시트 이름(3x) + 컬럼 헤더(2x) + 셀 데이터(1x) 가중치 점수
+  - `find_sheets_by_category()`: 엑셀 전체 시트 스캔 → 점수 내림차순
+  - `explain_classification()`: 사람이 읽기 좋은 분류 요약
+
+### CLI 신규 옵션 (`tools.excel_importer.importer`)
+- `--auto-channel` — 시트 이름이 "채널"이 아니어도 내용 스캔해서 채널 TC 시트 자동 선택
+- `--auto-category <cat>` — 다른 카테고리도 자동 식별 가능
+- `--classify-sheets` — 전체 시트를 9 카테고리로 분류만 출력 후 종료 (탐색용)
+- `--merge <catalog.json>` — import 직후 200건 카탈로그와 dry-run 머지 미리보기
+  (신규/충돌/총계 카운트)
+
+### 한 줄 사용 예시
+```bash
+python -m tools.excel_importer.importer \
+  --input ~/Downloads/사내-TC.xlsx \
+  --auto-channel \
+  --output drafts/channel-tcs.json \
+  --dry-run \
+  --merge infrastructure/notebook-gateway/data/scenarios-catalog.json
+```
+
+### ✅ 테스트 273/273 통과 (신규 15: 4종 score_sheet + 4종 find_sheets + 2종 explain + 5종 CLI)
+
+### 실 데이터 검증
+사용자 다운로드 폴더의 `[업무_공용] 개발QA파트.xlsx` 46개 시트 분류 결과:
+TC 컨텐츠 없는 관리 파일이라 모든 시트 점수 약함(1~4점) → 잘못된 매칭 회피 확인.
+
+### 사용자 워크플로 단순화
+업데이트 47까지: ① 시트 목록 확인 → ② 채널 시트 이름 식별 → ③ import → ④ 검토 → ⑤ 머지
+이번 업데이트: ① 한 줄 명령어 → 끝
+
 ## 2026-05-29 (업데이트 49) — 외부 사업자 관련 자료 제거 (보안)
 
 저장소가 공개 상태에서 운영되는 동안 노출되면 안 되는 외부 사업자(KT/SKB) 관련 자료를

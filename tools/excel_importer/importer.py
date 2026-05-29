@@ -221,7 +221,7 @@ def apply_llm_result(
 # CLI
 # ──────────────────────────────────────────────────────────────
 
-def main():
+def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(
         prog="excel-importer",
         description="Excel/CSV TC 시트 → v2 카탈로그 JSON",
@@ -230,8 +230,19 @@ def main():
     p.add_argument("--output", type=Path, help="출력 .json (검증 통과만). --list-sheets 시에는 불필요.")
     p.add_argument("--sheet", default="채널",
                    help="엑셀 시트 이름 (기본 '채널', 대소문자/공백 무시). csv에는 무시됨.")
+    p.add_argument("--auto-channel", action="store_true",
+                   help="시트 이름이 '채널'이 아니어도 내용 스캔해서 채널 TC 시트 자동 식별. "
+                        "여러 시트 매칭 시 점수 가장 높은 시트 선택.")
+    p.add_argument("--auto-category", default=None,
+                   help="--auto-channel과 동일하지만 카테고리 지정 가능 (channel/epg/ott/drm/"
+                        "trickplay/recording/parental/search/settings).")
     p.add_argument("--list-sheets", action="store_true",
                    help="엑셀 시트 목록만 출력하고 종료 (어떤 시트가 있는지 확인용)")
+    p.add_argument("--classify-sheets", action="store_true",
+                   help="모든 시트를 스캔해서 카테고리 자동 분류 결과만 출력 후 종료")
+    p.add_argument("--merge", type=Path, default=None,
+                   help="import 직후 지정한 카탈로그 JSON과 dry-run 머지 미리보기 출력 "
+                        "(예: --merge infrastructure/notebook-gateway/data/scenarios-catalog.json)")
     p.add_argument("--batch-size", type=int, default=8, help="LLM 호출당 행 수")
     p.add_argument("--dry-run", action="store_true",
                    help="LLM 호출 없이 direct map만 — steps/preconditions는 빈 배열")
@@ -248,7 +259,7 @@ def main():
     p.add_argument("--column-sla", default=DEFAULT_MAP.sla_ms)
     p.add_argument("--column-owner", default=DEFAULT_MAP.owner)
 
-    args = p.parse_args()
+    args = p.parse_args(argv)
 
     # --list-sheets: 시트만 출력 후 종료 (업로드 후 시트 확인용)
     if args.list_sheets:
@@ -261,8 +272,47 @@ def main():
             print(f"  - {s}")
         return 0
 
+    # --classify-sheets: 모든 시트 카테고리 자동 분류 후 종료
+    if args.classify_sheets:
+        from tools.excel_importer.sheet_classifier import (
+            explain_classification, score_sheet,
+        )
+        import pandas as pd
+        xl = pd.ExcelFile(args.input)
+        print(f"📊 {args.input} — {len(xl.sheet_names)}개 시트 분류:")
+        for sn in xl.sheet_names:
+            try:
+                df = pd.read_excel(args.input, sheet_name=sn, dtype=str,
+                                   keep_default_na=False, nrows=30)
+            except Exception as e:
+                print(f"  [{sn}] skip: {e}")
+                continue
+            cls = score_sheet(sn, list(df.columns), df.to_dict(orient="records"))
+            print(f"  {explain_classification(cls)}")
+        return 0
+
+    # --auto-channel / --auto-category: 시트 내용 스캔해서 자동 선택
+    target_cat = "channel" if args.auto_channel else args.auto_category
+    if target_cat:
+        from tools.excel_importer.sheet_classifier import find_sheets_by_category
+        candidates = find_sheets_by_category(args.input, target_cat, min_score=3)
+        if not candidates:
+            print(f"❌ '{target_cat}' 카테고리에 매칭되는 시트 없음. "
+                  f"--classify-sheets 로 전체 분류 확인 권장.", file=sys.stderr)
+            return 3
+        chosen = candidates[0]
+        print(f"🎯 자동 선택된 시트: '{chosen.sheet_name}' "
+              f"(카테고리 {target_cat} 점수 {chosen.scores[target_cat]}, "
+              f"신뢰도 {chosen.confidence*100:.0f}%)")
+        if len(candidates) > 1:
+            others = ", ".join(f"{c.sheet_name}({c.scores[target_cat]})"
+                                for c in candidates[1:4])
+            print(f"   다른 후보: {others}")
+        args.sheet = chosen.sheet_name
+
     if not args.output:
-        print("❌ --output 필수 (--list-sheets 사용 시에만 생략 가능)", file=sys.stderr)
+        print("❌ --output 필수 (--list-sheets/--classify-sheets 시에만 생략 가능)",
+              file=sys.stderr)
         return 2
 
     cmap = ColumnMap(
@@ -293,6 +343,8 @@ def main():
             json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         print(f"✅ dry-run: {len(out)} scenarios → {args.output} (steps/preconditions 빈 채로)")
+        if args.merge:
+            _preview_merge(args.merge, out)
         return 0
 
     # LLM batch input 구성
@@ -371,7 +423,40 @@ def main():
         )
         print(f"   캐시 적중률: {ratio:.0%} (시스템 프롬프트 재사용 효과)")
 
+    if args.merge:
+        _preview_merge(args.merge, ok)
+
     return 0 if not (all_errors or validation_errors) else 1
+
+
+def _preview_merge(catalog_path: Path, new_scenarios: list[dict]) -> None:
+    """기존 카탈로그와 dry-run 머지 — 신규/충돌/총계 요약 출력.
+
+    실제 머지는 별도 명령(tools.catalog_tuner)으로 분리 — 안전 보장.
+    """
+    print(f"\n🔀 머지 미리보기 (dry-run) — 기존 카탈로그: {catalog_path}")
+    if not catalog_path.exists():
+        print(f"   ⚠️  카탈로그 파일 없음 — 신규 {len(new_scenarios)}건이 전체가 됩니다.")
+        return
+    try:
+        existing = json.loads(catalog_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        print(f"   ❌ 카탈로그 JSON 파싱 실패: {e}", file=sys.stderr)
+        return
+
+    existing_ids = {s.get("id") for s in existing if isinstance(s, dict)}
+    new_ids = {s.get("id") for s in new_scenarios if isinstance(s, dict)}
+    additions = sorted(new_ids - existing_ids)
+    conflicts = sorted(new_ids & existing_ids)
+
+    print(f"   기존 카탈로그: {len(existing)}건")
+    print(f"   신규 import : {len(new_scenarios)}건")
+    print(f"   추가 가능   : {len(additions)}건 — {additions[:8]}{'...' if len(additions) > 8 else ''}")
+    print(f"   ID 충돌     : {len(conflicts)}건 — {conflicts[:8]}{'...' if len(conflicts) > 8 else ''}")
+    if conflicts:
+        print("   ⚠️  실제 머지 시 충돌 정책 결정 필요 (skip / replace / rename).")
+    print(f"   머지 후 총계 (충돌 skip 가정): {len(existing) + len(additions)}건")
+    print("   실제 머지: `python -m tools.catalog_tuner merge <import.json> <catalog.json> --output ...`")
 
 
 if __name__ == "__main__":

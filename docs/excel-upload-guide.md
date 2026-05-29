@@ -4,17 +4,49 @@
 
 ---
 
-## 1. 한 줄 요약
+## 1. 한 줄 요약 — 가장 권장 (시트 이름 모를 때)
 
 ```bash
 python -m tools.excel_importer.importer \
-  --input docs/specs/사내-TC.xlsx \
-  --sheet 채널 \
+  --input ~/Downloads/사내-TC.xlsx \
+  --auto-channel \
+  --output drafts/channel-tcs.json \
+  --dry-run \
+  --merge infrastructure/notebook-gateway/data/scenarios-catalog.json
+```
+
+이 한 줄로:
+1. 엑셀의 모든 시트 내용 스캔 → 채널 TC 시트 자동 식별
+2. 그 시트만 v2 카탈로그 schema로 변환 (LLM 호출 없이 직접 매핑)
+3. 200건 카탈로그와 dry-run 머지 미리보기 (충돌/추가 카운트 출력)
+
+### 시트 이름을 안다면 — 직접 지정
+
+```bash
+python -m tools.excel_importer.importer \
+  --input ~/Downloads/사내-TC.xlsx \
+  --sheet "채널" \
   --output drafts/channel-tcs.json \
   --dry-run
 ```
 
-`--sheet 채널`이 핵심. 시트 이름은 대소문자/공백 무시 매칭(e.g. `Channel`, ` 채널 `, `채널시트` 모두 OK).
+`--sheet 채널`은 대소문자/공백 무시 매칭(e.g. `Channel`, ` 채널 `, `채널시트` 모두 OK).
+
+### 어떤 시트가 어떤 카테고리인지 모를 때 — 분류 먼저
+
+```bash
+python -m tools.excel_importer.importer \
+  --input ~/Downloads/사내-TC.xlsx \
+  --classify-sheets
+```
+
+전체 시트를 channel/epg/ott/drm/trickplay/recording/parental/search/settings 9종으로 분류.
+결과 예시:
+```
+[채널 자핑] → channel (점수 18, 신뢰도 78%, 전체 분포 {channel: 18, epg: 5})
+[OTT 검증] → ott (점수 12, 신뢰도 100%)
+[조직도] TC 시트 아님 (모든 카테고리 점수 0)
+```
 
 `--dry-run`은 LLM 호출 없이 기본 필드만 매핑 — Steps/Preconditions는 비워둔 채로 저장. 외부 API 키 정책 답 받기 전 단계에서 사용.
 
