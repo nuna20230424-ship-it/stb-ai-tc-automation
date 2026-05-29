@@ -64,11 +64,23 @@ jobs:
           </head>
           <body>
             <h1>STB AI 테스트 자동화</h1>
-            <div class="sub">셋톱박스 QA 100% 자동화 · Phase 2 코드 8/8 완료</div>
+            <div class="sub">셋톱박스 QA 100% 자동화 · Phase 2 코드 8/8 완료 · 운영 콘솔 실 데이터 연동</div>
+
+            <a class="card" href="console.html" style="border-color:#2b6cb0">
+              <h2>🎯 운영 콘솔 (Pass / Fail / N/T / N/A)</h2>
+              <p>5메뉴 — 결과 요약·TC 목록·실행·결과 상세·설정. <strong>InfluxDB catalog_runs 실시간 갱신</strong> +
+                 N/T 사유 자동 분류 + 증빙 다운로드 (캡처·영상·UART·MCP 타임라인). 운영자용 표준 QA 콘솔.</p>
+            </a>
 
             <a class="card" href="demo.html">
-              <h2>📺 인터랙티브 데모 (5탭)</h2>
-              <p>Dashboard · Catalog · Test Run · Judge Result · Vision Bench — 클릭 가능한 운영 화면 미리보기</p>
+              <h2>📺 기술 미리보기 데모 (5탭)</h2>
+              <p>Dashboard · Catalog · Test Run · Judge Result · Vision Bench — 3-tier 판정 / 임베딩 / vision LLM
+                 등 기술 측면 미리보기. 운영 시에는 위 콘솔 사용.</p>
+            </a>
+
+            <a class="card" href="procurement-options.html">
+              <h2>💰 장비 구매 옵션 (최적 vs 최소비용)</h2>
+              <p>Magewell · BroadLink · TP-Link · OWC — 2026-05-29 검증된 URL/가격. 최소 ₩54만 / 최적 ₩182만.</p>
             </a>
 
             <a class="card" href="STB-AI-자동화-요약.html">
@@ -78,7 +90,7 @@ jobs:
 
             <a class="card" href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation">
               <h2>📚 GitHub 저장소</h2>
-              <p>33개 docs / 코드 / CHANGELOG — 전체 자료 탐색</p>
+              <p>코드 + tools 7종 + docs 35개 + CHANGELOG (45 업데이트)</p>
             </a>
 
             <footer>
