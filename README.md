@@ -7,7 +7,8 @@ Claude Code + Gemini 기반 AI 바이브코딩으로 6개월 내 PoC → 본격 
 
 | 진입점 | 즉시 열기 (raw.githack) | GitHub Pages (Settings → Pages enable 후) |
 |---|---|---|
-| 📺 **인터랙티브 데모** (5탭) | <https://raw.githack.com/nuna20230424-ship-it/stb-ai-tc-automation/main/docs/demo.html> | <https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/demo.html> |
+| 🎯 **운영 콘솔** (Pass/Fail/N/T/N/A · 증빙 자료 다운로드) | <https://raw.githack.com/nuna20230424-ship-it/stb-ai-tc-automation/main/docs/console.html> | <https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/console.html> |
+| 📺 **인터랙티브 데모** (5탭 · 기술 상세) | <https://raw.githack.com/nuna20230424-ship-it/stb-ai-tc-automation/main/docs/demo.html> | <https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/demo.html> |
 | 📄 **요약 HTML** (기획·구조·진행·사용) | <https://raw.githack.com/nuna20230424-ship-it/stb-ai-tc-automation/main/docs/STB-AI-%EC%9E%90%EB%8F%99%ED%99%94-%EC%9A%94%EC%95%BD.html> | <https://nuna20230424-ship-it.github.io/stb-ai-tc-automation/STB-AI-자동화-요약.html> |
 | 📋 텍스트 통합 요약 | [SUMMARY.md](SUMMARY.md) | — |
 

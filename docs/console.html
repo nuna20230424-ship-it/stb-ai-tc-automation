@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>STB QA 자동화 운영 콘솔</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#0f1014; --panel:#1a1c22; --panel2:#22252e; --panel3:#2a2d38;
+    --fg:#e6e8ee; --sub:#9aa0b0; --dim:#6b7280; --accent:#7dd3fc;
+    --pass:#22c55e; --fail:#ef4444; --nt:#fbbf24; --na:#9ca3af; --pending:#a78bfa;
+    --border:#2d3140; --mono:'SF Mono','Menlo','Consolas',monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font: 14px/1.55 -apple-system,'Apple SD Gothic Neo','Pretendard',sans-serif; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 24px 24px 80px; }
+
+  /* ── 헤더 ─────────────────────────────────────────────── */
+  header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+  h1 { margin: 0; font-size: 22px; }
+  h1 .badge { font-size: 11px; padding: 3px 8px; background: var(--panel2); color: var(--accent); border-radius: 10px; margin-left: 10px; vertical-align: middle; }
+  .meta { color: var(--sub); font-size: 12px; }
+  .meta strong { color: var(--fg); }
+
+  /* ── 탭 (메뉴) — 큼직하고 직관적 ─────────────────────── */
+  nav.tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+  nav .tab { padding: 12px 22px; cursor: pointer; color: var(--sub); border-bottom: 3px solid transparent; font-weight: 600; font-size: 14px; }
+  nav .tab:hover { color: var(--fg); }
+  nav .tab.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--panel); }
+  nav .tab .icon { font-size: 18px; margin-right: 6px; vertical-align: middle; }
+
+  section.view { display: none; }
+  section.view.active { display: block; }
+
+  /* ── 1. 결과 요약 ─────────────────────────────────────── */
+  .summary-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
+  .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; cursor: pointer; transition: transform .1s; }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card .label { color: var(--sub); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  .stat-card .number { font-size: 36px; font-weight: 700; margin-top: 4px; font-family: var(--mono); }
+  .stat-card .sub { color: var(--sub); font-size: 12px; margin-top: 4px; }
+  .stat-card.total .number { color: var(--accent); }
+  .stat-card.pass .number, .stat-card.pass .label { color: var(--pass); }
+  .stat-card.fail .number, .stat-card.fail .label { color: var(--fail); }
+  .stat-card.nt .number, .stat-card.nt .label { color: var(--nt); }
+  .stat-card.na .number, .stat-card.na .label { color: var(--na); }
+
+  /* 도넛 + 카테고리 */
+  .charts { display: grid; grid-template-columns: 320px 1fr; gap: 16px; margin-top: 22px; }
+  @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+  .card h3 { margin: 0 0 14px; font-size: 15px; color: var(--fg); }
+
+  .cat-bar { display: grid; grid-template-columns: 90px 1fr 80px; gap: 8px; align-items: center; padding: 6px 0; font-size: 13px; }
+  .cat-bar .name { color: var(--sub); }
+  .cat-bar .bar-bg { background: var(--panel2); border-radius: 3px; overflow: hidden; height: 16px; position: relative; display: flex; }
+  .cat-bar .bar-pass { background: var(--pass); }
+  .cat-bar .bar-fail { background: var(--fail); }
+  .cat-bar .bar-nt { background: var(--nt); }
+  .cat-bar .bar-na { background: var(--na); }
+  .cat-bar .right { font-family: var(--mono); color: var(--sub); text-align: right; font-size: 12px; }
+
+  /* 최근 Fail 5건 */
+  .recent { margin-top: 22px; }
+  .recent .row { display: grid; grid-template-columns: 100px 1fr 100px 90px; gap: 12px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .recent .row:hover { background: var(--panel2); }
+  .recent .row .id { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+  .recent .row .reason { color: var(--sub); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── 2. TC 목록 ──────────────────────────────────────── */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filter-bar .chip {
+    padding: 6px 12px; border-radius: 16px; background: var(--panel2); border: 1px solid var(--border);
+    cursor: pointer; font-size: 13px; color: var(--sub);
+  }
+  .filter-bar .chip.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+  .filter-bar input { background: var(--panel); border: 1px solid var(--border); color: var(--fg); padding: 6px 12px; border-radius: 16px; font-size: 13px; min-width: 200px; margin-left: auto; }
+
+  .tc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .tc-card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; cursor: pointer; transition: transform .1s; }
+  .tc-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .tc-card .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .tc-card .id { font-family: var(--mono); font-size: 12px; color: var(--sub); }
+  .tc-card .name { font-weight: 600; margin: 4px 0; }
+  .tc-card .meta { font-size: 11px; color: var(--dim); display: flex; gap: 8px; }
+  .tc-card .meta .cat { padding: 1px 6px; background: var(--panel2); border-radius: 3px; }
+
+  .status-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 12px; letter-spacing: .5px;
+  }
+  .status-badge.pass { background: rgba(34,197,94,.15); color: var(--pass); }
+  .status-badge.fail { background: rgba(239,68,68,.15); color: var(--fail); }
+  .status-badge.nt { background: rgba(251,191,36,.15); color: var(--nt); }
+  .status-badge.na { background: rgba(156,163,175,.15); color: var(--na); }
+  .status-badge.pending { background: rgba(167,139,250,.15); color: var(--pending); }
+
+  /* ── 3. 실행 ─────────────────────────────────────────── */
+  .run-step { background: var(--panel); border-left: 3px solid var(--accent); border-radius: 6px; padding: 18px 22px; margin-bottom: 14px; }
+  .run-step h3 { margin: 0 0 8px; font-size: 15px; }
+  .run-step .num { display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center; background: var(--accent); color: var(--bg); border-radius: 50%; font-weight: 700; margin-right: 10px; }
+  .run-step code { background: var(--panel2); padding: 2px 8px; border-radius: 3px; font-size: 12px; }
+  .run-step pre { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 14px; font-family: var(--mono); font-size: 12px; color: var(--accent); overflow-x: auto; margin: 8px 0; }
+
+  .big-btn { background: var(--accent); color: var(--bg); border: none; padding: 14px 28px; border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+  .big-btn:hover { background: #5fb8d9; }
+  .big-btn.secondary { background: var(--panel2); color: var(--fg); border: 1px solid var(--border); }
+
+  /* ── 4. 결과 상세 ────────────────────────────────────── */
+  .detail-status { padding: 22px; border-radius: 8px; margin-bottom: 16px; }
+  .detail-status.pass { background: rgba(34,197,94,.08); border: 1px solid var(--pass); }
+  .detail-status.fail { background: rgba(239,68,68,.08); border: 1px solid var(--fail); }
+  .detail-status.nt { background: rgba(251,191,36,.08); border: 1px solid var(--nt); }
+  .detail-status.na { background: rgba(156,163,175,.08); border: 1px solid var(--na); }
+  .detail-status h2 { margin: 0 0 8px; font-size: 24px; }
+  .detail-status.pass h2 { color: var(--pass); }
+  .detail-status.fail h2 { color: var(--fail); }
+  .detail-status.nt h2 { color: var(--nt); }
+  .detail-status.na h2 { color: var(--na); }
+  .detail-status .reason { font-size: 15px; color: var(--fg); margin-top: 6px; }
+  .detail-status .meta-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; color: var(--sub); }
+  .detail-status .meta-row span { font-family: var(--mono); }
+
+  .expand-card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 12px; }
+  .expand-card .head { padding: 14px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .expand-card .head:hover { background: var(--panel2); }
+  .expand-card .head h4 { margin: 0; font-size: 14px; }
+  .expand-card .head .arrow { color: var(--sub); transition: transform .2s; }
+  .expand-card.open .head .arrow { transform: rotate(90deg); }
+  .expand-card .body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--border); }
+  .expand-card.open .body { display: block; }
+  .expand-card .body .kv { display: grid; grid-template-columns: 130px 1fr; gap: 6px; margin: 8px 0; font-size: 13px; }
+  .expand-card .body .kv dt { color: var(--sub); }
+  .expand-card .body .kv dd { margin: 0; font-family: var(--mono); }
+
+  .evidence-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 12px; }
+  .ev-card { background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; }
+  .ev-card .ev-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .ev-card .ev-meta { font-size: 11px; color: var(--sub); font-family: var(--mono); }
+  .ev-card .ev-dl { display: block; margin-top: 10px; padding: 6px 10px; background: var(--accent); color: var(--bg); text-align: center; border-radius: 4px; font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; width: 100%; }
+  .ev-card .ev-dl.disabled { background: var(--dim); cursor: not-allowed; }
+  .ev-thumb { background: var(--bg); border-radius: 4px; padding: 8px; text-align: center; font-size: 11px; color: var(--dim); margin-bottom: 6px; }
+  .ev-thumb .icon { font-size: 32px; display: block; margin-bottom: 4px; }
+
+  /* ── 공통 ─────────────────────────────────────────────── */
+  .mono { font-family: var(--mono); }
+  .empty { padding: 40px; text-align: center; color: var(--dim); }
+  button { cursor: pointer; }
+
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--sub); font-size: 11px; }
+  footer a { color: var(--accent); }
+
+  /* 회색 표 (kv) */
+  .kv-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .kv-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  .kv-table td:first-child { color: var(--sub); width: 130px; }
+  .kv-table td:last-child { font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>STB QA 자동화 운영 콘솔 <span class="badge">v1.0</span></h1>
+  <div class="meta">
+    카탈로그 <strong>200</strong> 시나리오 · 마지막 회귀 <strong>2026-05-29 22:00</strong> · 빌드 <strong>v1.2.3</strong>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tab active" data-view="summary"><span class="icon">📊</span>결과 요약</div>
+  <div class="tab" data-view="cases"><span class="icon">📋</span>TC 목록</div>
+  <div class="tab" data-view="run"><span class="icon">▶️</span>실행</div>
+  <div class="tab" data-view="detail"><span class="icon">🔍</span>결과 상세</div>
+  <div class="tab" data-view="settings"><span class="icon">⚙️</span>설정·도구</div>
+</nav>
+
+<!-- ═══════════════════ 1. 결과 요약 ═══════════════════ -->
+<section class="view active" data-view="summary">
+  <div class="summary-grid">
+    <div class="stat-card total"><div class="label">총 TC</div><div class="number" id="sumTotal">200</div><div class="sub">카탈로그 v2 시나리오</div></div>
+    <div class="stat-card pass" onclick="filterAndGo('pass')"><div class="label">Pass · 정상</div><div class="number" id="sumPass">175</div><div class="sub" id="sumPassPct">87.5%</div></div>
+    <div class="stat-card fail" onclick="filterAndGo('fail')"><div class="label">Fail · 이상</div><div class="number" id="sumFail">8</div><div class="sub" id="sumFailPct">4.0%</div></div>
+    <div class="stat-card nt" onclick="filterAndGo('nt')"><div class="label">N/T · 미실행</div><div class="number" id="sumNT">12</div><div class="sub" id="sumNTPct">6.0%</div></div>
+    <div class="stat-card na" onclick="filterAndGo('na')"><div class="label">N/A · 적용불가</div><div class="number" id="sumNA">5</div><div class="sub" id="sumNAPct">2.5%</div></div>
+  </div>
+
+  <div class="charts">
+    <div class="card">
+      <h3>전체 상태 분포</h3>
+      <svg viewBox="0 0 240 240" width="100%" height="220" id="donut"></svg>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:8px; font-size:12px;">
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--pass);border-radius:50%;margin-right:4px"></span>Pass</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--fail);border-radius:50%;margin-right:4px"></span>Fail</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--nt);border-radius:50%;margin-right:4px"></span>N/T</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--na);border-radius:50%;margin-right:4px"></span>N/A</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>카테고리별 결과 (상위 8 카테고리)</h3>
+      <div id="catBars"></div>
+    </div>
+  </div>
+
+  <div class="recent">
+    <div class="card">
+      <h3>최근 Fail 5건 · 클릭 시 상세로 이동</h3>
+      <div id="recentFails"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 2. TC 목록 ═══════════════════ -->
+<section class="view" data-view="cases">
+  <div class="filter-bar" id="caseFilters"></div>
+  <div class="tc-grid" id="tcGrid"></div>
+</section>
+
+<!-- ═══════════════════ 3. 실행 ═══════════════════ -->
+<section class="view" data-view="run">
+  <h2 style="margin-top:0">TC 실행 흐름 — 4단계</h2>
+  <p style="color:var(--sub)">사내 Excel TC를 카탈로그에 합쳐 자동 회귀까지 한 흐름. <strong>각 명령은 한 번만 실행하면 이후 야간 자동 회귀에 자동 합류됨.</strong></p>
+
+  <div class="run-step">
+    <h3><span class="num">1</span>TC Excel 업로드</h3>
+    <p>사내 TC 엑셀을 <code>docs/specs/</code>에 복사. Mac 터미널 또는 Finder 드래그.</p>
+    <pre>cp ~/Downloads/사내TC.xlsx docs/specs/</pre>
+  </div>
+
+  <div class="run-step">
+    <h3><span class="num">2</span>카탈로그로 변환</h3>
+    <p>컬럼이 다르면 <code>--column-id "시험번호"</code> 같은 플래그로 즉시 매핑.</p>
+    <pre>python -m tools.excel_importer.importer \
+  --input docs/specs/사내TC.xlsx \
+  --output drafts/imported.json \
+  --batch-size 8</pre>
+    <p style="color:var(--sub); font-size:13px">→ <code>id / category / priority / expected / sla_ms</code> 자동 매핑. 자유텍스트 <code>Test Steps</code>는 LLM이 5종 액션 배열로 구조화 (API 키 있을 때).</p>
+  </div>
+
+  <div class="run-step">
+    <h3><span class="num">3</span>카탈로그 머지 (백업·검증 자동)</h3>
+    <p>ID 충돌 검사, schema 검증, 자동 백업까지 한 번에. 실패 시 자동 롤백.</p>
+    <pre>python -m tools.catalog.merge --drafts drafts/imported.json --on-conflict abort --dry-run   # 미리보기
+python -m tools.catalog.merge --drafts drafts/imported.json --on-conflict abort           # 실제 반영</pre>
+  </div>
+
+  <div class="run-step">
+    <h3><span class="num">4</span>실행 — 3가지 모드 중 선택</h3>
+    <p style="margin-bottom:12px"><strong>① 즉시 시험 실행</strong> (특정 TC만):</p>
+    <pre>pytest -m catalog -k "사내TC_001 or 사내TC_002"</pre>
+
+    <p style="margin:14px 0 6px"><strong>② 영향 분석 회귀</strong> (변경된 컴포넌트만):</p>
+    <pre>python -m tools.tc_selector select --changed-components voice-asr --emit-pytest-k k.txt
+pytest -m catalog -k "$(cat k.txt)"</pre>
+
+    <p style="margin:14px 0 6px"><strong>③ 야간 무인 회귀</strong> (GitHub Actions 자동, 매일 22:00 KST):</p>
+    <pre>git push   # main에 머지되면 자동 — e2e-nightly.yml 워크플로</pre>
+
+    <button class="big-btn" onclick="alert('실 운영 시 게이트웨이 노트북에서 위 명령 실행. 데모에선 시뮬레이션입니다.')">▶ 시뮬레이션 실행</button>
+    <button class="big-btn secondary" onclick="document.querySelector('[data-view=summary]').click()">결과 요약으로 이동</button>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>💡 어디서 실행하나? (장비별)</h3>
+    <table class="kv-table">
+      <tr><td>로컬 즉시</td><td>운영자 노트북 터미널 (게이트웨이 MCP 가동 후)</td></tr>
+      <tr><td>야간 무인</td><td>GitHub Actions <code>e2e-nightly.yml</code> @ self-hosted runner (notebook)</td></tr>
+      <tr><td>특정 TC만</td><td>pytest <code>-k</code> + tc_selector emit-pytest-k</td></tr>
+      <tr><td>변경 영향만</td><td>tc_selector → 자동 분석 후 야간 회귀에 합류 (70~90% 시간 절약)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ 4. 결과 상세 ═══════════════════ -->
+<section class="view" data-view="detail">
+  <div id="detailContent">
+    <div class="empty">
+      <p>TC 목록에서 시나리오를 클릭하면 여기에 상세가 표시됩니다.</p>
+      <button class="big-btn secondary" onclick="document.querySelector('[data-view=cases]').click()">TC 목록 보기</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 5. 설정·도구 ═══════════════════ -->
+<section class="view" data-view="settings">
+  <div class="card">
+    <h3>🛠 운영 도구 6종 (Phase 3~5)</h3>
+    <table class="kv-table">
+      <tr><td>tc_selector</td><td>변경 영향 분석 — 야간 회귀 70~90% 절약 · <a href="26-test-selection.md" style="color:var(--accent)">docs/26</a></td></tr>
+      <tr><td>triage</td><td>실패 클러스터링 → 1 JIRA (LogSage) · <a href="27-triage-mcp.md" style="color:var(--accent)">docs/27</a></td></tr>
+      <tr><td>navgraph</td><td>화면 상태 BFS 경로 · <a href="34-state-graph-navigation.md" style="color:var(--accent)">docs/34</a></td></tr>
+      <tr><td>rdk</td><td>RDK Thunder API 폴백 · <a href="35-rdk-fallback.md" style="color:var(--accent)">docs/35</a></td></tr>
+      <tr><td>catalog_expander</td><td>파라미터 확장 (36→200) · <a href="37-catalog-expander.md" style="color:var(--accent)">docs/37</a></td></tr>
+      <tr><td>catalog_tuner</td><td>SME 검토 lint + overrides · <a href="38-catalog-tuning.md" style="color:var(--accent)">docs/38</a></td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>📚 주요 문서</h3>
+    <table class="kv-table">
+      <tr><td>경영진 1페이지</td><td><a href="12-executive-briefing.md" style="color:var(--accent)">docs/12-executive-briefing.md</a></td></tr>
+      <tr><td>장비 구매 옵션</td><td><a href="procurement-options.html" style="color:var(--accent)">procurement-options.html</a></td></tr>
+      <tr><td>데모 가이드</td><td><a href="demo-guide.md" style="color:var(--accent)">demo-guide.md</a></td></tr>
+      <tr><td>기술 데모 (이전)</td><td><a href="demo.html" style="color:var(--accent)">demo.html</a> (Phase 2 기술 상세)</td></tr>
+      <tr><td>저장소</td><td><a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation" style="color:var(--accent)" target="_blank">GitHub</a></td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>📌 용어 사전 (한 줄 설명)</h3>
+    <table class="kv-table">
+      <tr><td>Pass</td><td>기대대로 동작 — 매칭 키워드/유사도 점수가 임계 이상</td></tr>
+      <tr><td>Fail</td><td>기대와 다름 — vision 묘사·UART 로그에 사유 명시</td></tr>
+      <tr><td>N/T (Not Tested)</td><td>실행 안 됨 — 베이스라인 없음/전제조건 미충족/시간 부족/MCP 미가동</td></tr>
+      <tr><td>N/A (Not Applicable)</td><td>적용 불가 — 펌웨어 범위 밖/자격 없음/하드웨어 부재</td></tr>
+      <tr><td>verdict</td><td>판정 결과 (Pass/Fail/N/T/N/A 중 하나)</td></tr>
+      <tr><td>SLA</td><td>응답 제한 시간 — 초과 시 Fail</td></tr>
+      <tr><td>증빙 자료</td><td>실행 캡처 + UART 로그 + MCP 호출 타임라인 — 디버깅·감사용</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  STB QA 자동화 운영 콘솔 · 2026-05-29 · 데모 데이터는 <strong>mock</strong>입니다. 실제 운영 시 InfluxDB <code>catalog_runs</code>에서 실시간 갱신.<br>
+  <a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation" target="_blank">GitHub: nuna20230424-ship-it/stb-ai-tc-automation</a>
+</footer>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// Mock 데이터 — 실제 운영 시 InfluxDB catalog_runs에서 자동 갱신
+// ══════════════════════════════════════════════════════════════
+
+// 36개 대표 TC (200 카탈로그 중) — Pass 28 / Fail 4 / N/T 3 / N/A 1
+const TCS = [
+  // Pass
+  {id:"epg_open_7day", name:"EPG 7일치 보기", category:"EPG", priority:"P1", status:"pass", sla_ms:2000, elapsed_ms:1620, ran_at:"22:01:14",
+   matched_keywords:["편성표","EPG","7일"], confidence:0.94, tier:"임베딩",
+   vision_describe:"7일치 편성 그리드가 표시되고 좌측에 '오늘'부터 '6일 후'까지 컬럼 헤더, 채널별 프로그램 블록이 정렬되어 있다."},
+  {id:"epg_next_day", name:"다음 날 편성 이동", category:"EPG", priority:"P1", status:"pass", sla_ms:1500, elapsed_ms:1180, ran_at:"22:01:18",
+   matched_keywords:["편성표","다음날"], confidence:0.91, tier:"임베딩"},
+  {id:"epg_zap_kbs1", name:"KBS1 채널 자핑", category:"EPG", priority:"P1", status:"pass", sla_ms:5000, elapsed_ms:2840, ran_at:"22:02:10",
+   matched_keywords:["KBS1","채널"], confidence:0.96, tier:"임베딩"},
+  {id:"ott_netflix_launch", name:"넷플릭스 음성 실행", category:"OTT", priority:"P1", status:"pass", sla_ms:5000, elapsed_ms:4820, ran_at:"22:03:00",
+   matched_keywords:["Netflix","My List"], confidence:0.78, tier:"룰 매칭",
+   vision_describe:"화면 상단에 Netflix 로고와 My List, 시리즈, 영화 메뉴가 표시되고 중앙에는 추천 콘텐츠 배너가 있다."},
+  {id:"ott_tving_launch", name:"티빙 음성 실행", category:"OTT", priority:"P1", status:"pass", sla_ms:5000, elapsed_ms:3650, ran_at:"22:03:10",
+   matched_keywords:["Tving","홈"], confidence:0.85, tier:"룰 매칭"},
+  {id:"ott_search_content", name:"OTT 콘텐츠 검색", category:"OTT", priority:"P1", status:"pass", sla_ms:3000, elapsed_ms:2400, ran_at:"22:03:25",
+   matched_keywords:["검색","결과"], confidence:0.88, tier:"임베딩"},
+  {id:"drm_playready_iptv", name:"IPTV PlayReady 인증", category:"DRM", priority:"P1", status:"pass", sla_ms:4000, elapsed_ms:3120, ran_at:"22:04:00",
+   matched_keywords:["IPTV","재생"], confidence:0.92, tier:"임베딩"},
+  {id:"trickplay_pause_resume", name:"일시정지 후 재개", category:"TrickPlay", priority:"P1", status:"pass", sla_ms:1000, elapsed_ms:820, ran_at:"22:05:00",
+   matched_keywords:["재생","Play"], confidence:0.95, tier:"임베딩"},
+  {id:"trickplay_ff_2x", name:"2배속 빨리감기", category:"TrickPlay", priority:"P1", status:"pass", sla_ms:800, elapsed_ms:620, ran_at:"22:05:08",
+   matched_keywords:["2배속","FF"], confidence:0.93, tier:"임베딩"},
+  {id:"trickplay_ff_4x", name:"4배속 빨리감기", category:"TrickPlay", priority:"P2", status:"pass", sla_ms:800, elapsed_ms:700, ran_at:"22:05:14",
+   matched_keywords:["4배속"], confidence:0.89, tier:"룰 매칭"},
+  {id:"search_voice_actor", name:"음성 배우 검색", category:"Search", priority:"P1", status:"pass", sla_ms:4000, elapsed_ms:3580, ran_at:"22:06:00",
+   matched_keywords:["송강호","검색결과"], confidence:0.86, tier:"임베딩"},
+  {id:"search_voice_title", name:"음성 제목 검색", category:"Search", priority:"P1", status:"pass", sla_ms:4000, elapsed_ms:3210, ran_at:"22:06:12",
+   matched_keywords:["기생충"], confidence:0.91, tier:"임베딩"},
+  {id:"recording_schedule_single", name:"1회 예약 녹화", category:"Recording", priority:"P1", status:"pass", sla_ms:3000, elapsed_ms:2410, ran_at:"22:07:00",
+   matched_keywords:["예약","녹화"], confidence:0.88, tier:"임베딩"},
+  {id:"recording_list_view", name:"녹화 목록 표시", category:"Recording", priority:"P1", status:"pass", sla_ms:2000, elapsed_ms:1450, ran_at:"22:07:18",
+   matched_keywords:["목록"], confidence:0.94, tier:"임베딩"},
+  {id:"parental_pin_prompt", name:"성인콘텐츠 PIN 요구", category:"Parental", priority:"P1", status:"pass", sla_ms:3500, elapsed_ms:3050, ran_at:"22:08:00",
+   matched_keywords:["PIN"], confidence:0.72, tier:"Vision 재질의",
+   vision_describe:"중앙에 'PIN을 입력해 주세요' 다이얼로그가 표시되고 숫자 패드가 보인다."},
+  {id:"parental_pin_correct", name:"정상 PIN 입력 후 진입", category:"Parental", priority:"P1", status:"pass", sla_ms:5000, elapsed_ms:4280, ran_at:"22:08:12",
+   matched_keywords:["채널","영상"], confidence:0.89, tier:"임베딩"},
+  {id:"settings_open_menu", name:"설정 메뉴 진입", category:"Settings", priority:"P1", status:"pass", sla_ms:2000, elapsed_ms:1320, ran_at:"22:09:00",
+   matched_keywords:["설정","메뉴"], confidence:0.97, tier:"임베딩"},
+  {id:"settings_change_language", name:"언어 변경", category:"Settings", priority:"P1", status:"pass", sla_ms:4000, elapsed_ms:3120, ran_at:"22:09:14",
+   matched_keywords:["언어","English"], confidence:0.91, tier:"임베딩"},
+  {id:"settings_resolution_1080p", name:"해상도 1080p 변경", category:"Settings", priority:"P2", status:"pass", sla_ms:5000, elapsed_ms:3650, ran_at:"22:09:32",
+   matched_keywords:["1080p"], confidence:0.85, tier:"임베딩"},
+  {id:"epg_zap_mbc", name:"MBC 채널 자핑", category:"EPG", priority:"P1", status:"pass", sla_ms:5000, elapsed_ms:2920, ran_at:"22:02:14"},
+  {id:"epg_zap_sbs", name:"SBS 채널 자핑", category:"EPG", priority:"P1", status:"pass", sla_ms:5000, elapsed_ms:2840, ran_at:"22:02:18"},
+  {id:"ott_launch_wavve", name:"웨이브 실행", category:"OTT", priority:"P1", status:"pass", sla_ms:6000, elapsed_ms:5420, ran_at:"22:03:30"},
+  {id:"ott_launch_youtube", name:"유튜브 실행", category:"OTT", priority:"P1", status:"pass", sla_ms:6000, elapsed_ms:4810, ran_at:"22:03:42"},
+  {id:"search_filter_genre", name:"검색 결과 장르 필터", category:"Search", priority:"P2", status:"pass", sla_ms:3000, elapsed_ms:2110, ran_at:"22:06:24"},
+  {id:"recording_schedule_series", name:"시리즈 예약", category:"Recording", priority:"P1", status:"pass", sla_ms:3000, elapsed_ms:2680, ran_at:"22:07:04"},
+  {id:"parental_block_channel_unblock", name:"차단 채널 해제", category:"Parental", priority:"P2", status:"pass", sla_ms:3500, elapsed_ms:2980, ran_at:"22:08:30"},
+  {id:"settings_audio_dolby", name:"오디오 Dolby 토글", category:"Settings", priority:"P2", status:"pass", sla_ms:3500, elapsed_ms:2620, ran_at:"22:09:46"},
+  {id:"settings_network_wifi", name:"Wi-Fi 네트워크 설정", category:"Settings", priority:"P2", status:"pass", sla_ms:4000, elapsed_ms:3240, ran_at:"22:09:58"},
+
+  // Fail
+  {id:"drm_widevine_l1", name:"Widevine L1 4K HDR 재생", category:"DRM", priority:"P1", status:"fail", sla_ms:8000, elapsed_ms:8420, ran_at:"22:04:18",
+   fail_reason:"HDCP 인증 실패 — 출력 해상도가 1080p로 강제 다운그레이드됨",
+   fail_detail:"detection-mcp가 4K 키워드 매칭 실패. UART 로그에 'HDCP authentication failed (rc=0x2008)' 발견. CDM 라이선스 응답 5초 지연.",
+   vision_describe:"화면이 재생 중이지만 해상도 인디케이터가 'FHD 1080p'로 표시됨. 4K HDR 인증 실패 가능성.",
+   matched_keywords:[], confidence:0.42, tier:"Vision 재질의",
+   sla_exceeded:true},
+  {id:"ott_resume_disney_plus", name:"디즈니+ 이어보기", category:"OTT", priority:"P2", status:"fail", sla_ms:7000, elapsed_ms:7200, ran_at:"22:03:50",
+   fail_reason:"콘텐츠 이어보기 위치가 0초로 리셋됨 (서버 동기화 실패)",
+   fail_detail:"기대: 마지막 시청 위치(예: 32:15)에서 재생. 실제: 00:00에서 재생 시작. UART 로그에 'playback position sync timeout' 표시.",
+   vision_describe:"재생 진행바가 0% 위치에 있음. 이전 시청 기록 미반영.",
+   matched_keywords:["디즈니"], confidence:0.55, tier:"룰 매칭"},
+  {id:"search_no_result", name:"검색 결과 없음 처리", category:"Search", priority:"P2", status:"fail", sla_ms:3000, elapsed_ms:2840, ran_at:"22:06:36",
+   fail_reason:"'결과 없음' 안내 메시지 미표시 (빈 화면)",
+   fail_detail:"기대: '검색 결과가 없습니다' 메시지 + 추천 콘텐츠. 실제: 빈 화면만 표시. UI 폴백 미구현 추정.",
+   vision_describe:"화면이 거의 비어 있고 검색창 외에 다른 요소가 없다.",
+   matched_keywords:[], confidence:0.28, tier:"Vision 재질의"},
+  {id:"trickplay_live_pause_timeshift", name:"Live Pause + 타임시프트", category:"TrickPlay", priority:"P2", status:"fail", sla_ms:1500, elapsed_ms:1820, ran_at:"22:05:24",
+   fail_reason:"Live Pause 후 재개 시 라이브로 점프 (타임시프트 미동작)",
+   fail_detail:"기대: 일시정지한 시점부터 재개 (타임시프트). 실제: 라이브 현재 시점으로 점프. 'live offset = 0' UART 로그.",
+   matched_keywords:["재생"], confidence:0.51, tier:"룰 매칭"},
+
+  // N/T (Not Tested)
+  {id:"drm_hdcp_violation", name:"HDCP 미지원 디스플레이 에러", category:"DRM", priority:"P2", status:"nt", sla_ms:3000, ran_at:"-",
+   nt_reason:"HDCP 미지원 모니터 부재 — 환경 조건 미충족",
+   nt_detail:"precondition: hdcp_unsupported_display. 현재 랩에 HDCP 1.4 모니터 1대뿐. 1.2 또는 미지원 디스플레이 1대 별도 발주 필요 (약 ₩5만)."},
+  {id:"epg_reserve_recording", name:"EPG에서 예약 녹화", category:"EPG", priority:"P2", status:"nt", sla_ms:2500, ran_at:"-",
+   nt_reason:"베이스라인 미시드 — Reference STB 캡처 미수집",
+   nt_detail:"baseline_vector_id 비어있음. seed_catalog --missing-only 실행 필요 (캡처카드 도착 후)."},
+  {id:"voice_remote_pairing", name:"BT 음성 리모컨 페어링", category:"Settings", priority:"P1", status:"nt", sla_ms:10000, ran_at:"-",
+   nt_reason:"BT 디바이스 미연결 — 자사 음성 리모컨 미수령",
+   nt_detail:"BT P1 디바이스 카탈로그 1번. Sprint 1 발주 대기 중. 도착 시 자동 합류."},
+
+  // N/A (Not Applicable)
+  {id:"settings_factory_reset", name:"공장 초기화", category:"Settings", priority:"P1", status:"na", sla_ms:60000, ran_at:"-",
+   na_reason:"위험 시나리오 — 자동 회귀 대상에서 영구 제외",
+   na_detail:"공장 초기화는 모든 설정·녹화·페어링 데이터를 삭제. 자동 실행 시 다른 시나리오에 영향. 수동 점검만 진행 (월 1회)."}
+];
+
+// 카테고리 색
+const CAT_COLOR = {EPG:'#7dd3fc', OTT:'#a78bfa', DRM:'#fbbf24', TrickPlay:'#22c55e', Search:'#f472b6', Recording:'#06b6d4', Parental:'#ef4444', Settings:'#94a3b8'};
+
+// ══════════════════════════════════════════════════════════════
+// 1. 요약 렌더링
+// ══════════════════════════════════════════════════════════════
+function statusCount(s) { return TCS.filter(t=>t.status===s).length; }
+
+function renderDonut() {
+  const counts = {pass:175, fail:8, nt:12, na:5}; // 실 200 데이터 (mock 표본은 36이지만 화면엔 200 기준)
+  const total = 200;
+  const cx=120, cy=120, r=85, ir=50;
+  let acc = 0;
+  const colors = {pass:'var(--pass)', fail:'var(--fail)', nt:'var(--nt)', na:'var(--na)'};
+  let svg = '';
+  for (const [k,v] of Object.entries(counts)) {
+    const a1 = (acc/total)*2*Math.PI - Math.PI/2;
+    const a2 = ((acc+v)/total)*2*Math.PI - Math.PI/2;
+    const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+    const x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+    const x3=cx+ir*Math.cos(a2), y3=cy+ir*Math.sin(a2);
+    const x4=cx+ir*Math.cos(a1), y4=cy+ir*Math.sin(a1);
+    const large = (v/total)>0.5 ? 1 : 0;
+    svg += `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${ir} ${ir} 0 ${large} 0 ${x4} ${y4} Z" fill="${colors[k]}"/>`;
+    acc += v;
+  }
+  svg += `<text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#e6e8ee" font-size="36" font-weight="700">${total}</text>`;
+  svg += `<text x="${cx}" y="${cy+18}" text-anchor="middle" fill="#9aa0b0" font-size="11">총 TC</text>`;
+  document.getElementById('donut').innerHTML = svg;
+}
+
+function renderCatBars() {
+  // 200 카탈로그 카테고리 분포 mock (Pass/Fail/N/T/N/A)
+  const cats = [
+    {name:'EPG', total:50, pass:48, fail:1, nt:1, na:0},
+    {name:'OTT', total:34, pass:30, fail:2, nt:2, na:0},
+    {name:'DRM', total:15, pass:12, fail:1, nt:1, na:1},
+    {name:'TrickPlay', total:23, pass:21, fail:2, nt:0, na:0},
+    {name:'Search', total:15, pass:13, fail:1, nt:1, na:0},
+    {name:'Recording', total:17, pass:16, fail:0, nt:1, na:0},
+    {name:'Parental', total:16, pass:15, fail:0, nt:1, na:0},
+    {name:'Settings', total:30, pass:20, fail:1, nt:5, na:4},
+  ];
+  let html = '';
+  for (const c of cats) {
+    const pp = (c.pass/c.total)*100, fp=(c.fail/c.total)*100, ntp=(c.nt/c.total)*100, nap=(c.na/c.total)*100;
+    html += `<div class="cat-bar">
+      <span class="name">${c.name}</span>
+      <div class="bar-bg">
+        <div class="bar-pass" style="width:${pp}%"></div>
+        <div class="bar-fail" style="width:${fp}%"></div>
+        <div class="bar-nt" style="width:${ntp}%"></div>
+        <div class="bar-na" style="width:${nap}%"></div>
+      </div>
+      <span class="right">${c.pass}/${c.total}</span>
+    </div>`;
+  }
+  document.getElementById('catBars').innerHTML = html;
+}
+
+function renderRecentFails() {
+  const fails = TCS.filter(t=>t.status==='fail').slice(0,5);
+  document.getElementById('recentFails').innerHTML = fails.map(t=>`
+    <div class="row" onclick="openDetail('${t.id}')">
+      <span class="status-badge fail">FAIL</span>
+      <div><div class="id">${t.id}</div><div class="reason">${t.fail_reason}</div></div>
+      <span class="mono" style="color:var(--sub); font-size:12px">${t.category}</span>
+      <span class="mono" style="color:var(--sub); font-size:12px">${t.ran_at}</span>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// 2. TC 목록 렌더링
+// ══════════════════════════════════════════════════════════════
+let currentFilter = 'all';
+function renderFilters() {
+  const counts = {all:TCS.length, pass:statusCount('pass'), fail:statusCount('fail'), nt:statusCount('nt'), na:statusCount('na')};
+  const labels = {all:'전체', pass:'✓ Pass', fail:'✕ Fail', nt:'⊘ N/T', na:'∅ N/A'};
+  let html = '';
+  for (const k of ['all','pass','fail','nt','na']) {
+    html += `<div class="chip ${currentFilter===k?'active':''}" onclick="setFilter('${k}')">${labels[k]} <span class="mono">${counts[k]}</span></div>`;
+  }
+  html += `<input type="text" placeholder="🔍 ID/이름 검색..." oninput="searchTCs(event)">`;
+  document.getElementById('caseFilters').innerHTML = html;
+}
+function setFilter(k) { currentFilter = k; renderFilters(); renderTCGrid(''); }
+function searchTCs(e) { renderTCGrid(e.target.value.toLowerCase()); }
+
+function renderTCGrid(q) {
+  let tcs = TCS;
+  if (currentFilter !== 'all') tcs = tcs.filter(t=>t.status===currentFilter);
+  if (q) tcs = tcs.filter(t=>(t.id+t.name).toLowerCase().includes(q));
+  if (!tcs.length) { document.getElementById('tcGrid').innerHTML = '<div class="empty">조건에 맞는 TC 없음</div>'; return; }
+  document.getElementById('tcGrid').innerHTML = tcs.map(t=>`
+    <div class="tc-card" onclick="openDetail('${t.id}')">
+      <div class="top">
+        <span class="id">${t.id}</span>
+        <span class="status-badge ${t.status}">${t.status.toUpperCase().replace('NT','N/T').replace('NA','N/A')}</span>
+      </div>
+      <div class="name">${t.name}</div>
+      <div class="meta">
+        <span class="cat" style="border-left:2px solid ${CAT_COLOR[t.category]}; padding-left:6px">${t.category}</span>
+        <span>${t.priority}</span>
+        ${t.sla_ms ? `<span class="mono">${t.elapsed_ms||'-'}ms / ${t.sla_ms}ms</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterAndGo(s) { setFilter(s); document.querySelector('[data-view=cases]').click(); }
+
+// ══════════════════════════════════════════════════════════════
+// 4. 결과 상세 렌더링
+// ══════════════════════════════════════════════════════════════
+function openDetail(id) {
+  const t = TCS.find(x=>x.id===id);
+  if (!t) return;
+  document.querySelector('[data-view=detail]').click();
+
+  const statusName = {pass:'Pass · 정상', fail:'Fail · 이상', nt:'N/T · 미실행', na:'N/A · 적용불가'}[t.status];
+  const statusIcon = {pass:'✓', fail:'✕', nt:'⊘', na:'∅'}[t.status];
+
+  let reason = '';
+  if (t.status==='pass') reason = `매칭된 키워드: <strong>${(t.matched_keywords||[]).join(', ')}</strong> · 신뢰도 <strong>${t.confidence}</strong> (${t.tier})`;
+  if (t.status==='fail') reason = t.fail_reason;
+  if (t.status==='nt') reason = t.nt_reason;
+  if (t.status==='na') reason = t.na_reason;
+
+  let html = `
+    <div class="detail-status ${t.status}">
+      <h2>${statusIcon} ${statusName}</h2>
+      <div style="font-size:13px; color:var(--sub)"><span class="mono">${t.id}</span> · ${t.name}</div>
+      <div class="reason"><strong>사유:</strong> ${reason}</div>
+      <div class="meta-row">
+        <span>카테고리: <strong>${t.category}</strong></span>
+        <span>우선순위: <strong>${t.priority}</strong></span>
+        ${t.sla_ms ? `<span>SLA: <strong>${t.elapsed_ms||'-'}ms / ${t.sla_ms}ms</strong>${t.sla_exceeded?' ⚠️ 초과':''}</span>` : ''}
+        <span>실행 시각: <strong>${t.ran_at}</strong></span>
+      </div>
+    </div>
+  `;
+
+  // 상태별 세부 항목 (펼침)
+  if (t.status==='pass') {
+    html += `
+      <div class="expand-card" onclick="this.classList.toggle('open')">
+        <div class="head"><h4>✓ Pass 세부 항목 (클릭 펼침)</h4><span class="arrow">▶</span></div>
+        <div class="body">
+          <dl class="kv">
+            <dt>매칭 키워드</dt><dd>${(t.matched_keywords||[]).map(k=>`<span style="background:rgba(34,197,94,.15);padding:2px 6px;border-radius:3px;margin-right:4px">${k}</span>`).join('')}</dd>
+            <dt>신뢰도 (confidence)</dt><dd>${t.confidence||'-'}</dd>
+            <dt>판정 단계 (tier)</dt><dd>${t.tier||'-'}</dd>
+            <dt>실행 시간</dt><dd>${t.elapsed_ms||'-'}ms</dd>
+            ${t.vision_describe ? `<dt>화면 묘사</dt><dd style="font-family:inherit; color:var(--sub)">"${t.vision_describe}"</dd>` : ''}
+          </dl>
+        </div>
+      </div>`;
+  }
+  if (t.status==='fail') {
+    html += `
+      <div class="expand-card open"><div class="head"><h4>✕ 실패 원인 상세</h4><span class="arrow">▶</span></div>
+        <div class="body">
+          <dl class="kv">
+            <dt>요약</dt><dd style="font-family:inherit; color:var(--fail)"><strong>${t.fail_reason}</strong></dd>
+            <dt>상세</dt><dd style="font-family:inherit; color:var(--fg)">${t.fail_detail||'-'}</dd>
+            ${t.vision_describe ? `<dt>실제 화면 묘사</dt><dd style="font-family:inherit; color:var(--sub)">"${t.vision_describe}"</dd>` : ''}
+            <dt>매칭 키워드 (실패)</dt><dd>${(t.matched_keywords||[]).length ? t.matched_keywords.join(', ') : '<em style="color:var(--dim)">매칭된 키워드 없음</em>'}</dd>
+            <dt>신뢰도</dt><dd>${t.confidence||'-'} (임계 미달)</dd>
+          </dl>
+        </div>
+      </div>`;
+  }
+  if (t.status==='nt') {
+    html += `
+      <div class="expand-card open"><div class="head"><h4>⊘ 미실행 사유</h4><span class="arrow">▶</span></div>
+        <div class="body">
+          <dl class="kv">
+            <dt>요약</dt><dd style="font-family:inherit; color:var(--nt)"><strong>${t.nt_reason}</strong></dd>
+            <dt>상세</dt><dd style="font-family:inherit; color:var(--fg)">${t.nt_detail||'-'}</dd>
+            <dt>해결 방법</dt><dd style="font-family:inherit; color:var(--sub)">precondition을 충족시키거나 베이스라인을 시드한 후 재실행</dd>
+          </dl>
+        </div>
+      </div>`;
+  }
+  if (t.status==='na') {
+    html += `
+      <div class="expand-card open"><div class="head"><h4>∅ 적용 불가 사유</h4><span class="arrow">▶</span></div>
+        <div class="body">
+          <dl class="kv">
+            <dt>요약</dt><dd style="font-family:inherit; color:var(--na)"><strong>${t.na_reason}</strong></dd>
+            <dt>상세</dt><dd style="font-family:inherit; color:var(--fg)">${t.na_detail||'-'}</dd>
+            <dt>비고</dt><dd style="font-family:inherit; color:var(--sub)">이 시나리오는 자동 회귀 대상에서 영구 제외됨</dd>
+          </dl>
+        </div>
+      </div>`;
+  }
+
+  // 증빙 자료 (모든 상태에 표시, N/A는 비어 있음)
+  if (t.status !== 'na') {
+    html += `
+      <div class="expand-card open">
+        <div class="head"><h4>📎 증빙 자료 — 다운로드</h4><span class="arrow">▶</span></div>
+        <div class="body">
+          <p style="color:var(--sub); font-size:12px; margin:6px 0 12px">
+            실 운영에선 <code>evidence/${t.ran_at}_${t.id}_${t.status.toUpperCase()}/</code> 디렉토리에 자동 패키지됨.
+          </p>
+          <div class="evidence-grid">
+            <div class="ev-card">
+              <div class="ev-thumb"><span class="icon">📷</span>마지막 캡처 프레임</div>
+              <div class="ev-name">capture-${t.id}.png</div>
+              <div class="ev-meta">142 KB · 1920×1080</div>
+              <button class="ev-dl" onclick="dl('${t.id}', 'png')">⬇ PNG 다운로드</button>
+            </div>
+            <div class="ev-card">
+              <div class="ev-thumb"><span class="icon">🎬</span>실행 영상 (선택)</div>
+              <div class="ev-name">video-${t.id}.mp4</div>
+              <div class="ev-meta">${t.status==='fail' || t.status==='nt' ? '8.4 MB · 12s · 4K30' : '미녹화 (Pass는 capture만)'}</div>
+              <button class="ev-dl ${t.status==='pass' ? 'disabled' : ''}" onclick="dl('${t.id}', 'mp4')">${t.status==='pass' ? '미수집' : '⬇ MP4 다운로드'}</button>
+            </div>
+            <div class="ev-card">
+              <div class="ev-thumb"><span class="icon">📜</span>UART 펌웨어 로그</div>
+              <div class="ev-name">uart-${t.id}.log</div>
+              <div class="ev-meta">${t.status==='fail' ? '14.2 KB · 사유 분석 포함' : '8.7 KB'}</div>
+              <button class="ev-dl" onclick="dl('${t.id}', 'log')">⬇ LOG 다운로드</button>
+            </div>
+            <div class="ev-card">
+              <div class="ev-thumb"><span class="icon">⚡</span>MCP 호출 타임라인</div>
+              <div class="ev-name">timeline-${t.id}.jsonl</div>
+              <div class="ev-meta">2.4 KB · 각 step 응답시간</div>
+              <button class="ev-dl" onclick="dl('${t.id}', 'jsonl')">⬇ JSONL 다운로드</button>
+            </div>
+            <div class="ev-card">
+              <div class="ev-thumb"><span class="icon">🧠</span>Vision 묘사 (텍스트)</div>
+              <div class="ev-name">vision-${t.id}.txt</div>
+              <div class="ev-meta">LLM이 본 화면 설명</div>
+              <button class="ev-dl" onclick="dl('${t.id}', 'txt')">⬇ TXT 다운로드</button>
+            </div>
+            <div class="ev-card" style="background:var(--accent); color:var(--bg)">
+              <div class="ev-thumb" style="background:rgba(0,0,0,.15); color:#fff"><span class="icon">📦</span>전체 증빙 묶음</div>
+              <div class="ev-name" style="color:var(--bg)">evidence-${t.id}.zip</div>
+              <div class="ev-meta" style="color:rgba(0,0,0,.7)">위 5개 + scenario.json + README</div>
+              <button class="ev-dl" style="background:var(--bg); color:var(--accent)" onclick="dl('${t.id}', 'zip')">⬇ ZIP 전체 다운로드</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // 실행 메타 (모든 상태)
+  html += `
+    <div class="expand-card" onclick="this.classList.toggle('open')">
+      <div class="head"><h4>🔧 실행 환경 메타</h4><span class="arrow">▶</span></div>
+      <div class="body">
+        <table class="kv-table">
+          <tr><td>시나리오 ID</td><td>${t.id}</td></tr>
+          <tr><td>펌웨어</td><td>v1.2.3</td></tr>
+          <tr><td>실행 환경</td><td>self-hosted runner (notebook)</td></tr>
+          <tr><td>JIRA 이슈</td><td>${t.status==='fail' ? `<a href="#" onclick="alert('JIRA STBQA-${1234 + (t.id.length % 100)} 자동 등록됨')" style="color:var(--accent)">STBQA-${1234 + (t.id.length % 100)} (자동 등록)</a>` : '<em style="color:var(--dim)">해당 없음</em>'}</td></tr>
+          <tr><td>다시 실행</td><td><code>pytest -m catalog -k "${t.id}"</code></td></tr>
+        </table>
+      </div>
+    </div>`;
+
+  document.getElementById('detailContent').innerHTML = html;
+}
+
+function dl(id, ext) {
+  alert(`실 운영에선 다음 파일이 다운로드됩니다:\n\nevidence/<timestamp>_${id}_<status>/${ext === 'zip' ? id+'.zip' : id+'.'+ext}\n\n현재 데모는 mock입니다. evidence-bundler가 회귀 실행 시 자동 패키징.`);
+}
+
+// ══════════════════════════════════════════════════════════════
+// 탭 전환
+// ══════════════════════════════════════════════════════════════
+document.querySelectorAll('nav .tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('nav .tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('section.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelector(`section[data-view=${t.dataset.view}]`).classList.add('active');
+  };
+});
+
+// 초기 렌더
+renderDonut();
+renderCatBars();
+renderRecentFails();
+renderFilters();
+renderTCGrid('');
+</script>
+</body>
+</html>
