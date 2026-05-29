@@ -2,6 +2,49 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-29 (업데이트 45) — 운영 콘솔 실 데이터 연동 + N/T 자동 분류 + 영상 녹화
+
+console.html을 mock에서 실 데이터(InfluxDB `catalog_runs`) 자동 갱신으로 전환. N/T·N/A 사유를
+8 규칙으로 결정론 분류. 시나리오 단위 영상 녹화 추가 — 증빙 zip에 `video/session.mp4` 포함.
+
+### 📁 신규: `tools/console_data/` 패키지
+- `classifier.py` — 결과 없는 시나리오를 8 우선순위로 N/T·N/A 분류
+  1. manual_only 태그 → N/A (영구 제외)
+  2. 펌웨어 범위 밖 → N/A
+  3. flake 격리 → N/A
+  4. 베이스라인 미시드 → N/T (해결 명령어 안내 포함)
+  5. precondition 자격 미충족 (netflix/tving/DRM/HDCP/PIN) → N/T
+  6. tc_selector deferred (예산 초과) → N/T
+  7. MCP 미가동 → N/T
+  8. 기타 (사유 미상) → N/T
+- `builder.py` — 카탈로그 + InfluxDB(`catalog_runs`)/JSON 머지 → `console-data.json` 페이로드
+  (graceful degradation: influxdb-client 미설치/접속 실패 시 빈 dict)
+- `cli.py` — `python -m tools.console_data build --catalog ... --output docs/console-data.json`
+- `__main__.py` — 모듈 진입점
+
+### 🔄 wiring 변경
+- `docs/console.html` — 페이지 로드 시 `console-data.json` fetch (실패 시 in-page mock 폴백).
+  footer에 데이터 소스(InfluxDB 실시간 / CI JSON / mock) + 펌웨어 + 생성 시각 표기
+- `docs/console-data.json` (커밋) — 현재 상태(200 시나리오, 베이스라인 미시드 → 전부 N/T)
+- `infrastructure/notebook-gateway/services/capture-mcp/main.py` — 영상 녹화 엔드포인트
+  - `POST /capture/start` — 비동기 ffmpeg Popen → `session_id` 반환
+  - `GET /capture/sessions` — 활성 세션 목록
+  - `DELETE /capture/sessions/{sid}` — `q` 입력으로 graceful 종료 → mp4 path/size/elapsed 반환
+- `tests/clients.py` — `CaptureClient.start_recording/stop_recording`
+- `tools/evidence/bundler.py` — `video_path` 필드 + `record_video()` + `video/session.mp4` 복사
+- `tests/scenarios/test_catalog.py` — `RECORD_VIDEO=1` 환경에서 시나리오 전후 자동 녹화 (try/finally로 verdict 무관 회수)
+- `.github/workflows/e2e-nightly.yml` — pytest 종료 후 `console-data.json` 빌드 + main 자동 커밋
+  (변경 시에만, `permissions: contents: write`)
+- `.github/workflows/lint.yml` — tools-tests 카운트 갱신 (212 → 231)
+
+### ✅ 테스트 231/231 통과 (19 신규: classifier 10 + builder 8 + CLI 1)
+
+### 사용자 피드백 반영
+> "실 데이터 연동 (InfluxDB catalog_runs에서 자동 갱신) / N/T 사유 코드 자동 분류 /
+> 영상 녹화 — capture-mcp에 duration_sec 늘리거나 ffmpeg 별도 녹화 옵션"
+
+코드 측에서 자동 분류 → 메뉴얼 라벨링 불필요. 시나리오마다 영상 증빙 다운로드 가능.
+
 ## 2026-05-29 (업데이트 44) — 운영 콘솔 (console.html) — Pass/Fail/N/T/N/A 표준 QA UI
 
 demo.html이 기술 미리보기 위주(tier/embedding/confidence 등 생소 용어)라 운영자에게

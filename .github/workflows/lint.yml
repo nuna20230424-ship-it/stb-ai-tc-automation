@@ -66,8 +66,8 @@ jobs:
         run: python -m tools.catalog.validate infrastructure/notebook-gateway/data/scenarios-catalog.json
 
   tools-tests:
-    # tools/ 순수 함수 회귀 — 212/212 안전망
-    # (catalog_expander/tuner/tc_selector/triage/navgraph/rdk/golden_set/vision_bench/anomaly_injector)
+    # tools/ 순수 함수 회귀 — 231/231 안전망
+    # (catalog_expander/tuner/tc_selector/triage/navgraph/rdk/golden_set/vision_bench/anomaly_injector/console_data)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

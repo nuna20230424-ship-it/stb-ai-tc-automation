@@ -322,7 +322,8 @@ pytest -m catalog -k "$(cat k.txt)"</pre>
 </section>
 
 <footer>
-  STB QA 자동화 운영 콘솔 · 2026-05-29 · 데모 데이터는 <strong>mock</strong>입니다. 실제 운영 시 InfluxDB <code>catalog_runs</code>에서 실시간 갱신.<br>
+  STB QA 자동화 운영 콘솔 · <span id="footerDate">2026-05-29</span> ·
+  <span id="footerSrc">데이터 소스 확인 중…</span><br>
   <a href="https://github.com/nuna20230424-ship-it/stb-ai-tc-automation" target="_blank">GitHub: nuna20230424-ship-it/stb-ai-tc-automation</a>
 </footer>
 
@@ -334,7 +335,8 @@ pytest -m catalog -k "$(cat k.txt)"</pre>
 // ══════════════════════════════════════════════════════════════
 
 // 36개 대표 TC (200 카탈로그 중) — Pass 28 / Fail 4 / N/T 3 / N/A 1
-const TCS = [
+// 페이지 로드 시 console-data.json 우선 fetch (InfluxDB 회귀 결과) → 실패 시 아래 mock 사용
+let TCS = [
   // Pass
   {id:"epg_open_7day", name:"EPG 7일치 보기", category:"EPG", priority:"P1", status:"pass", sla_ms:2000, elapsed_ms:1620, ran_at:"22:01:14",
    matched_keywords:["편성표","EPG","7일"], confidence:0.94, tier:"임베딩",
@@ -429,14 +431,39 @@ const TCS = [
 // 카테고리 색
 const CAT_COLOR = {EPG:'#7dd3fc', OTT:'#a78bfa', DRM:'#fbbf24', TrickPlay:'#22c55e', Search:'#f472b6', Recording:'#06b6d4', Parental:'#ef4444', Settings:'#94a3b8'};
 
+// SUMMARY — fetch 성공 시 server-side build_summary() 결과로 교체
+// (총/Pass/Fail/N/T/N/A + by_category[]) — 없으면 TCS에서 즉시 파생
+let SUMMARY = null;
+let DATA_SOURCE = 'mock';  // 'influx' | 'json' | 'no-runs' | 'mock'
+let GENERATED_AT = null;
+let FIRMWARE = 'unknown';
+
+function deriveSummary() {
+  const by = {};
+  for (const t of TCS) {
+    const c = t.category || '?';
+    if (!by[c]) by[c] = {name:c, total:0, pass:0, fail:0, nt:0, na:0};
+    by[c].total++;
+    by[c][t.status] = (by[c][t.status]||0) + 1;
+  }
+  const counts = {pass:0, fail:0, nt:0, na:0};
+  for (const t of TCS) counts[t.status] = (counts[t.status]||0) + 1;
+  return {
+    total: TCS.length,
+    pass: counts.pass, fail: counts.fail, nt: counts.nt, na: counts.na,
+    by_category: Object.values(by).sort((a,b)=>b.total-a.total),
+  };
+}
+
 // ══════════════════════════════════════════════════════════════
 // 1. 요약 렌더링
 // ══════════════════════════════════════════════════════════════
 function statusCount(s) { return TCS.filter(t=>t.status===s).length; }
 
 function renderDonut() {
-  const counts = {pass:175, fail:8, nt:12, na:5}; // 실 200 데이터 (mock 표본은 36이지만 화면엔 200 기준)
-  const total = 200;
+  const s = SUMMARY || deriveSummary();
+  const counts = {pass:s.pass, fail:s.fail, nt:s.nt, na:s.na};
+  const total = s.total || 1;
   const cx=120, cy=120, r=85, ir=50;
   let acc = 0;
   const colors = {pass:'var(--pass)', fail:'var(--fail)', nt:'var(--nt)', na:'var(--na)'};
@@ -458,17 +485,7 @@ function renderDonut() {
 }
 
 function renderCatBars() {
-  // 200 카탈로그 카테고리 분포 mock (Pass/Fail/N/T/N/A)
-  const cats = [
-    {name:'EPG', total:50, pass:48, fail:1, nt:1, na:0},
-    {name:'OTT', total:34, pass:30, fail:2, nt:2, na:0},
-    {name:'DRM', total:15, pass:12, fail:1, nt:1, na:1},
-    {name:'TrickPlay', total:23, pass:21, fail:2, nt:0, na:0},
-    {name:'Search', total:15, pass:13, fail:1, nt:1, na:0},
-    {name:'Recording', total:17, pass:16, fail:0, nt:1, na:0},
-    {name:'Parental', total:16, pass:15, fail:0, nt:1, na:0},
-    {name:'Settings', total:30, pass:20, fail:1, nt:5, na:4},
-  ];
+  const cats = (SUMMARY || deriveSummary()).by_category;
   let html = '';
   for (const c of cats) {
     const pp = (c.pass/c.total)*100, fp=(c.fail/c.total)*100, ntp=(c.nt/c.total)*100, nap=(c.na/c.total)*100;
@@ -709,12 +726,51 @@ document.querySelectorAll('nav .tab').forEach(t=>{
   };
 });
 
-// 초기 렌더
-renderDonut();
-renderCatBars();
-renderRecentFails();
-renderFilters();
-renderTCGrid('');
+// ══════════════════════════════════════════════════════════════
+// 실 데이터 fetch — console-data.json (CI가 갱신, InfluxDB catalog_runs 기반)
+// 실패/누락 시 위의 mock TCS로 폴백 → GitHub Pages 단독 데모도 정상 동작
+// ══════════════════════════════════════════════════════════════
+function renderAll() {
+  renderDonut();
+  renderCatBars();
+  renderRecentFails();
+  renderFilters();
+  renderTCGrid('');
+}
+
+function updateFooter() {
+  const labels = {influx:'InfluxDB 실시간', json:'CI JSON 아티팩트', 'no-runs':'실행 결과 없음 (전부 N/T)', mock:'데모 mock'};
+  const label = labels[DATA_SOURCE] || DATA_SOURCE;
+  const fw = FIRMWARE && FIRMWARE !== 'unknown' ? ` · 펌웨어 <code>${FIRMWARE}</code>` : '';
+  const gen = GENERATED_AT ? ` · 생성 <code>${GENERATED_AT}</code>` : '';
+  document.getElementById('footerSrc').innerHTML = `데이터 소스 <strong>${label}</strong>${fw}${gen}`;
+  if (GENERATED_AT) document.getElementById('footerDate').textContent = GENERATED_AT.slice(0,10);
+}
+
+async function loadConsoleData() {
+  try {
+    const res = await fetch('console-data.json', {cache:'no-store'});
+    if (!res.ok) throw new Error('http '+res.status);
+    const data = await res.json();
+    if (Array.isArray(data.tcs) && data.tcs.length) {
+      TCS = data.tcs;
+      SUMMARY = data.summary || null;
+      DATA_SOURCE = data.source || 'json';
+      GENERATED_AT = data.generated_at || null;
+      FIRMWARE = data.firmware || 'unknown';
+    }
+  } catch (e) {
+    // mock 유지
+    console.info('console-data.json 미수신 — mock 표본으로 폴백', e.message);
+  }
+  updateFooter();
+  renderAll();
+}
+
+// 첫 렌더는 mock 즉시 표시 → fetch 결과 도착 시 재렌더 (FOUC 최소화)
+renderAll();
+updateFooter();
+loadConsoleData();
 </script>
 </body>
 </html>

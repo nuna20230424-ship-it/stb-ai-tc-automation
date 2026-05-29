@@ -59,6 +59,7 @@ class EvidenceBundler:
     voice_utterances: list[str] = field(default_factory=list)
     uart_logs: list[tuple[str, str]] = field(default_factory=list)   # (label, text)
     mcp_calls: list[dict] = field(default_factory=list)              # 자유 dict
+    video_path: Path | None = None                                   # capture-mcp 녹화 결과 (mp4)
 
     # 출력 경로 (write 시 결정)
     output_dir: Path | None = None
@@ -80,6 +81,12 @@ class EvidenceBundler:
 
     def record_uart(self, label: str, text: str) -> None:
         self.uart_logs.append((label, text))
+
+    def record_video(self, video_path: Path | str) -> None:
+        """capture-mcp 녹화 결과(mp4) 첨부 — write 시 video/session.mp4로 복사."""
+        p = Path(video_path)
+        if p.exists() and p.stat().st_size > 0:
+            self.video_path = p
 
     def record_mcp_call(self, service: str, method: str, **payload) -> None:
         self.mcp_calls.append({
@@ -125,6 +132,14 @@ class EvidenceBundler:
             dst = out / "capture" / f"frame_{i:02d}{src.suffix}"
             try:
                 shutil.copy2(src, dst)
+            except FileNotFoundError:
+                pass
+
+        # 영상 녹화 (있을 때만) — 증빙 다운로드 zip에 포함
+        if self.video_path and self.video_path.exists():
+            (out / "video").mkdir(parents=True, exist_ok=True)
+            try:
+                shutil.copy2(self.video_path, out / "video" / "session.mp4")
             except FileNotFoundError:
                 pass
 

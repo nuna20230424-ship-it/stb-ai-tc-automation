@@ -33,6 +33,20 @@ class CaptureClient(_Base):
         r.raise_for_status()
         return r.json()
 
+    def start_recording(self, scenario_id: str, target: str = "dut", max_duration_sec: int = 120) -> dict:
+        """비동기 영상 녹화 시작 — 시나리오 시작 직전 호출 → session_id 회수."""
+        r = self.client.post("/capture/start", json={
+            "scenario_id": scenario_id, "target": target, "max_duration_sec": max_duration_sec,
+        })
+        r.raise_for_status()
+        return r.json()
+
+    def stop_recording(self, session_id: str) -> dict:
+        """녹화 종료 — mp4 경로/크기/elapsed 반환."""
+        r = self.client.delete(f"/capture/sessions/{session_id}", timeout=30.0)
+        r.raise_for_status()
+        return r.json()
+
 
 class IRClient(_Base):
     def send(self, codeset: str, key: str) -> dict:

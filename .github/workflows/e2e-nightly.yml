@@ -23,6 +23,9 @@ concurrency:
   group: e2e-nightly
   cancel-in-progress: false
 
+permissions:
+  contents: write   # docs/console-data.json 갱신 후 main에 커밋
+
 jobs:
   e2e:
     runs-on: [self-hosted, notebook, gateway]
@@ -127,6 +130,38 @@ jobs:
           else
             echo "ℹ️  evidence 디렉토리 비어있음 — triage skip"
           fi
+
+      - name: 운영 콘솔 데이터 갱신 (docs/console-data.json) — InfluxDB catalog_runs
+        if: always()
+        working-directory: .
+        env:
+          AVAILABLE_CREDENTIALS: ${{ vars.AVAILABLE_CREDENTIALS }}
+        run: |
+          source tests/.venv/bin/activate
+          python -m tools.console_data build \
+            --catalog infrastructure/notebook-gateway/data/scenarios-catalog.json \
+            --output docs/console-data.json \
+            --firmware "$DUT_FIRMWARE" \
+            --influx-url "$INFLUX_URL" \
+            --influx-token "$INFLUX_TOKEN" \
+            --influx-org "$INFLUX_ORG" \
+            --influx-bucket "$INFLUX_BUCKET" \
+            --influx-lookback "-24h" \
+            ${AVAILABLE_CREDENTIALS:+--available-credentials "$AVAILABLE_CREDENTIALS"}
+
+      - name: 콘솔 데이터 커밋 (변경 시에만)
+        if: github.ref == 'refs/heads/main' && always()
+        working-directory: .
+        run: |
+          if git diff --quiet docs/console-data.json 2>/dev/null; then
+            echo "ℹ️  console-data.json 변경 없음 — skip"
+            exit 0
+          fi
+          git config user.name "stb-qa-bot"
+          git config user.email "stb-qa-bot@kaongroup.com"
+          git add docs/console-data.json
+          git commit -m "chore(console): nightly catalog_runs 갱신 (run #${{ github.run_id }})"
+          git push origin HEAD:main
 
       - name: Upload reports
         if: always()
