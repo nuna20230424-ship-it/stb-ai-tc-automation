@@ -24,8 +24,12 @@ from pydantic import BaseModel, Field, field_validator
 CATALOG_VERSION = "2.0"
 
 Category = Literal[
+    # v2 base (8) — 업데이트 24 도입
     "EPG", "OTT", "DRM", "TrickPlay",
     "Search", "Recording", "Parental", "Settings",
+    # v2.2 확장 (10) — 업데이트 53, 사내 KAON 25 시트 의미 보존 위해 추가
+    "Audio", "Bluetooth", "Network", "Power", "Display",
+    "Voice", "AI", "RCU", "Firmware", "Home",
 ]
 
 Priority = Literal["P1", "P2", "P3"]
@@ -197,6 +201,17 @@ CATEGORY_TO_CHANGE_SIGNALS: dict[str, list[str]] = {
     "Recording": ["pvr-storage", "scheduler"],
     "Parental": ["parental-control", "settings-ui"],
     "Settings": ["settings-ui", "system-config"],
+    # v2.2 확장 (업데이트 53)
+    "Audio": ["audio-pipeline", "audio-output", "alsa"],
+    "Bluetooth": ["bluetooth-stack", "bt-pairing", "a2dp"],
+    "Network": ["networking", "wifi-driver", "ethernet"],
+    "Power": ["power-mgmt", "boot-sequence", "standby-controller"],
+    "Display": ["display-pipeline", "hdmi-output", "hdcp"],
+    "Voice": ["voice-asr", "ai-assistant", "katniss"],
+    "AI": ["ai-runtime", "ai-pq", "ai-audio", "ai-caption"],
+    "RCU": ["rcu-pairing", "ir-driver", "key-mapper"],
+    "Firmware": ["fwupd-agent", "ota-server", "boot-partition"],
+    "Home": ["home-ui", "launcher", "ad-renderer"],
 }
 
 # Priority → risk_weight 기본값

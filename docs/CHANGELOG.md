@@ -2,6 +2,81 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-30 (업데이트 53) — 100% 자동화: v2.2 카테고리 확장 + bulk import 480건
+
+업데이트 52에서 5 시트 93건 import 검증한 후 사용자 지시 — "TC 전체 100% 자동화 구현".
+KAON v0.8 25 시트 / 505건 전체를 한 번에 v2.2 카탈로그로 변환하기 위한 인프라 완성.
+
+### 발견된 핵심 갭
+v2 카테고리 enum이 8개(EPG/OTT/DRM/TrickPlay/Search/Recording/Parental/Settings)만 있어
+KAON 25 시트 중 17 시트(오디오/블루투스/네트워크/AI/RCU/펌웨어/홈/안정성/부팅 등)가 모두
+Settings에 덤프됨 → 카테고리별 dashboard·triage·TIA 전부 무의미해짐.
+
+### v2.2 Category enum 확장 (8 → 18)
+`tools/catalog/schema.py`:
+- 신규: `Audio, Bluetooth, Network, Power, Display, Voice, AI, RCU, Firmware, Home`
+- `CATEGORY_TO_CHANGE_SIGNALS` 동기 확장 — TIA(tc_selector)가 새 카테고리 인식
+- `tools/triage/components.py:CATEGORY_HINT` + `category_from_scenario_id`도 동기 확장
+- `tools/excel_importer/column_map.py` 한국어 alias 재매핑:
+  음성인식→Voice (기존 Search에서 분리), 안정성/부팅/POWER→Power,
+  펌웨어→Firmware, 오디오→Audio, 해상도→Display, 블루투스→Bluetooth,
+  네트워크→Network, RCU→RCU, 홈→Home, AI 화질/사운드/자막/시력/목소리/시청퀵→AI
+
+### 신규 도구
+- **`tools/excel_importer/bulk.py`** — KAON 25 시트 → v2.2 일괄 변환
+  - `KAON_SHEET_TO_CATEGORY` 매핑 테이블 (시트→(category, id_prefix, default_sla))
+  - `_제외` 토큰 시트 자동 skip
+  - 시트 간 ID 중복 검출
+  - 단일 통합 JSON + merge preview
+- **`tools/excel_importer/merge_into_catalog.py`** — drafts → 카탈로그 안전 머지
+  - pydantic 검증 통과 항목만 머지
+  - 자동 백업 (suffix 지정)
+  - 충돌 정책 `--on-conflict skip|replace`
+  - `--dry-run` 미리보기
+
+### 실데이터 검증 결과
+실 KAON `AI 자동화_..._Genie A+전용.xlsx` (25 시트 / 505 TC) 처리:
+
+| 결과 | 카운트 |
+|------|-------|
+| 시트 처리 | 24 (1 시트 `_제외` skip) |
+| direct map 통과 | **480 / 480** |
+| skip (필수 누락) | 0 |
+| ID 중복 (시트 간) | 0 |
+| pydantic v2.2 검증 통과 | 480 / 480 |
+| 머지 후 카탈로그 | 200 → **680건** |
+
+머지 후 카테고리 분포(680건):
+```
+AI         98   OTT        85   EPG        76   Firmware   47
+Bluetooth  47   Voice      43   Home       40   Audio      38
+RCU        36   Settings   30   Parental   25   Power      25
+TrickPlay  23   Display    18   Recording  17   DRM        15
+Search     15   Network     2
+```
+
+### 회귀 결과
+- **tools/tests/ — 295/295 통과** (lint 테스트 1건은 KAON 빈 steps 예외 처리 추가)
+- **tests/scenarios anomaly 11 skip** (실 STB 보호 모드 정상)
+- pydantic v2.2 schema validate — 680/680 OK
+
+### 미머지(의도적)
+- `infrastructure/notebook-gateway/data/scenarios-catalog.json` — 200건 그대로 유지.
+  머지 후 480건의 한국어 "예상 결과" 사내 텍스트는 **6/2 private 전환 전 push 보류**.
+  로컬에서 한 줄 명령으로 머지 재현:
+  ```
+  python -m tools.excel_importer.merge_into_catalog \
+    --import-from drafts/kaon-all.json \
+    --catalog infrastructure/notebook-gateway/data/scenarios-catalog.json \
+    --backup-suffix 2026-05-30-pre-kaon
+  ```
+
+### 결정 필요 사항 (사용자 확인)
+
+1. **카탈로그 머지 push 시점** — 6/2 private 전환 후 / 그 전에 sanitize 후 push / 영구 로컬
+2. **Steps 구조화 LLM 백엔드** — Anthropic API 키 정책 답 / Ollama 로컬 추가 구현 / SME 수동 입력
+3. **카테고리 v2.2 정착** — 18개 신규 5종(Audio/Bluetooth/Network/Power/Display/Voice/AI/RCU/Firmware/Home)이 사내 dashboards 운영 정책과 부합하는지
+
 ## 2026-05-30 (업데이트 52) — 사내 엑셀(KAON v0.8) 실데이터 import 갭 해소
 
 업데이트 50의 importer로 실제 KAON `AI 자동화_..._Genie A+전용.xlsx` 파일을

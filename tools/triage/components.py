@@ -68,6 +68,17 @@ CATEGORY_HINT: dict[str, str] = {
     "Recording": "system",
     "Parental": "ui-responsiveness",
     "Settings": "system",
+    # v2.2 확장 (업데이트 53)
+    "Audio": "audio",
+    "Bluetooth": "input-bt",
+    "Network": "network",
+    "Power": "system",
+    "Display": "video",
+    "Voice": "voice",
+    "AI": "video",          # AI 화질/음성/자막은 영상/음성 컴포넌트로
+    "RCU": "input-ir",
+    "Firmware": "system",
+    "Home": "ui-responsiveness",
 }
 
 # 컴포넌트별 기본 심각도 (집계 JIRA severity 산정 기준)
@@ -91,7 +102,17 @@ def category_from_scenario_id(scenario_id: str) -> str | None:
         "epg_": "EPG", "ott_": "OTT", "drm_": "DRM", "trickplay_": "TrickPlay",
         "search_": "Search", "recording_": "Recording",
         "parental_": "Parental", "settings_": "Settings",
-        "channel_": "EPG", "voice_": "Search", "bt_": "OTT",
+        "channel_": "EPG", "voice_": "Voice", "bt_": "Bluetooth",
+        # v2.2 KAON sheet prefix → 신규 카테고리
+        "kaon_channel_": "EPG", "kaon_ott_": "OTT", "kaon_vod_": "OTT",
+        "kaon_voice_": "Voice", "kaon_parental_": "Parental",
+        "kaon_audio_": "Audio", "kaon_bt_": "Bluetooth",
+        "kaon_network_": "Network", "kaon_power_": "Power",
+        "kaon_boot_": "Power", "kaon_stability_": "Power",
+        "kaon_display_": "Display", "kaon_rcu_": "RCU",
+        "kaon_firmware_": "Firmware", "kaon_qat_": "Firmware",
+        "kaon_home_": "Home", "kaon_ad_": "Home",
+        "kaon_ai_": "AI",
     }
     for prefix, cat in prefix_map.items():
         if scenario_id.startswith(prefix):

@@ -63,32 +63,43 @@ CATEGORY_ALIASES = {
     "settings": "Settings",
     "setting": "Settings",
     "system": "Settings",
-    # 한국어 사내 엑셀 대분류 (KAON 등) — 가장 가까운 v2 enum으로 매핑
+    # 한국어 사내 엑셀 대분류 (KAON 등) — 가장 가까운 v2.2 enum으로 매핑
     "채널": "EPG",
     "epg/채널": "EPG",
     "ott/vod": "OTT",
     "vod": "OTT",
     "검색": "Search",
-    "음성인식": "Search",
+    "음성인식": "Voice",
     "녹화": "Recording",
     "자녀안심": "Parental",
     "자녀안심 설정": "Parental",
     "자녀보호": "Parental",
     "설정": "Settings",
     "시스템": "Settings",
-    "안정성": "Settings",
-    "부팅": "Settings",
-    "power": "Settings",
-    "전원": "Settings",
-    "펌웨어": "Settings",
-    "펌웨어 업그레이드": "Settings",
-    "네트워크": "Settings",
-    "오디오": "Settings",
-    "해상도": "Settings",
-    "블루투스": "Settings",
-    "rcu": "Settings",
-    "홈": "Settings",
-    "홈_채널_vod설정": "Settings",
+    # v2.2 확장 카테고리 (업데이트 53) — KAON 25 시트 의미 보존
+    "안정성": "Power",          # 장시간 시청/메모리/리부트
+    "부팅": "Power",
+    "power": "Power",
+    "전원": "Power",
+    "펌웨어": "Firmware",
+    "펌웨어 업그레이드": "Firmware",
+    "fw 업그레이드": "Firmware",
+    "네트워크": "Network",
+    "오디오": "Audio",
+    "해상도": "Display",
+    "블루투스": "Bluetooth",
+    "rcu": "RCU",
+    "홈": "Home",
+    "홈_채널_vod설정": "Home",
+    "재생 시나리오": "Home",      # First I AD
+    "ai 화질 최적화": "AI",
+    "ai 사운드 최적화": "AI",
+    "ai 실시간 자막": "AI",
+    "시력 보호 모드": "AI",
+    "ai 시청 퀵모드": "AI",
+    "메뉴 진입": "Home",         # 목소리 강조 시트의 대분류
+    "기본 기능": "Voice",        # AI 음성 가전 제어 시트
+    "ai 음성 가전 제어": "Voice",
 }
 
 

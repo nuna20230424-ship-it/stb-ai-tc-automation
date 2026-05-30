@@ -54,18 +54,31 @@ class TestKoreanCategoryAliases:
     def test_채널_to_EPG(self):
         assert normalize_category("채널") == "EPG"
 
-    def test_검색_음성인식_to_Search(self):
+    def test_검색_음성인식_매핑(self):
+        # 업데이트 53: 음성인식은 별도 Voice 카테고리로 (Search와 분리)
         assert normalize_category("검색") == "Search"
-        assert normalize_category("음성인식") == "Search"
+        assert normalize_category("음성인식") == "Voice"
 
     def test_자녀안심_to_Parental(self):
         assert normalize_category("자녀안심") == "Parental"
         assert normalize_category("자녀안심 설정") == "Parental"
 
-    def test_시스템_레벨_to_Settings(self):
-        for k in ["안정성", "부팅", "POWER", "전원", "펌웨어",
-                  "네트워크", "오디오", "해상도", "블루투스", "RCU", "홈"]:
-            assert normalize_category(k) == "Settings", k
+    def test_v22_확장_카테고리_매핑(self):
+        # 업데이트 53: KAON 25 시트의 의미 보존 위해 카테고리 확장
+        expected = {
+            "안정성": "Power", "부팅": "Power", "POWER": "Power", "전원": "Power",
+            "펌웨어": "Firmware", "펌웨어 업그레이드": "Firmware",
+            "네트워크": "Network",
+            "오디오": "Audio",
+            "해상도": "Display",
+            "블루투스": "Bluetooth",
+            "RCU": "RCU",
+            "홈": "Home",
+            "ai 화질 최적화": "AI", "ai 사운드 최적화": "AI",
+            "ai 실시간 자막": "AI", "시력 보호 모드": "AI",
+        }
+        for k, v in expected.items():
+            assert normalize_category(k) == v, f"{k} expected {v} got {normalize_category(k)}"
 
 
 # ──────────────────────────────────────────────────────────────
