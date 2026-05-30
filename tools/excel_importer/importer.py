@@ -102,11 +102,13 @@ def _resolve_sheet(path: Path, requested: str | None) -> str | None:
     )
 
 
-def load_rows(path: Path, sheet: str | None = None) -> list[dict]:
+def load_rows(path: Path, sheet: str | None = None, header_row: int = 0) -> list[dict]:
     """csv/xlsx → list of dict (컬럼명 → 값).
 
     Args:
         sheet: 엑셀일 때 특정 시트만 로드 (대소문자/공백 무시 매칭). None이면 첫 시트.
+        header_row: 헤더 행 인덱스(0-based). 사내 엑셀은 상단에 통계/요약 행이 있어
+            실제 컬럼명이 7행 이후에 오는 경우가 있음. 기본 0.
     """
     try:
         import pandas as pd
@@ -118,9 +120,11 @@ def load_rows(path: Path, sheet: str | None = None) -> list[dict]:
     suffix = path.suffix.lower()
     if suffix in (".xlsx", ".xls"):
         resolved = _resolve_sheet(path, sheet) if sheet else 0
-        df = pd.read_excel(path, sheet_name=resolved, dtype=str, keep_default_na=False)
+        df = pd.read_excel(path, sheet_name=resolved, dtype=str,
+                           keep_default_na=False, header=header_row)
     elif suffix == ".csv":
-        df = pd.read_csv(path, dtype=str, keep_default_na=False)
+        df = pd.read_csv(path, dtype=str, keep_default_na=False,
+                         header=header_row)
     else:
         raise ValueError(f"지원하지 않는 확장자: {suffix} (.csv/.xlsx만)")
     return df.to_dict(orient="records")
@@ -130,10 +134,26 @@ def load_rows(path: Path, sheet: str | None = None) -> list[dict]:
 # Direct map — 자유 텍스트 없이 결정 가능한 필드
 # ──────────────────────────────────────────────────────────────
 
-def direct_map_row(row: dict, cmap: ColumnMap) -> dict | None:
+def direct_map_row(
+    row: dict,
+    cmap: ColumnMap,
+    *,
+    force_category: str | None = None,
+    default_priority: str | None = None,
+    default_sla: int | None = None,
+    id_prefix: str | None = None,
+) -> dict | None:
     """row → 부분적 v2 dict (preconditions/steps는 비어있음).
 
-    필수 필드(id/category/priority/expected/sla_ms) 미충족 시 None.
+    Args:
+        force_category: 컬럼값 대신 모든 row를 이 카테고리로 강제 (시트 이름이
+            카테고리인 사내 엑셀에서 유용). v2 enum 값 그대로 전달 (예: "EPG").
+        default_priority: 중요도 컬럼이 비어있거나 인식 못할 때 폴백 (예: "P2").
+        default_sla: SLA 컬럼이 없거나 빈 값일 때 폴백 (예: 3000). None이면
+            기존 동작(필수 → 누락 시 skip).
+        id_prefix: TC ID 정규화 후 앞에 붙일 prefix (예: "kaon_channel_").
+
+    필수 필드 미충족 시 None.
     """
     raw_id = row.get(cmap.id, "")
     raw_cat = row.get(cmap.category, "")
@@ -141,23 +161,37 @@ def direct_map_row(row: dict, cmap: ColumnMap) -> dict | None:
     raw_exp = row.get(cmap.expected, "")
     raw_sla = row.get(cmap.sla_ms, "")
 
-    if not raw_id or not raw_cat or not raw_pri or not raw_exp:
+    if not raw_id or not raw_exp:
         return None
 
-    cat = normalize_category(raw_cat)
-    pri = normalize_priority(raw_pri)
-    if not cat or not pri:
+    if force_category:
+        cat = force_category
+    else:
+        if not raw_cat:
+            return None
+        cat = normalize_category(raw_cat)
+        if not cat:
+            return None
+
+    pri = normalize_priority(raw_pri) if raw_pri else None
+    if not pri:
+        pri = default_priority
+    if not pri:
         return None
 
     try:
         sla = int(str(raw_sla).strip())
     except (ValueError, TypeError):
-        return None
-    if sla <= 0:
+        sla = default_sla if default_sla is not None else None
+    if sla is None or sla <= 0:
         return None
 
+    base_id = normalize_id(raw_id, cat)
+    if id_prefix:
+        base_id = f"{id_prefix.rstrip('_')}_{base_id}"
+
     return {
-        "id": normalize_id(raw_id, cat),
+        "id": base_id,
         "category": cat,
         "priority": pri,
         "preconditions": [],   # ← LLM이 채움
@@ -259,6 +293,24 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--column-sla", default=DEFAULT_MAP.sla_ms)
     p.add_argument("--column-owner", default=DEFAULT_MAP.owner)
 
+    # 사내 엑셀(KAON 등) 대응 — 헤더 행 / 폴백 / 강제 카테고리 / ID prefix
+    p.add_argument("--header-row", type=int, default=0,
+                   help="헤더 행 인덱스 (0-based). 상단에 통계/요약 행이 있는 사내 엑셀의 경우 "
+                        "실제 컬럼명이 8번째 행이면 --header-row 7. 기본 0.")
+    p.add_argument("--default-sla", type=int, default=None,
+                   help="SLA 컬럼이 없거나 빈 값일 때 폴백 (예: 3000ms). 미지정 시 SLA 누락 row는 skip.")
+    p.add_argument("--default-priority", default=None,
+                   choices=[None, "P1", "P2", "P3"],
+                   help="중요도가 비어있거나 인식 못할 때 폴백 (예: P2). 미지정 시 skip.")
+    p.add_argument("--force-category", default=None,
+                   choices=[None, "EPG", "OTT", "DRM", "TrickPlay", "Search",
+                            "Recording", "Parental", "Settings"],
+                   help="컬럼값 대신 모든 row를 이 카테고리로 강제. 시트 이름이 카테고리인 "
+                        "사내 엑셀에서 유용.")
+    p.add_argument("--id-prefix", default=None,
+                   help="TC ID 앞에 붙일 prefix (예: 'kaon_channel'). 시트 간 ID 충돌 방지 목적. "
+                        "trailing '_'는 자동 정리됨.")
+
     args = p.parse_args(argv)
 
     # --list-sheets: 시트만 출력 후 종료 (업로드 후 시트 확인용)
@@ -326,12 +378,21 @@ def main(argv: list[str] | None = None) -> int:
         owner=args.column_owner,
     )
 
-    rows = load_rows(args.input, sheet=args.sheet)
+    rows = load_rows(args.input, sheet=args.sheet, header_row=args.header_row)
     sheet_label = f" (시트 '{args.sheet}')" if args.input.suffix.lower() in (".xlsx", ".xls") else ""
     print(f"📥 {len(rows)} rows loaded{sheet_label}")
 
     # Direct map
-    partial = [direct_map_row(r, cmap) for r in rows]
+    partial = [
+        direct_map_row(
+            r, cmap,
+            force_category=args.force_category,
+            default_priority=args.default_priority,
+            default_sla=args.default_sla,
+            id_prefix=args.id_prefix,
+        )
+        for r in rows
+    ]
     skipped = sum(1 for p in partial if p is None)
     print(f"📋 direct map: {len(rows) - skipped} 통과, {skipped} skip(필수 필드 누락)")
 

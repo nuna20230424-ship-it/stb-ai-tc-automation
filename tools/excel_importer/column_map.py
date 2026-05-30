@@ -63,6 +63,32 @@ CATEGORY_ALIASES = {
     "settings": "Settings",
     "setting": "Settings",
     "system": "Settings",
+    # 한국어 사내 엑셀 대분류 (KAON 등) — 가장 가까운 v2 enum으로 매핑
+    "채널": "EPG",
+    "epg/채널": "EPG",
+    "ott/vod": "OTT",
+    "vod": "OTT",
+    "검색": "Search",
+    "음성인식": "Search",
+    "녹화": "Recording",
+    "자녀안심": "Parental",
+    "자녀안심 설정": "Parental",
+    "자녀보호": "Parental",
+    "설정": "Settings",
+    "시스템": "Settings",
+    "안정성": "Settings",
+    "부팅": "Settings",
+    "power": "Settings",
+    "전원": "Settings",
+    "펌웨어": "Settings",
+    "펌웨어 업그레이드": "Settings",
+    "네트워크": "Settings",
+    "오디오": "Settings",
+    "해상도": "Settings",
+    "블루투스": "Settings",
+    "rcu": "Settings",
+    "홈": "Settings",
+    "홈_채널_vod설정": "Settings",
 }
 
 
@@ -88,6 +114,15 @@ PRIORITY_ALIASES = {
     "major": "P1",
     "minor": "P2",
     "trivial": "P3",
+    # 한국어 — 사내 엑셀에서 중요도가 상/중/하 또는 높음/중간/낮음으로 표기되는 경우
+    "상": "P1",
+    "중": "P2",
+    "하": "P3",
+    "높음": "P1",
+    "중간": "P2",
+    "낮음": "P3",
+    "긴급": "P1",
+    "보통": "P2",
 }
 
 

@@ -9,15 +9,18 @@
 
 자동화의 첫 관문 — 이게 부족하면 코드가 동작 안 함. `excel_importer`가 매핑 시도하는 컬럼:
 
-| 컬럼 | 자동화 사용 방법 | 결측 시 영향 |
-|------|-----------------|------------|
-| **ID** | 고유 식별자 → InfluxDB tag / 베이스라인 키 | 결측 시 import skip |
-| **Category** | EPG/OTT/DRM/... → ID prefix + 마커 그룹화 | 결측 시 import skip |
-| **Priority** | P1/P2/P3 → risk_weight + tc_selector 가중치 | 결측 시 P3 기본 |
-| **Expected Result** | 판정 비교 기준 (rule tier) | 결측 시 판정 불가 (시나리오 자체 불가능) |
-| **SLA (ms)** | 응답 제한 시간 → 2배 초과 시 Fail | 결측 시 시간 검증 못함 |
-| **Test Steps** | IR/voice/wait/capture/navigate 5종 액션 시퀀스 | 결측 시 LLM이 자유텍스트 → 구조화 (API 키 필요) |
-| **Preconditions** | 사전 조건 → 자동 fixture 매칭 (netflix_logged_in 등) | 결측 시 모든 STB에 적용 시도 |
+| 컬럼 | 자동화 사용 방법 | 결측 시 영향 | 사내 엑셀 폴백(업데이트 52) |
+|------|-----------------|------------|--------------------------|
+| **ID** | 고유 식별자 → InfluxDB tag / 베이스라인 키 | 결측 시 import skip | `--id-prefix kaon_channel` |
+| **Category** | EPG/OTT/DRM/... → ID prefix + 마커 그룹화 | 결측 시 import skip | `--force-category EPG` (시트 이름 = 카테고리) |
+| **Priority** | P1/P2/P3 → risk_weight + tc_selector 가중치 | 결측 시 P3 기본 | `--default-priority P2` + 상/중/하 alias |
+| **Expected Result** | 판정 비교 기준 (rule tier) | 결측 시 판정 불가 (시나리오 자체 불가능) | (필수) |
+| **SLA (ms)** | 응답 제한 시간 → 2배 초과 시 Fail | 결측 시 시간 검증 못함 | `--default-sla 3000` |
+| **Test Steps** | IR/voice/wait/capture/navigate 5종 액션 시퀀스 | 결측 시 LLM이 자유텍스트 → 구조화 (API 키 필요) | LLM 보류 시 dry-run으로 빈 채 import |
+| **Preconditions** | 사전 조건 → 자동 fixture 매칭 (netflix_logged_in 등) | 결측 시 모든 STB에 적용 시도 | 빈 배열로 import |
+
+> 사내 엑셀이 헤더가 상단 N행 아래 (KAON v0.8은 R7)에 있다면 `--header-row 7` 추가.
+> 5개 시트(채널/OTT/VOD/음성인식/자녀안심) 93건 import 검증 완료 — [업데이트 52](CHANGELOG.md#2026-05-30-업데이트-52).
 
 **선택 컬럼**: Owner, JIRA Epic, Firmware Min/Max (기여도 낮음)
 

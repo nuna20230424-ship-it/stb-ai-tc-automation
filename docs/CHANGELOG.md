@@ -2,6 +2,69 @@
 
 본 프로젝트의 일자별 업데이트 이력. 새 세션마다 항목을 위로 추가한다.
 
+## 2026-05-30 (업데이트 52) — 사내 엑셀(KAON v0.8) 실데이터 import 갭 해소
+
+업데이트 50의 importer로 실제 KAON `AI 자동화_..._Genie A+전용.xlsx` 파일을
+처리하다 발견한 4종 갭 보강. 보강 후 채널/OTT/VOD/음성인식/자녀안심 5개 시트
+**93/93 통과**, ID 충돌 0건.
+
+### 발견된 4종 갭
+
+| 갭 | 사내 엑셀 실태 | 보강 |
+|----|---------------|------|
+| 헤더 행 위치 | R0이 아니라 R7행 (상단 7행은 통계 요약) | `--header-row 7` |
+| SLA 컬럼 부재 | 시트 자체에 응답시간 컬럼 없음 | `--default-sla 3000` |
+| 중요도 빈 값 또는 상/중/하 | 소스에서 미입력 / 한국어 표기 | `--default-priority P2` + 한국어 alias |
+| 대분류 한국어 + 단순 숫자 TC ID | "채널"/"OTT" 등 + ID `1`,`2`,`3` | `--force-category` + `--id-prefix` |
+
+### CLI 신규 옵션 (`tools.excel_importer.importer`)
+- `--header-row N` — 헤더 행 인덱스 (default 0). KAON은 7
+- `--default-sla N` — SLA 컬럼 빈/없을 때 폴백 (ms)
+- `--default-priority P[123]` — 중요도 빈/인식불가 시 폴백
+- `--force-category {EPG|OTT|DRM|TrickPlay|Search|Recording|Parental|Settings}` —
+  시트 단위로 컬럼값 무시하고 강제. 시트 이름이 카테고리인 사내 엑셀에서 유용
+- `--id-prefix <str>` — TC ID 앞에 prefix 부착 (시트 간 충돌 방지)
+
+### column_map.py 한국어 alias 확장
+- **Priority**: 상/중/하, 높음/중간/낮음, 긴급/보통 → P1/P2/P3
+- **Category**: 채널→EPG, 음성인식→Search, 자녀안심→Parental,
+  안정성/부팅/POWER/펌웨어/네트워크/오디오/해상도/블루투스/RCU/홈 → Settings
+
+> v2 enum이 8 카테고리만 지원 — KAON 25 시트 중 Audio/Boot/Power/Network 등
+> 독립 카테고리는 모두 Settings로 통합. 후속에 v2 enum 확장 논의 필요.
+
+### 한 줄 사용 예시 (KAON 채널 시트)
+```bash
+python -m tools.excel_importer.importer \
+  --input ~/Downloads/사내-TC.xlsx --sheet "채널" --header-row 7 \
+  --column-id "TC ID" --column-category "대분류" --column-priority "중요도" \
+  --column-expected "예상 결과" --column-preconditions "기능 범위(사전조건)" \
+  --column-steps "테스트케이스 및 절차" \
+  --force-category EPG --default-priority P2 --default-sla 3000 \
+  --id-prefix kaon_channel \
+  --output drafts/kaon-channel.json --dry-run \
+  --merge infrastructure/notebook-gateway/data/scenarios-catalog.json
+```
+
+### ✅ 테스트 295/295 통과 (신규 22: priority 4 + category 4 + force 2 + default-priority 3 +
+default-sla 3 + id-prefix 3 + header-row 2 + e2e 1)
+
+### dry-run 검증 결과 (drafts 미커밋 — 민감정보)
+
+| 시트 | rows | direct map 통과 | 머지 후 | category |
+|------|------|----------------|---------|----------|
+| 채널 | 26 | 26 | 226 | EPG |
+| OTT | 46 | 46 | 272 | OTT |
+| VOD | 5 | 5 | 277 | OTT |
+| 음성인식 | 7 | 7 | 284 | Search |
+| 자녀안심 설정 | 9 | 9 | 293 | Parental |
+
+ID 충돌: 0건 (`kaon_*` prefix 덕분). Steps/Preconditions는 빈 채로 — LLM 활성화 후 채움.
+
+### 미적용 (의도적)
+- drafts/*.json 커밋 — gitignored. 실 TC 내용 포함이라 private 전환(2026-06-02) 이전까지 보류
+- v2 Category enum 확장 — 후속 논의 필요 (Audio/Boot/Network/Bluetooth/AI feature 등)
+
 ## 2026-05-29 (업데이트 51) — TC 자동화 필수 요소 체크리스트 문서
 
 사내 엑셀 업로드 전 사용자가 체크할 수 있도록 6개 그룹 필수 요소 정리.

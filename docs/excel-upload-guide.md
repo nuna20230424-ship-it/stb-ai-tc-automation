@@ -139,6 +139,54 @@ python -m tools.excel_importer.importer \
   --output drafts/channel-tcs.json --dry-run
 ```
 
+### KAON 사내 엑셀 형식 (업데이트 52)
+
+KAON v0.8 형식은 다음 3가지가 표준 영문 엑셀과 다름:
+1. **헤더가 R7행** — 상단 7행은 통계 요약 (전체/실행/N/T/N/A/Pass/Fail 항목수)
+2. **SLA 컬럼 없음** — 시트 자체에 응답시간 컬럼이 없음
+3. **중요도가 빈 값 또는 한국어 상/중/하** — 소스에서 미입력인 경우 다수
+
+이를 모두 한 줄로 처리:
+
+```bash
+python -m tools.excel_importer.importer \
+  --input ~/Downloads/사내-TC.xlsx \
+  --sheet "채널" \
+  --header-row 7 \
+  --column-id "TC ID" \
+  --column-category "대분류" \
+  --column-priority "중요도" \
+  --column-expected "예상 결과" \
+  --column-preconditions "기능 범위(사전조건)" \
+  --column-steps "테스트케이스 및 절차" \
+  --force-category EPG \
+  --default-priority P2 \
+  --default-sla 3000 \
+  --id-prefix kaon_channel \
+  --output drafts/kaon-channel.json \
+  --dry-run \
+  --merge infrastructure/notebook-gateway/data/scenarios-catalog.json
+```
+
+| 신규 옵션 | 용도 |
+|----------|------|
+| `--header-row N` | 헤더가 R0이 아니라 N행에 있을 때 (KAON은 7) |
+| `--default-sla 3000` | SLA 컬럼이 없거나 빈 값일 때 폴백(ms) |
+| `--default-priority P2` | 중요도 빈 값일 때 폴백 |
+| `--force-category EPG` | 대분류 컬럼 무시하고 시트 단위로 카테고리 강제 |
+| `--id-prefix kaon_channel` | 시트 간 ID 충돌 방지 (TC ID가 `1`/`2`/`3`처럼 단순 숫자일 때) |
+
+시트별 force-category 매핑 가이드:
+
+| KAON 시트 | --force-category | 비고 |
+|----------|------------------|------|
+| 채널 | EPG | 채널 자핑/직접 입력 |
+| OTT, VOD | OTT | |
+| 음성인식, RCU, 검색 | Search | |
+| 자녀안심 설정 | Parental | |
+| 녹화/PVR | Recording | |
+| 안정성, 부팅, POWER, 펌웨어 업그레이드, 오디오, 해상도, 블루투스, 네트워크, 홈, AI 화질/사운드/자막, 시력 보호 | Settings | v2 enum에 카테고리 없음 — 통합 |
+
 ---
 
 ## 4. 카탈로그 머지
